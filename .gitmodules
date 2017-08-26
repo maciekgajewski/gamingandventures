@@ -1,0 +1,3 @@
+[submodule "balls1/x_googletest"]
+	path = balls1/x_googletest
+	url = https://github.com/google/googletest.git

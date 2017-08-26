@@ -16,7 +16,9 @@ if(CMAKE_CL_64)
 	LINK_DIRECTORIES(${IRRLICH_ROOT}/lib/Win64-visualStudio)
 endif()
 
+add_subdirectory(x_googletest)
 add_subdirectory(ecs)
+add_subdirectory(tests)
 
 add_executable(balls1
 	main.cc

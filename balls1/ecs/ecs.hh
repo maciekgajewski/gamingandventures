@@ -2,12 +2,16 @@
 
 #include <boost/range/algorithm.hpp>
 
+#include <boost/fusion/algorithm/iteration/for_each.hpp>
+#include <boost/fusion/adapted/std_tuple.hpp>
+
 #include <cinttypes>
 #include <string>
 #include <unordered_map>
 #include <memory>
 #include <typeindex>
 #include <typeinfo>
+#include <tuple>
 
 namespace Ecs {
 
@@ -31,7 +35,11 @@ public:
 
 	// Adds component to entity
 	template<typename CT>
-	CT& AddComponentToEntity(EntityId id);
+	CT& AddComponentToEntity(EntityId id, const CT& value = CT{});
+
+	// Iterates over entities with specific components
+	template<typename... CTs, typename F>
+	void ForEach(F fun);
 
 private:
 
@@ -60,9 +68,9 @@ private:
 		// TODO use different container (Dense hashmap?)
 		std::unordered_map<EntityId, CT> mData;
 
-		CT& AddToEntity(EntityId id)
+		CT& AddToEntity(EntityId id, const CT& value)
 		{
-			auto res = mData.emplace(id, CT{});
+			auto res = mData.emplace(id, value);
 			if (res.second)
 				return res.first->second;
 			else
@@ -92,14 +100,14 @@ ComponentTypeId Ecs::RegisterComponentType(const std::string& typeName)
 }
 
 template<typename CT>
-CT& Ecs::AddComponentToEntity(EntityId id)
+CT& Ecs::AddComponentToEntity(EntityId id, const CT& value)
 {
 	if (mEntityNames.find(id) == mEntityNames.end())
 		throw std::logic_error("No such entity");
 
 
 	ComponentType<CT>& type = GetComponentByType<CT>();
-	return type.AddToEntity(id);
+	return type.AddToEntity(id, value);
 }
 
 template<typename CT>
@@ -116,5 +124,28 @@ Ecs::ComponentType<CT>& Ecs::GetComponentByType()
 
 	return *type;
 }
+
+template<typename T> struct GetCtFromTypePtr;
+template<typename CT> struct GetCtFromTypePtr<Ecs::ComponentType<CT>*>
+{
+	using type = CT;
+};
+
+template<typename... CTs, typename F>
+void Ecs::ForEach(F fun)
+{
+	static_assert(sizeof...(CTs) > 0, "Must provide at leas one component type");
+	std::tuple<ComponentType<CTs>*...> types;
+
+	boost::fusion::for_each(types, [&](auto* tptr)
+	{
+		using CT = typename GetCtFromTypePtr<decltype(tptr)>::type;
+		tptr = &this->GetComponentByType<CT>();
+	});
+
+
+
+}
+
 
 }
