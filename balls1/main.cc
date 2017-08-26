@@ -1,4 +1,4 @@
-#include "ecs.hh"
+#include <ecs/ecs.hh>
 
 #include <irrlicht/irrlicht.h>
 

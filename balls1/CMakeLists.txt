@@ -16,12 +16,13 @@ if(CMAKE_CL_64)
 	LINK_DIRECTORIES(${IRRLICH_ROOT}/lib/Win64-visualStudio)
 endif()
 
+add_subdirectory(ecs)
+
 add_executable(balls1
 	main.cc
-	ecs.cc ecs.hh
 )
 
 target_link_libraries(balls1
-
+	ecs
 	Irrlicht)
 
