@@ -3,6 +3,7 @@
 #include <boost/range/algorithm.hpp>
 
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
+#include <boost/fusion/algorithm/transformation/transform.hpp>
 #include <boost/fusion/adapted/std_tuple.hpp>
 
 #include <cinttypes>
@@ -38,7 +39,7 @@ public:
 	CT& AddComponentToEntity(EntityId id, const CT& value = CT{});
 
 	// Iterates over entities with specific components
-	template<typename... CTs, typename F>
+	template<typename CT, typename... CTs, typename F>
 	void ForEach(F fun);
 
 private:
@@ -64,10 +65,6 @@ private:
 		{
 		}
 
-		// Component storage
-		// TODO use different container (Dense hashmap?)
-		std::unordered_map<EntityId, CT> mData;
-
 		CT& AddToEntity(EntityId id, const CT& value)
 		{
 			auto res = mData.emplace(id, value);
@@ -77,6 +74,27 @@ private:
 				throw std::logic_error("Entity already has component of this type");
 		}
 
+		template<typename F>
+		void ForEach(F f)
+		{
+			for(auto& p : mData)
+			{
+				f(p.first, p.second);
+			}
+		}
+
+		CT* Find(EntityId id)
+		{
+			auto it = mData.find(id);
+			if (it == mData.end())
+				return nullptr;
+			else
+				return &it->second;
+		}
+
+		// Component storage
+		// TODO use different container (Dense hashmap?)
+		std::unordered_map<EntityId, CT> mData;
 	};
 
 	template<typename CT>
@@ -131,18 +149,31 @@ template<typename CT> struct GetCtFromTypePtr<Ecs::ComponentType<CT>*>
 	using type = CT;
 };
 
-template<typename... CTs, typename F>
+template<typename CT, typename... CTs, typename F>
 void Ecs::ForEach(F fun)
 {
-	static_assert(sizeof...(CTs) > 0, "Must provide at leas one component type");
-	std::tuple<ComponentType<CTs>*...> types;
-
-	boost::fusion::for_each(types, [&](auto* tptr)
+	ComponentType<CT>& primaryType = GetComponentByType<CT>();
+	std::tuple<ComponentType<CTs>*...> secondaryTypes;
+	boost::fusion::for_each(secondaryTypes, [&](auto& tptr)
 	{
-		using CT = typename GetCtFromTypePtr<decltype(tptr)>::type;
-		tptr = &this->GetComponentByType<CT>();
+		using SecCT = GetCtFromTypePtr<decltype(tptr)>::type;
+		tptr = &(this->GetComponentByType<SecCT>());
 	});
 
+	primaryType.ForEach([&](EntityId& id, CT& component)
+	{
+		// iterate over secondary, and see if they have the comnponent
+		//std::tuple<CTs*> secondaries; = this->FindComponents<CTs>(id);
+		bool allFound = true;
+		auto secondaries = boost::fusion::transform(secondaryTypes, [&](auto tptr)
+		{
+			auto* component = tptr->Find(id); // TODO how to break iteration if component not found?
+			if (!component)
+				allFound = false;
+		});
+
+		// TODO now call
+	});
 
 
 }
