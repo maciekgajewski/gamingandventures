@@ -32,7 +32,7 @@ TEST(EcsTests, BasicIterate)
 
 	// Iterate!
 	int stringCount = 0;
-	ecs.ForEach<StringAspect>([&](StringAspect&)
+	ecs.ForEach<StringAspect>([&](EntityId, StringAspect&)
 	{
 		stringCount++;
 	});
@@ -40,7 +40,7 @@ TEST(EcsTests, BasicIterate)
 	EXPECT_EQ(2, stringCount);
 
 	int intCount = 0;
-	ecs.ForEach<NumAspect>([&](NumAspect&)
+	ecs.ForEach<NumAspect>([&](EntityId, NumAspect&)
 	{
 		intCount++;
 	});
@@ -48,7 +48,7 @@ TEST(EcsTests, BasicIterate)
 	EXPECT_EQ(1, intCount);
 
 	int bothCount = 0;
-	ecs.ForEach<NumAspect, StringAspect>([&](NumAspect&, StringAspect&)
+	ecs.ForEach<NumAspect, StringAspect>([&](EntityId, NumAspect&, StringAspect&)
 	{
 		bothCount++;
 	});

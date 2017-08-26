@@ -2,10 +2,6 @@
 
 #include <boost/range/algorithm.hpp>
 
-#include <boost/fusion/algorithm/iteration/for_each.hpp>
-#include <boost/fusion/algorithm/transformation/transform.hpp>
-#include <boost/fusion/adapted/std_tuple.hpp>
-
 #include <cinttypes>
 #include <string>
 #include <unordered_map>
@@ -83,13 +79,21 @@ private:
 			}
 		}
 
-		CT* Find(EntityId id)
+		CT* Find(EntityId id, bool& bother)
 		{
+			if (!bother)
+				return nullptr;
+
 			auto it = mData.find(id);
 			if (it == mData.end())
+			{
+				bother = false;
 				return nullptr;
+			}
 			else
+			{
 				return &it->second;
+			}
 		}
 
 		// Component storage
@@ -149,34 +153,22 @@ template<typename CT> struct GetCtFromTypePtr<Ecs::ComponentType<CT>*>
 	using type = CT;
 };
 
+template<typename F, typename CT, typename... CTs>
+void ForwardIf(F fun, EntityId id, bool cond, CT& primary, CTs*... ptrs)
+{
+	if (cond)
+		fun(id, primary, *ptrs...);
+}
+
 template<typename CT, typename... CTs, typename F>
 void Ecs::ForEach(F fun)
 {
 	ComponentType<CT>& primaryType = GetComponentByType<CT>();
-	std::tuple<ComponentType<CTs>*...> secondaryTypes;
-	boost::fusion::for_each(secondaryTypes, [&](auto& tptr)
+	primaryType.ForEach([&](EntityId id, CT& component)
 	{
-		using SecCT = GetCtFromTypePtr<decltype(tptr)>::type;
-		tptr = &(this->GetComponentByType<SecCT>());
+		bool allPresent = true;
+		ForwardIf(fun, id, allPresent, component, (GetComponentByType<CTs>().Find(id, allPresent))...);
 	});
-
-	primaryType.ForEach([&](EntityId& id, CT& component)
-	{
-		// iterate over secondary, and see if they have the comnponent
-		//std::tuple<CTs*> secondaries; = this->FindComponents<CTs>(id);
-		bool allFound = true;
-		auto secondaries = boost::fusion::transform(secondaryTypes, [&](auto tptr)
-		{
-			auto* component = tptr->Find(id); // TODO how to break iteration if component not found?
-			if (!component)
-				allFound = false;
-		});
-
-		// TODO now call
-	});
-
-
 }
-
 
 }
