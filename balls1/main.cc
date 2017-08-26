@@ -75,7 +75,8 @@ int main(int , char**)
 	assert(light);
 	light->setLightType(irr::video::ELT_POINT);
 	auto& lightData = light->getLightData();
-	lightData.Attenuation = {5E-3f, 0.0, 0.0};
+	lightData.Attenuation = {1.0f, 0.0, 0.0};
+	lightData.DiffuseColor.set(1.0, 1.0, 1.0, 1.0);
 
 	while (device->run())
 	{
