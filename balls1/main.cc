@@ -2,6 +2,8 @@
 
 #include <irrlicht/irrlicht.h>
 
+#include <boost/optional.hpp>
+
 #include <iostream>
 #include <random>
 
@@ -67,8 +69,43 @@ void animateBalls(Ecs::Ecs& ecs, double dt)
 	});
 }
 
+template<typename T>
+std::ostream& operator<<(std::ostream& s, const irr::core::vector3d<T>& v)
+{
+	return s << "(" << v.X << ", " << v.Y << ", " << v.Z << ")";
+}
+
+struct EventReceiver : public irr::IEventReceiver
+{
+	bool OnEvent(const irr::SEvent& event) override
+	{
+		if (event.EventType == irr::EET_MOUSE_INPUT_EVENT)
+		{
+			if (event.MouseInput.Event == irr::EMIE_MOUSE_MOVED)
+			{
+				if (prevX_ && *prevX_ != event.MouseInput.X && camera_)
+				{
+					static const double SENSITIVITY = 1.0;
+
+					irr::core::vector3df rotation = camera_->getRotation();
+					rotation.Y += SENSITIVITY * event.MouseInput.X - *prevX_;
+					camera_->setRotation(rotation);
+				}
+				prevX_ = event.MouseInput.X;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	boost::optional<std::int32_t> prevX_;
+	irr::scene::ICameraSceneNode* camera_ = nullptr;
+};
+
 int main(int , char**)
 {
+	EventReceiver eventReceiver;
+
 	// Init renderer
 	irr::IrrlichtDevice *device = irr::createDevice(
 		irr::video::EDT_OPENGL,
@@ -77,7 +114,7 @@ int main(int , char**)
 		false, // fullscreen
 		false, // stencil buffer
 		false, // vsync
-		0); // even receiver
+		&eventReceiver); // even receiver
 
 	device->setWindowCaption(L"Balls! (in space)");
 
@@ -124,7 +161,8 @@ int main(int , char**)
 	createBalls(BALLS, smgr, ecs, ballTexture);
 
 	// Lights, camera, action!
-	smgr->addCameraSceneNode(0, irr::core::vector3df(0,5,-40), irr::core::vector3df(0,5,50));
+	irr::scene::ICameraSceneNode* camera = smgr->addCameraSceneNode(0, irr::core::vector3df(0,5,-40), irr::core::vector3df(0,5,50));
+	camera->bindTargetAndRotation(true);
 	auto light = smgr->addLightSceneNode(0, irr::core::vector3df{100, 100, 100}, irr::video::SColor(1.0, 1.0, 1.0, 1.0), 1000.0);
 	assert(light);
 	light->setLightType(irr::video::ELT_POINT);
@@ -132,6 +170,8 @@ int main(int , char**)
 	lightData.Attenuation = {1.0f, 0.0, 0.0};
 	lightData.DiffuseColor.set(1.0, 1.0, 1.0, 1.0);
 	lightData.AmbientColor.set(1.0, 0.2, 0.2, 0.4);
+
+	eventReceiver.camera_ = camera;
 
 	std::uint32_t time = timer->getTime();
 	while (device->run())
