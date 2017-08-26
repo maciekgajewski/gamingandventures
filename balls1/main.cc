@@ -19,6 +19,7 @@ struct Rendered
 struct Ball
 {
 	float radius_;
+	irr::core::vector3df velocity_;
 };
 
 
@@ -46,6 +47,26 @@ void createBalls(int count, irr::scene::ISceneManager* smgr, Ecs::Ecs& ecs, irr:
 	}
 }
 
+void animateBalls(Ecs::Ecs& ecs, double dt)
+{
+	ecs.ForEach<Components::Ball, Components::Rendered>([&](Ecs::EntityId, Components::Ball& ball, Components::Rendered& ren)
+	{
+		ball.velocity_ += irr::core::vector3df{0.0f, -9.8f, 0.0f} * dt;
+
+		irr::core::vector3df pos = ren.node_->getPosition();
+		irr::core::vector3df newPos = pos + ball.velocity_ * dt;
+
+		// bounce
+		if (newPos.Y < 0)
+		{
+			newPos.Y = -newPos.Y;
+			ball.velocity_.Y *= -1;
+		}
+
+		ren.node_->setPosition(newPos);
+	});
+}
+
 int main(int , char**)
 {
 	// Init renderer
@@ -63,6 +84,7 @@ int main(int , char**)
 	irr::video::IVideoDriver* driver = device->getVideoDriver();
 	irr::gui::IGUIEnvironment* guienv = device->getGUIEnvironment();
 	irr::scene::ISceneManager* smgr = device->getSceneManager();
+	irr::ITimer* timer = device->getTimer();
 
 	// build world
 
@@ -97,7 +119,7 @@ int main(int , char**)
 	}
 
 	// balls
-	static const int BALLS = 100;
+	static const int BALLS = 200;
 	irr::video::ITexture* ballTexture = driver->getTexture("ball.jpg");
 	createBalls(BALLS, smgr, ecs, ballTexture);
 
@@ -111,6 +133,7 @@ int main(int , char**)
 	lightData.DiffuseColor.set(1.0, 1.0, 1.0, 1.0);
 	lightData.AmbientColor.set(1.0, 0.2, 0.2, 0.4);
 
+	std::uint32_t time = timer->getTime();
 	while (device->run())
 	{
 		driver->beginScene(
@@ -121,6 +144,11 @@ int main(int , char**)
 		smgr->drawAll();
 		guienv->drawAll();
 		driver->endScene();
+
+		std::uint32_t prevTime = time;
+		time = timer->getTime();
+
+		animateBalls(ecs, (time - prevTime)/1000.0);
 	}
 
 	return 0;
