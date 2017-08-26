@@ -62,12 +62,6 @@ int main(int , char**)
 		r.node_->setMaterialTexture(0, driver->getTexture("ground.jpg"));
 		//r.node_->setDebugDataVisible(irr::scene::EDS_NORMALS);
 
-
-
-		auto& mat = r.node_->getMaterial(0);
-		mat.DiffuseColor.set(255, 20, 200, 20);
-		mat.EmissiveColor.set(0, 0, 0, 0);
-		mat.AmbientColor.set(0, 0, 0, 0);
 	}
 
 	smgr->addCameraSceneNode(0, irr::core::vector3df(0,5,-40), irr::core::vector3df(0,0,50));
