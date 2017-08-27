@@ -98,7 +98,7 @@ struct EventReceiver : public irr::IEventReceiver
 		}
 		else if (event.EventType == irr::EET_KEY_INPUT_EVENT)
 		{
-			if (event.KeyInput.Char == 'w')
+			if (event.KeyInput.Key == irr::KEY_KEY_W)
 			{
 				if (event.KeyInput.PressedDown)
 					camVeclocity_ = 1.0;
@@ -106,12 +106,17 @@ struct EventReceiver : public irr::IEventReceiver
 					camVeclocity_ = 0.0;
 				return true;
 			}
-			if (event.KeyInput.Char == 's')
+			if (event.KeyInput.Key == irr::KEY_KEY_S)
 			{
 				if (event.KeyInput.PressedDown)
 					camVeclocity_ = -1.0;
 				else
 					camVeclocity_ = 0.0;
+				return true;
+			}
+			if (event.KeyInput.Key == irr::KEY_ESCAPE)
+			{
+				quit_ = true;
 				return true;
 			}
 
@@ -124,6 +129,7 @@ struct EventReceiver : public irr::IEventReceiver
 	boost::optional<std::int32_t> prevX_;
 	irr::scene::ICameraSceneNode* camera_ = nullptr;
 	double camVeclocity_ = 0;
+	bool quit_ = false;
 };
 
 void moveCam(irr::scene::ICameraSceneNode* cam, double velV, double dt)
@@ -212,7 +218,7 @@ int main(int , char**)
 	eventReceiver.camera_ = camera;
 
 	std::uint32_t time = timer->getTime();
-	while (device->run())
+	while (device->run() && !eventReceiver.quit_)
 	{
 		driver->beginScene(
 			true, // back buffer
