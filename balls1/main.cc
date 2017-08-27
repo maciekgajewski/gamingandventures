@@ -4,8 +4,12 @@
 
 #include <boost/optional.hpp>
 
+#include <boost/container/static_vector.hpp>
+#include <boost/range/algorithm.hpp>
+
 #include <iostream>
 #include <random>
+#include <algorithm>
 
 
 namespace Components
@@ -27,11 +31,19 @@ struct Ball
 
 }
 
+template<typename T>
+std::ostream& operator<<(std::ostream& s, const irr::core::vector3d<T>& v)
+{
+	return s << "(" << v.X << ", " << v.Y << ", " << v.Z << ")";
+}
+
+
 void createBalls(int count, irr::scene::ISceneManager* smgr, Ecs::Ecs& ecs, irr::video::ITexture* texture)
 {
 	std::minstd_rand rd;
 	std::uniform_real_distribution<float> heightDist(8.0f, 50.0f);
-	std::uniform_real_distribution<float> posDist(-1000.0f, 1000.0f);
+	//std::uniform_real_distribution<float> posDist(-1000.0f, 1000.0f);
+	std::uniform_real_distribution<float> posDist(-10.0f, 10.0f);
 	std::uniform_real_distribution<float> sizeDist(2.0f, 10.0f);
 	for (int i = 0; i < count; i++)
 	{
@@ -73,25 +85,63 @@ void animateBalls(Ecs::Ecs& ecs, double dt, irr::scene::ITriangleSelector* tsel)
 
 		static const int TRIANGLES = 32;
 		irr::core::triangle3df triangles[TRIANGLES];
-		int collided = 0;
-		tsel->getTriangles(triangles, TRIANGLES, collided, collisionBox);
+		int triangleCount = 0;
+		tsel->getTriangles(triangles, TRIANGLES, triangleCount, collisionBox);
 
 		// temporary:
-		if (collided > 0)
+		if (triangleCount > 0)
 		{
-			newPos.Y = -newPos.Y;
-			ball.velocity_.Y *= -1;
-			std::cout << "ball " << id << " collided with " << collided << " triangles" << std::endl;
+			// see whihc triangles actually colidded with the ball
+			struct Collision
+			{
+				const irr::core::triangle3df* triangle;
+				float distance;
+			};
+			boost::container::static_vector<Collision, TRIANGLES> collisions;
+			for(int i = 0; i < triangleCount; i++)
+			{
+				const irr::core::triangle3df& triangle = triangles[i];
+				irr::core::plane3df plane = triangle.getPlane();
+				float distance = plane.getDistanceTo(pos);
+
+				if (distance <= ball.radius_)
+					collisions.push_back({&triangle, distance});
+			}
+
+			// pick the first collision
+			if (!collisions.empty())
+			{
+				boost::sort(collisions, [&](const Collision& a, const Collision& b) { return a.distance < b.distance; });
+				irr::core::vector3df normal = collisions.front().triangle->getNormal().normalize();
+
+				// reflected velocity
+				float vdn = ball.velocity_.dotProduct(normal);
+				irr::core::vector3df reflected = ball.velocity_ - vdn * normal * 2.0;
+				assert(std::abs(reflected.getLength() - ball.velocity_.getLength()) < 0.01);
+
+				// get actual reflection point
+				float ndv = normal.dotProduct(ball.velocity_);
+				float depth = ball.radius_ - collisions.front().distance;
+				irr::core::vector3df travelledBelow = (depth / ndv) * ball.velocity_;
+				irr::core::vector3df collisionPoint = pos + travelledBelow;
+				irr::core::vector3df travelledSinceCol = -(depth / ndv) * reflected;
+				// verify
+				float distAtColl = collisions.front().triangle->getPlane().getDistanceTo(collisionPoint);
+				//std::cout << "distance at collision: " << distAtColl << ", radius: " << ball.radius_ << std::endl;
+				assert(std::abs(distAtColl - ball.radius_) < 0.01);
+
+				std::cout << ball.velocity_ << " reflected from " << normal << " is " << reflected << std::endl;
+				std::cout << "ball pos at col: " << pos << ", but actual collision was at: " << collisionPoint << std::endl;
+
+				std::cout << "travelled after collision: " << travelledSinceCol << std::endl;
+
+				ball.velocity_ = reflected;
+				newPos = collisionPoint + travelledSinceCol;
+			}
 		}
 
 		ren.node_->setPosition(newPos);
 	});
-}
-
-template<typename T>
-std::ostream& operator<<(std::ostream& s, const irr::core::vector3d<T>& v)
-{
-	return s << "(" << v.X << ", " << v.Y << ", " << v.Z << ")";
 }
 
 struct EventReceiver : public irr::IEventReceiver
@@ -222,7 +272,7 @@ int main(int , char**)
 	}
 
 	// balls
-	static const int BALLS = 200;
+	static const int BALLS = 1;
 	irr::video::ITexture* ballTexture = driver->getTexture("ball.jpg");
 	createBalls(BALLS, smgr, ecs, ballTexture);
 
