@@ -42,8 +42,7 @@ void createBalls(int count, irr::scene::ISceneManager* smgr, Ecs::Ecs& ecs, irr:
 {
 	std::minstd_rand rd;
 	std::uniform_real_distribution<float> heightDist(8.0f, 50.0f);
-	//std::uniform_real_distribution<float> posDist(-1000.0f, 1000.0f);
-	std::uniform_real_distribution<float> posDist(-10.0f, 10.0f);
+	std::uniform_real_distribution<float> posDist(-1000.0f, 1000.0f);
 	std::uniform_real_distribution<float> sizeDist(2.0f, 10.0f);
 	for (int i = 0; i < count; i++)
 	{
@@ -70,16 +69,7 @@ void animateBalls(Ecs::Ecs& ecs, double dt, irr::scene::ITriangleSelector* tsel)
 		irr::core::vector3df pos = ren.node_->getPosition();
 		irr::core::vector3df newPos = pos + ball.velocity_ * dt;
 
-		// bounce
-		/* naive implementation with ground always at 0
-		if (newPos.Y < 0)
-		{
-			newPos.Y = -newPos.Y;
-			ball.velocity_.Y *= -1;
-		}
-		*/
-
-		// see if tghe ball may intersect the ground
+		// see if the ball may intersect the ground
 		irr::core::vector3df boxDiag(ball.radius_, ball.radius_, ball.radius_);
 		irr::core::aabbox3df collisionBox(pos - boxDiag, pos + boxDiag);
 
@@ -130,10 +120,10 @@ void animateBalls(Ecs::Ecs& ecs, double dt, irr::scene::ITriangleSelector* tsel)
 				//std::cout << "distance at collision: " << distAtColl << ", radius: " << ball.radius_ << std::endl;
 				assert(std::abs(distAtColl - ball.radius_) < 0.01);
 
-				std::cout << ball.velocity_ << " reflected from " << normal << " is " << reflected << std::endl;
-				std::cout << "ball pos at col: " << pos << ", but actual collision was at: " << collisionPoint << std::endl;
+//				std::cout << ball.velocity_ << " reflected from " << normal << " is " << reflected << std::endl;
+//				std::cout << "ball pos at col: " << pos << ", but actual collision was at: " << collisionPoint << std::endl;
 
-				std::cout << "travelled after collision: " << travelledSinceCol << std::endl;
+//				std::cout << "travelled after collision: " << travelledSinceCol << std::endl;
 
 				ball.velocity_ = reflected;
 				newPos = collisionPoint + travelledSinceCol;
@@ -272,7 +262,7 @@ int main(int , char**)
 	}
 
 	// balls
-	static const int BALLS = 1;
+	static const int BALLS = 200;
 	irr::video::ITexture* ballTexture = driver->getTexture("ball.jpg");
 	createBalls(BALLS, smgr, ecs, ballTexture);
 
