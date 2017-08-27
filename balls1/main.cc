@@ -79,6 +79,7 @@ struct EventReceiver : public irr::IEventReceiver
 {
 	bool OnEvent(const irr::SEvent& event) override
 	{
+		// mouse
 		if (event.EventType == irr::EET_MOUSE_INPUT_EVENT)
 		{
 			if (event.MouseInput.Event == irr::EMIE_MOUSE_MOVED)
@@ -95,12 +96,49 @@ struct EventReceiver : public irr::IEventReceiver
 				return true;
 			}
 		}
+		else if (event.EventType == irr::EET_KEY_INPUT_EVENT)
+		{
+			if (event.KeyInput.Char == 'w')
+			{
+				if (event.KeyInput.PressedDown)
+					camVeclocity_ = 1.0;
+				else
+					camVeclocity_ = 0.0;
+				return true;
+			}
+			if (event.KeyInput.Char == 's')
+			{
+				if (event.KeyInput.PressedDown)
+					camVeclocity_ = -1.0;
+				else
+					camVeclocity_ = 0.0;
+				return true;
+			}
+
+		}
+		// keyboard
+
 		return false;
 	}
 
 	boost::optional<std::int32_t> prevX_;
 	irr::scene::ICameraSceneNode* camera_ = nullptr;
+	double camVeclocity_ = 0;
 };
+
+void moveCam(irr::scene::ICameraSceneNode* cam, double velV, double dt)
+{
+	static const double SPEED = 10.0;
+
+	irr::core::vector3df rotation = cam->getRotation();
+	irr::core::vector3df velocity(0, 0, velV);
+	velocity.rotateXZBy(-rotation.Y);
+	irr::core::vector3df velocityMpl = velocity * dt * SPEED;
+
+	irr::core::vector3df position = cam->getPosition();
+	cam->setPosition(position + velocityMpl);
+	cam->setTarget(cam->getTarget() + velocityMpl);
+}
 
 int main(int , char**)
 {
@@ -188,7 +226,9 @@ int main(int , char**)
 		std::uint32_t prevTime = time;
 		time = timer->getTime();
 
-		animateBalls(ecs, (time - prevTime)/1000.0);
+		double dt = (time - prevTime)/1000.0;
+		animateBalls(ecs, dt);
+		moveCam(camera, eventReceiver.camVeclocity_, dt);
 	}
 
 	return 0;
