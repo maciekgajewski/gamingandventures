@@ -49,9 +49,9 @@ void createBalls(int count, irr::scene::ISceneManager* smgr, Ecs::Ecs& ecs, irr:
 	}
 }
 
-void animateBalls(Ecs::Ecs& ecs, double dt)
+void animateBalls(Ecs::Ecs& ecs, double dt, irr::scene::ITriangleSelector* tsel)
 {
-	ecs.ForEach<Components::Ball, Components::Rendered>([&](Ecs::EntityId, Components::Ball& ball, Components::Rendered& ren)
+	ecs.ForEach<Components::Ball, Components::Rendered>([&](Ecs::EntityId id, Components::Ball& ball, Components::Rendered& ren)
 	{
 		ball.velocity_ += irr::core::vector3df{0.0f, -9.8f, 0.0f} * dt;
 
@@ -59,10 +59,29 @@ void animateBalls(Ecs::Ecs& ecs, double dt)
 		irr::core::vector3df newPos = pos + ball.velocity_ * dt;
 
 		// bounce
+		/* naive implementation with ground always at 0
 		if (newPos.Y < 0)
 		{
 			newPos.Y = -newPos.Y;
 			ball.velocity_.Y *= -1;
+		}
+		*/
+
+		// see if tghe ball may intersect the ground
+		irr::core::vector3df boxDiag(ball.radius_, ball.radius_, ball.radius_);
+		irr::core::aabbox3df collisionBox(pos - boxDiag, pos + boxDiag);
+
+		static const int TRIANGLES = 32;
+		irr::core::triangle3df triangles[TRIANGLES];
+		int collided = 0;
+		tsel->getTriangles(triangles, TRIANGLES, collided, collisionBox);
+
+		// temporary:
+		if (collided > 0)
+		{
+			newPos.Y = -newPos.Y;
+			ball.velocity_.Y *= -1;
+			std::cout << "ball " << id << " collided with " << collided << " triangles" << std::endl;
 		}
 
 		ren.node_->setPosition(newPos);
@@ -175,6 +194,7 @@ int main(int , char**)
 	ecs.RegisterComponentType<Components::Ball>("Ball");
 
 	// floor
+	irr::scene::ITriangleSelector* groundTriangeSelector = nullptr;
 	{
 		Ecs::EntityId floorId = ecs.CreateEntity("Floor");
 		Components::Rendered& r = ecs.AddComponentToEntity<Components::Rendered>(floorId);
@@ -197,6 +217,8 @@ int main(int , char**)
 		r.node_->setMaterialTexture(0, driver->getTexture("ground.jpg"));
 		//r.node_->setDebugDataVisible(irr::scene::EDS_NORMALS);
 
+
+		groundTriangeSelector = smgr->createOctreeTriangleSelector(mesh, r.node_);
 	}
 
 	// balls
@@ -233,7 +255,7 @@ int main(int , char**)
 		time = timer->getTime();
 
 		double dt = (time - prevTime)/1000.0;
-		animateBalls(ecs, dt);
+		animateBalls(ecs, dt, groundTriangeSelector);
 		moveCam(camera, eventReceiver.camVeclocity_, dt);
 	}
 
