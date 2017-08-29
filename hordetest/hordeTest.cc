@@ -74,7 +74,8 @@ int main(int, char**)
 //			20, 20, 20 // s xyz
 //			);
 
-		// Add light source
+		// Add light source (not needed)
+		/*
 		H3DNode light = h3dAddLightNode( H3DRootNode, "Light1", 0, "LIGHTING", "SHADOWMAP" );
 		h3dSetNodeTransform( light, 0, 15, 10, -60, 0, 0, 1, 1, 1 );
 		h3dSetNodeParamF( light, H3DLight::RadiusF, 0, 30 );
@@ -85,6 +86,7 @@ int main(int, char**)
 		h3dSetNodeParamF( light, H3DLight::ColorF3, 1, 0.8f );
 		h3dSetNodeParamF( light, H3DLight::ColorF3, 2, 0.7f );
 		h3dSetNodeParamF( light, H3DLight::ColorMultiplierF, 0, 1.0f );
+		*/
 
 		// Customize post processing effects
 		/*
@@ -107,6 +109,7 @@ int main(int, char**)
 
 		/* Loop until the user closes the window */
 		int i = 0;
+		double before = glfwGetTime();
 		while (!glfwWindowShouldClose(window))
 		{
 			h3dSetNodeTransform(sphereNode,
@@ -127,6 +130,14 @@ int main(int, char**)
 			/* Poll for and process events */
 			glfwPollEvents();
 			i++;
+
+			if ((i % 100) == 0)
+			{
+				double after = glfwGetTime();
+				std::cout << 100/(after-before) << " fps" << std::endl;
+				before = after;
+			}
+
 		}
 
 	}
