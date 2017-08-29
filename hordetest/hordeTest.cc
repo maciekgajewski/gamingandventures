@@ -62,17 +62,17 @@ int main(int, char**)
 		// Camera
 		H3DNode camNode = h3dAddCameraNode( H3DRootNode, "Camera", pipeline);
 		h3dSetNodeTransform(camNode,
-			3, 2, 19,
-			7 ,15, 0,
+			0, 0, 0,
+			0 ,0, 0,
 			1, 1, 1 );
 
 		// Sphere
 		H3DNode sphereNode = h3dAddNodes( H3DRootNode, sphere);
-		h3dSetNodeTransform(sphereNode,
-			0, -20, 0, // t xyz
-			0, 0, 0, // r xyz
-			20, 20, 20 // s xyz
-			);
+//		h3dSetNodeTransform(sphereNode,
+//			0, -20, 0, // t xyz
+//			0, 0, 0, // r xyz
+//			20, 20, 20 // s xyz
+//			);
 
 		// Add light source
 		H3DNode light = h3dAddLightNode( H3DRootNode, "Light1", 0, "LIGHTING", "SHADOWMAP" );
@@ -94,10 +94,28 @@ int main(int, char**)
 		h3dSetMaterialUniform( matRes, "hdrBrightOffset", 0.08f, 0, 0, 0 );
 		*/
 
+		//h3dSetOption( H3DOptions::DebugViewMode, 1.0f );
+		//h3dSetOption( H3DOptions::WireframeMode, 1.0f );
+		h3dSetNodeParamI( camNode, H3DCamera::ViewportXI, 0 );
+		h3dSetNodeParamI( camNode, H3DCamera::ViewportYI, 0 );
+		h3dSetNodeParamI( camNode, H3DCamera::ViewportWidthI, 800 );
+		h3dSetNodeParamI( camNode, H3DCamera::ViewportHeightI, 600);
+
+		// Set virtual camera parameters
+		h3dSetupCameraView( camNode, 45.0f, (float)800.0 / 600.0, 0.1f, 1000.0f );
+		h3dResizePipelineBuffers( pipeline, 800, 600 );
+
 		/* Loop until the user closes the window */
+		int i = 0;
 		while (!glfwWindowShouldClose(window))
 		{
-			// render
+			h3dSetNodeTransform(sphereNode,
+				0, -20 + 0.01*i, -40, // t xyz
+				0, 0, 0, // r xyz
+				20, 20, 20 // s xyz
+				);
+				// render
+
 			h3dRender(camNode);
 
 			// Finish rendering of frame
@@ -108,6 +126,7 @@ int main(int, char**)
 
 			/* Poll for and process events */
 			glfwPollEvents();
+			i++;
 		}
 
 	}
