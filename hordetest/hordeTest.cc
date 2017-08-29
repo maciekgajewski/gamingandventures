@@ -24,8 +24,6 @@ int main(int, char**)
 {
 	std::cout << "hello" << std::endl;
 
-	char* gv = (char *)glGetString( GL_VERSION );
-
 	if (!glfwInit())
 	{
 		std::cout << "failed to initialize glfw" << std::endl;
@@ -33,27 +31,34 @@ int main(int, char**)
 	}
 
 
-	// make window
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Hello", nullptr, nullptr);
-	if (!window)
-	{
-		std::cout << "Failed to create window" << std::endl;
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window);
-
-	// init Horde
-	if(!h3dInit())
-	{
-		h3dutDumpMessages();
-		std::cout << "Failed to initialize Horde" << std::endl;
-		return -1;
-	}
-
-
 	try
 	{
+		// make window
+		GLFWwindow* window = glfwCreateWindow(800, 600, "Hello", nullptr, nullptr);
+		if (!window)
+		{
+			throw std::runtime_error("Failed to create window");
+		}
+
+		glfwMakeContextCurrent(window);
+
+
+		// init Horde
+		if(!h3dInit())
+		{
+			throw std::runtime_error("Failed to initialize Horde");
+		}
+
+
+		H3DRes pipeline = h3dAddResource( H3DResTypes::Pipeline, "forward.pipeline.xml", 0 );
+		H3DRes sphere = h3dAddResource( H3DResTypes::SceneGraph, "sphere.scene.xml", 0 );
+
+
+
+		if (!h3dutLoadResourcesFromDisk("resources"))
+		{
+			throw std::runtime_error("failed to load resources");
+		}
 
 		/* Loop until the user closes the window */
 		int i = 0;
@@ -73,6 +78,7 @@ int main(int, char**)
 	}
 	catch(...)
 	{
+		h3dutDumpMessages();
 		glfwTerminate();
 		throw;
 	}

@@ -1,0 +1,3 @@
+<Model name="sphere" geometry="sphere.geo">
+    <Mesh name="Sphere01" material="stones.material.xml" batchStart="0" batchCount="2880" vertRStart="0" vertREnd="587" />
+</Model>
