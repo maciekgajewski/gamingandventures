@@ -11,6 +11,7 @@ add_subdirectory(glad)
 add_executable(opengltest
 
 	main.cc
+	window.hh window.cc
 )
 
 target_link_libraries(opengltest
