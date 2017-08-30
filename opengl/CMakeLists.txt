@@ -12,6 +12,9 @@ add_executable(opengltest
 
 	main.cc
 	window.hh window.cc
+	io.hh io.cc
+
+	shader.vert
 )
 
 target_link_libraries(opengltest
