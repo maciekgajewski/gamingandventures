@@ -25,35 +25,46 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-		// vertex shader
-		std::string vertexShaderCode = OT::readFile("shader.vert");
-
-		vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		const char* code = vertexShaderCode.c_str();
-		glShaderSource(vertexShader, 1, &code, nullptr);
-		glCompileShader(vertexShader);
-
-		int  success;
-		char infoLog[512];
-		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-		if(!success)
-		{
-			glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-			std::cout << "Error compiling vertex shader: " << infoLog << std::endl;
-		}
+		// shaders
+		vertexShader = loadShader("shader.vert", GL_VERTEX_SHADER);
+		fragmentShader = loadShader("shader.frag", GL_FRAGMENT_SHADER);
 	}
 
 	void mainLoop()
 	{
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-
 	}
 
 private:
+
+	unsigned loadShader(const std::string& sourcePath, unsigned shaderType)
+	{
+		std::string code = OT::readFile(sourcePath);
+
+		unsigned shaderId = glCreateShader(shaderType);
+		const char* codePtr = code.c_str();
+		glShaderSource(shaderId, 1, &codePtr, nullptr);
+		glCompileShader(shaderId);
+
+		int  success;
+		char infoLog[512];
+		glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
+		if(!success)
+		{
+			glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
+			std::cout << "Error compiling shader " << std::endl;
+			std::cout << sourcePath << " " << infoLog << std::endl;
+			throw std::runtime_error("Error compiling shader");
+		}
+
+		return shaderId;
+	}
+
 	std::vector<float> vertices;
 	unsigned vbo = 0;
 	unsigned vertexShader = 0;
+	unsigned fragmentShader = 0;
 
 };
 
