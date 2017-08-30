@@ -1,7 +1,6 @@
 <Material>
     <Shader source="model.shader"/>
 	<ShaderFlag name="_F03_ParallaxMapping"/>
-	
     <Sampler name="albedoMap" map="layingrock.jpg" />
 	<Sampler name="normalMap" map="layingrockBump.tga" allowCompression="false" />
 </Material>
