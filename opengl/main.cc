@@ -1,6 +1,34 @@
+#include <glad/glad.h>
+
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+
+void onWindowResize(GLFWwindow* /*window*/, int width, int height)
+{
+	glViewport(0, 0, width, height);
+	std::cout << "window resized to " << width << "x" << height << std::endl;
+}
+
+GLFWwindow* initWindow(int width, int height)
+{
+	GLFWwindow* window = glfwCreateWindow(width, height, "Hello", nullptr, nullptr);
+	if (!window)
+	{
+		throw std::runtime_error("Failed to create window");
+	}
+
+	glfwSetFramebufferSizeCallback(window, onWindowResize);
+	glfwMakeContextCurrent(window);
+	return window;
+}
+
+
+void mainLoop()
+{
+
+}
+
 
 int main()
 {
@@ -19,17 +47,19 @@ int main()
 	try
 	{
 		// make window
-		GLFWwindow* window = glfwCreateWindow(800, 600, "Hello", nullptr, nullptr);
-		if (!window)
+		GLFWwindow* window = initWindow(800, 600);
+
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
-			throw std::runtime_error("Failed to create window");
+			throw std::runtime_error("Failed to initialize GLAD");
 		}
+		glViewport(0, 0, 800, 600);
 
-
-		glfwMakeContextCurrent(window);
-
+		// main loop
 		while (!glfwWindowShouldClose(window))
 		{
+			mainLoop();
+
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
