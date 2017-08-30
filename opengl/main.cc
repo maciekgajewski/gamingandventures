@@ -12,6 +12,10 @@ int main()
 		std::cout << "failed to initialize glfw" << std::endl;
 		return -1;
 	}
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 	try
 	{
 		// make window
@@ -20,6 +24,7 @@ int main()
 		{
 			throw std::runtime_error("Failed to create window");
 		}
+
 
 		glfwMakeContextCurrent(window);
 
