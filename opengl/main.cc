@@ -5,13 +5,38 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <vector>
 
-
-
-void mainLoop()
+class Scene
 {
-	// TODO
-}
+public:
+
+	void init()
+	{
+		// init VBO (vertex data)
+		vertices = {
+			-0.5f, -0.5f, 0.0f,
+			 0.5f, -0.5f, 0.0f,
+			 0.0f,  0.5f, 0.0f
+		};
+
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+	}
+
+	void mainLoop()
+	{
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+	}
+
+private:
+	std::vector<float> vertices;
+	unsigned vbo = 0;
+
+};
 
 
 int main()
@@ -41,10 +66,14 @@ int main()
 		}
 		glViewport(0, 0, 800, 600);
 
+		Scene scene;
+
+		scene.init();
+
 		// main loop
 		while (!window.shouldClose())
 		{
-			mainLoop();
+			scene.mainLoop();
 
 			window.swapBuffers();
 			glfwPollEvents();
