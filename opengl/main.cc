@@ -32,7 +32,7 @@ public:
 		};
 
 		// shaders
-		shader_ = OT::Shader(OT::readFile("shader.vert"), OT::readFile("shader.frag"));
+		shader_ = OT::Shader(OT::readFile("shaders/solid.vert"), OT::readFile("shaders/solid.frag"));
 
 		// triangle ========
 		// vertex array object

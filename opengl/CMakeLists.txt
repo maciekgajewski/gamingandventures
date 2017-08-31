@@ -14,6 +14,7 @@ add_subdirectory(x_glm/glm)
 include_directories(x_glm)
 
 
+file(GLOB SHADERS shaders/*)
 add_executable(opengltest
 
 	main.cc
@@ -22,8 +23,7 @@ add_executable(opengltest
 
 	shader.hh shader.cc
 
-	shader.vert
-	shader.frag
+	${SHADERS}
 )
 
 target_link_libraries(opengltest

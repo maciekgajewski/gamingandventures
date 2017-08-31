@@ -8,9 +8,10 @@ namespace OT {
 std::string readFile(const std::string& path)
 {
 	std::ifstream f;
-	f.exceptions(std::ios_base::failbit | std::ios_base::badbit);
 
 	f.open(path);
+	if (f.fail())
+		throw std::runtime_error("Error opening '" + path + "'");
 
 	std::string result;
 
