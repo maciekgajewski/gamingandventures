@@ -14,12 +14,6 @@ public:
 
 	void init()
 	{
-		// init VBO (vertex data)
-		float verticesTriangle[] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.0f,  0.5f, 0.0f
-		};
 		float verticesRect[] = {
 			 0.5f,  0.5f, 0.0f,
 			 0.5f, -0.5f, 0.0f,
@@ -30,27 +24,10 @@ public:
 			0, 1, 3,
 			1, 2, 3
 		};
+		vertices_ = 6;
 
 		// shaders
 		shader_ = OT::Shader(OT::readFile("shaders/solid.vert"), OT::readFile("shaders/solid.frag"));
-
-		// triangle ========
-		// vertex array object
-		glGenVertexArrays(1, &triangleVao_);
-		glBindVertexArray(triangleVao_);
-
-		// vertex buffer object
-		glGenBuffers(1, &triangleVbo_);
-		glBindBuffer(GL_ARRAY_BUFFER, triangleVbo_);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(verticesTriangle), verticesTriangle, GL_STATIC_DRAW);
-
-		// shader params (move this to draw?)
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // uses currently bound VAO
-		glEnableVertexAttribArray(0);
-
-		// cleanup
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
 
 		// rectangle ======
 		glGenVertexArrays(1, &rectVao_);
@@ -87,23 +64,14 @@ public:
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		// draw rectangle
 		if (drawRect)
-		{
 			color.Set(glm::vec3(1.0f, 0.0f, 0.0f));
-
-			glBindVertexArray(rectVao_);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_); // why is this needed?
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		}
-		// draw triangle
 		else
-		{
-			color.Set(glm::vec3(1.0f, 0.0f, 1.0f));
+			color.Set(glm::vec3(0.0f, 1.0f, 1.0f));
 
-			glBindVertexArray(triangleVao_);
-			glDrawArrays(GL_TRIANGLES, 0, 3);
-		}
+		glBindVertexArray(rectVao_);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_); // why is this needed?
+		glDrawElements(GL_TRIANGLES, vertices_, GL_UNSIGNED_INT, 0);
 
 	}
 
@@ -112,13 +80,10 @@ public:
 
 private:
 
-	unsigned triangleVbo_ = 0; // vertex buffer object
-	unsigned triangleVao_ = 0; // vertex array object
-
-	// rect
 	unsigned rectVbo_ = 0; // vertex buffer object
 	unsigned rectVao_ = 0;
 	unsigned rectEao_ = 0;
+	unsigned vertices_ = 0;
 
 	OT::Shader shader_;
 };
