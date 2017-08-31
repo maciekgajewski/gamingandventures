@@ -81,16 +81,29 @@ public:
 		// activate shader (material)
 		shader_.Use();
 
-		// draw triangle
-		//glBindVertexArray(triangleVao_);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		if (debug)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		else
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// draw rectangle
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glBindVertexArray(rectVao_);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_); // why is this needed?
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		if (drawRect)
+		{
+			glBindVertexArray(rectVao_);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_); // why is this needed?
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		}
+		// draw triangle
+		else
+		{
+			glBindVertexArray(triangleVao_);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+		}
+
 	}
+
+	bool drawRect = false;
+	bool debug = false;
 
 private:
 
@@ -103,6 +116,39 @@ private:
 	unsigned rectEao_ = 0;
 
 	OT::Shader shader_;
+};
+
+class MainWindow : public OT::Window
+{
+public:
+
+	MainWindow(Scene& scene) : OT::Window(800, 600, "Hello"), scene_(scene) {}
+
+protected:
+
+	void onKey(int key, int scancode, int action, int mods) override
+	{
+		if (key == GLFW_KEY_R)
+		{
+			if (action == GLFW_PRESS)
+				scene_.drawRect = true;
+			else if (action == GLFW_RELEASE)
+				scene_.drawRect = false;
+		}
+
+		if (key == GLFW_KEY_D)
+		{
+			if (action == GLFW_PRESS)
+				scene_.debug = true;
+			else if (action == GLFW_RELEASE)
+				scene_.debug = false;
+		}
+
+	}
+
+private:
+
+	Scene& scene_;
 };
 
 
@@ -123,7 +169,9 @@ int main()
 	try
 	{
 		// make window
-		OT::Window window(800, 600, "Hello");
+		Scene scene;
+
+		MainWindow window(scene);
 
 		window.makeContextCurrent();
 
@@ -132,8 +180,6 @@ int main()
 			throw std::runtime_error("Failed to initialize GLAD");
 		}
 		glViewport(0, 0, 800, 600);
-
-		Scene scene;
 
 		scene.init();
 

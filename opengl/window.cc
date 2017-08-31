@@ -9,16 +9,16 @@
 
 namespace OT {
 
-void Window::windowResized(GLFWwindow* window, int width, int height)
+void Window::windowResizedFun(GLFWwindow* window, int width, int height)
 {
 	Window* w = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	w->onResized(width, height);
+	w->windowResized(width, height);
 }
 
-void Window::keyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
+void Window::keyEventFun(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	Window* w = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	w->onKey(key, scancode, action, mods);
+	w->keyEvent(key, scancode, action, mods);
 }
 
 
@@ -31,8 +31,8 @@ Window::Window(int w, int h, const std::string& title)
 		throw std::runtime_error("Failed to create window");
 	}
 	glfwSetWindowUserPointer(window_, this);
-	glfwSetFramebufferSizeCallback(window_, &Window::windowResized);
-	glfwSetKeyCallback(window_, &Window::keyEvent);
+	glfwSetFramebufferSizeCallback(window_, &Window::windowResizedFun);
+	glfwSetKeyCallback(window_, &Window::keyEventFun);
 
 }
 
@@ -63,18 +63,22 @@ bool Window::shouldClose() const
 	return glfwWindowShouldClose(window_);
 }
 
-void Window::onResized(int w, int h)
+void Window::windowResized(int w, int h)
 {
 	std::cout << "window resized to " << w << "x" << h << std::endl;
 	if (isContext_)
 		glViewport(0, 0, w, h);
+
+	onResized(w, h);
 }
 
-void Window::onKey(int key, int, int action, int)
+void Window::keyEvent(int key, int scancode, int action, int mods)
 {
 	std::cout << "key action. key: " << key << ", action: " << action << std::endl;
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		close();
+	else
+		onKey(key, scancode, action, mods);
 }
 
 } // ns
