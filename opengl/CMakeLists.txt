@@ -14,6 +14,8 @@ add_executable(opengltest
 	window.hh window.cc
 	io.hh io.cc
 
+	shader.hh shader.cc
+
 	shader.vert
 	shader.frag
 )
