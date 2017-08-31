@@ -7,7 +7,6 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <vector>
 
 class Scene
 {
@@ -16,47 +15,92 @@ public:
 	void init()
 	{
 		// init VBO (vertex data)
-		vertices = {
+		float verticesTriangle[] = {
 			-0.5f, -0.5f, 0.0f,
 			 0.5f, -0.5f, 0.0f,
 			 0.0f,  0.5f, 0.0f
+		};
+		float verticesRect[] = {
+			 0.5f,  0.5f, 0.0f,
+			 0.5f, -0.5f, 0.0f,
+			-0.5f, -0.5f, 0.0f,
+			 -0.5f,  0.5f, 0.0f
+		};
+		unsigned indicesRect[] = {
+			0, 1, 3,
+			1, 2, 3
 		};
 
 		// shaders
 		shader_ = OT::Shader(OT::readFile("shader.vert"), OT::readFile("shader.frag"));
 
+		// triangle ========
 		// vertex array object
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
+		glGenVertexArrays(1, &triangleVao_);
+		glBindVertexArray(triangleVao_);
 
 		// vertex buffer object
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+		glGenBuffers(1, &triangleVbo_);
+		glBindBuffer(GL_ARRAY_BUFFER, triangleVbo_);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verticesTriangle), verticesTriangle, GL_STATIC_DRAW);
 
-		// shader params
+		// shader params (move this to draw?)
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // uses currently bound VAO
 		glEnableVertexAttribArray(0);
 
+		// cleanup
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+
+		// rectangle ======
+		glGenVertexArrays(1, &rectVao_);
+		glBindVertexArray(rectVao_);
+
+		glGenBuffers(1, &rectEao_);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesRect), indicesRect, GL_STATIC_DRAW);
+
+		glGenBuffers(1, &rectVbo_);
+		glBindBuffer(GL_ARRAY_BUFFER, rectVbo_);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verticesRect), verticesRect, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // uses currently bound VAO
+		glEnableVertexAttribArray(0);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}
 
 	void mainLoop()
 	{
+		// clear
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		// activate shader (material)
 		shader_.Use();
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		// draw triangle
+		//glBindVertexArray(triangleVao_);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		// draw rectangle
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glBindVertexArray(rectVao_);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_); // why is this needed?
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
 private:
 
-	std::vector<float> vertices;
-	unsigned vbo = 0; // vertex buffer object
-	unsigned vao = 0; // vertex array object
+	unsigned triangleVbo_ = 0; // vertex buffer object
+	unsigned triangleVao_ = 0; // vertex array object
+
+	// rect
+	unsigned rectVbo_ = 0; // vertex buffer object
+	unsigned rectVao_ = 0;
+	unsigned rectEao_ = 0;
 
 	OT::Shader shader_;
 };
