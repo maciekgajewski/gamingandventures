@@ -79,6 +79,7 @@ public:
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// activate shader (material)
+		OT::Uniform color = shader_.GetUniform("color");
 		shader_.Use();
 
 		if (debug)
@@ -89,6 +90,8 @@ public:
 		// draw rectangle
 		if (drawRect)
 		{
+			color.Set(glm::vec3(1.0f, 0.0f, 0.0f));
+
 			glBindVertexArray(rectVao_);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_); // why is this needed?
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -96,6 +99,8 @@ public:
 		// draw triangle
 		else
 		{
+			color.Set(glm::vec3(1.0f, 0.0f, 1.0f));
+
 			glBindVertexArray(triangleVao_);
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		}
