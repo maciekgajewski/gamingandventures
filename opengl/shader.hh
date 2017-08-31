@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <glad/glad.h>
 
@@ -13,6 +14,7 @@ class Uniform
 {
 public:
 
+	Uniform() = default;
 	explicit Uniform(int l) : location_(l) {}
 
 	void Set(const glm::vec3& v)
@@ -20,10 +22,15 @@ public:
 		glUniform3f(location_, v.x, v.y, v.z);
 	}
 
+	void Set(const glm::mat4& m)
+	{
+		glUniformMatrix4fv(location_, 1, GL_FALSE, glm::value_ptr(m));
+	}
+
 
 private:
 
-	int location_ = 0;
+	int location_ = -1;
 };
 
 class Shader

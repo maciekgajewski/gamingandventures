@@ -6,6 +6,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <iostream>
 
 class Scene
@@ -14,20 +16,43 @@ public:
 
 	void init()
 	{
+		// cube
 		float verticesRect[] = { // xyz  rgb
-			 0.5f,  0.5f, 0.0f,		1.0f, 0.0f, 0.0f,
-			 0.5f, -0.5f, 0.0f,		0.5f, 0.5f, 0.5f,
-			-0.5f, -0.5f, 0.0f,		0.0f, 1.0f, 0.0f,
-			 -0.5f,  0.5f, 0.0f,	0.0f, 0.0f, 1.0f,
+			 0.5f,  0.5f, 0.5f,		1.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.5f,		0.5f, 0.5f, 0.5f,
+			-0.5f, -0.5f, 0.5f,		0.0f, 1.0f, 0.0f,
+			 -0.5f,  0.5f, 0.5f,	0.0f, 0.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,	1.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, -0.5f,	0.5f, 0.5f, 0.5f,
+			-0.5f, -0.5f, -0.5f,	0.0f, 1.0f, 0.0f,
+			 -0.5f,  0.5f, -0.5f,	0.0f, 0.0f, 1.0f,
 		};
 		unsigned indicesRect[] = {
-			0, 1, 3,
-			1, 2, 3
+			3, 2, 0,
+			2, 1, 0,
+
+			0, 1, 4,
+			1, 5, 4,
+
+			4, 5, 7,
+			5, 6, 7,
+
+			7, 6, 3,
+			6, 2, 3,
+
+			5, 1, 6,
+			1, 2, 6,
+
+			0, 4, 3,
+			4, 7, 3,
 		};
-		vertices_ = 6;
+		vertices_ = 6*6;
 
 		// shaders
-		shader_ = OT::Shader(OT::readFile("shaders/per_vertex_color.vert"), OT::readFile("shaders/per_vertex_color.frag"));
+		shader_ = OT::Shader(OT::readFile("shaders/pvc_trans.vert"), OT::readFile("shaders/pvc_trans.frag"));
+		transformationUniform_ = shader_.GetUniform("trans");
+		trans_ = glm::mat4(1.0f);
+		transformationUniform_.Set(trans_);
 
 		// rectangle ======
 		glGenVertexArrays(1, &rectVao_);
@@ -61,6 +86,7 @@ public:
 
 		// activate shader (material)
 		shader_.Use();
+		transformationUniform_.Set(trans_);
 
 		if (debug)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -75,10 +101,14 @@ public:
 		glBindVertexArray(rectVao_);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_); // why is this needed?
 		glDrawElements(GL_TRIANGLES, vertices_, GL_UNSIGNED_INT, 0);
-
 	}
 
-	bool drawRect = false;
+	void rotate()
+	{
+		trans_ = glm::rotate(trans_,  glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0));
+		std::cout << "rorated" << std::endl;
+	}
+
 	bool debug = false;
 
 private:
@@ -89,6 +119,8 @@ private:
 	unsigned vertices_ = 0;
 
 	OT::Shader shader_;
+	glm::mat4 trans_;
+	OT::Uniform transformationUniform_;
 };
 
 class MainWindow : public OT::Window
@@ -103,10 +135,8 @@ protected:
 	{
 		if (key == GLFW_KEY_R)
 		{
-			if (action == GLFW_PRESS)
-				scene_.drawRect = true;
-			else if (action == GLFW_RELEASE)
-				scene_.drawRect = false;
+			if (action == GLFW_PRESS || action == GLFW_REPEAT)
+				scene_.rotate();
 		}
 
 		if (key == GLFW_KEY_D)
