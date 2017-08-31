@@ -14,11 +14,11 @@ public:
 
 	void init()
 	{
-		float verticesRect[] = {
-			 0.5f,  0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			-0.5f, -0.5f, 0.0f,
-			 -0.5f,  0.5f, 0.0f
+		float verticesRect[] = { // xyz  rgb
+			 0.5f,  0.5f, 0.0f,		1.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f,		0.5f, 0.5f, 0.5f,
+			-0.5f, -0.5f, 0.0f,		0.0f, 1.0f, 0.0f,
+			 -0.5f,  0.5f, 0.0f,	0.0f, 0.0f, 1.0f,
 		};
 		unsigned indicesRect[] = {
 			0, 1, 3,
@@ -27,7 +27,7 @@ public:
 		vertices_ = 6;
 
 		// shaders
-		shader_ = OT::Shader(OT::readFile("shaders/solid.vert"), OT::readFile("shaders/solid.frag"));
+		shader_ = OT::Shader(OT::readFile("shaders/per_vertex_color.vert"), OT::readFile("shaders/per_vertex_color.frag"));
 
 		// rectangle ======
 		glGenVertexArrays(1, &rectVao_);
@@ -41,8 +41,12 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, rectVbo_);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(verticesRect), verticesRect, GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // uses currently bound VAO
+		// first param: xyz
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); // uses currently bound VAO
 		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -56,7 +60,6 @@ public:
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// activate shader (material)
-		OT::Uniform color = shader_.GetUniform("color");
 		shader_.Use();
 
 		if (debug)
@@ -64,10 +67,10 @@ public:
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		if (drawRect)
-			color.Set(glm::vec3(1.0f, 0.0f, 0.0f));
-		else
-			color.Set(glm::vec3(0.0f, 1.0f, 1.0f));
+//		if (drawRect)
+//			color.Set(glm::vec3(1.0f, 0.0f, 0.0f));
+//		else
+//			color.Set(glm::vec3(0.0f, 1.0f, 1.0f));
 
 		glBindVertexArray(rectVao_);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_); // why is this needed?
