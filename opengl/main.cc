@@ -3,17 +3,14 @@
 #include "shader.hh"
 #include "mesh_utilities.hh"
 #include "mesh.hh"
-#include "single_point_light_solid_phong_material.hh"
+#include "single_point_light_phong_material.hh"
+#include "texture.hh"
 
 #include <glad/glad.h>
 
 #include <GLFW/glfw3.h>
 
 #include <glm/gtc/matrix_transform.hpp>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <x_stb/stb_image.h>
-
 
 #include <boost/optional.hpp>
 
@@ -26,8 +23,8 @@ public:
 	void init()
 	{
 		material_.emplace();
-		//mesh_ = OT::buildCubeMesh();
-		mesh_ = OT::buildSphereMesh(10);
+		mesh_ = OT::buildCubeMesh();
+		//mesh_ = OT::buildSphereMesh(10);
 
 		// model transfrmation
 		transformationUniform_ = material_->GetShader().GetUniform("model");
@@ -46,11 +43,6 @@ public:
 			);
 
 		// texture
-		int width, height, nrChannels;
-		std::string texturePath = "textures/ground.jpg";
-		unsigned char* data = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
-		if (!data)
-			throw std::runtime_error("Failed to load image '" + texturePath + "' : " + stbi_failure_reason());
 
 		// other
 		glEnable(GL_DEPTH_TEST);
@@ -132,8 +124,9 @@ private:
 	OT::Uniform cameraTransformationUniform_;
 
 	OT::Mesh mesh_;
+	OT::Texture texture_;
 
-	boost::optional<OT::SinglePointLightSolidPhongMaterial> material_;
+	boost::optional<OT::SinglePointLightPhongMaterial> material_;
 	float ambientLight_ = 0.1f;
 };
 

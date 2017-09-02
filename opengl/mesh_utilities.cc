@@ -95,7 +95,10 @@ Mesh buildCubeMesh()
 	Mesh::Face faces[12];
 
 	for(int i = 0; i < 12; i++)
-		faces[i] = {3*i+0, 3*i+1, 3*i+2};
+	{
+		int f = i*3;
+		faces[i] = {f+0, f+1, f+2};
+	}
 
 	return Mesh(std::begin(vertices), std::end(vertices), std::begin(faces), std::end(faces));
 }
