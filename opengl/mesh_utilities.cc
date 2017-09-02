@@ -106,7 +106,7 @@ Mesh buildCubeMesh()
 Mesh buildSphereMesh(int segments)
 {
 	assert(segments > 0);
-	int segmentsPerDiameter = segments*4;
+	int segmentsPerDiameter = segments*4+1;
 
 	std::vector<Mesh::Vertex> vertices;
 	std::vector<Mesh::Face> faces;
@@ -114,25 +114,27 @@ Mesh buildSphereMesh(int segments)
 
 	// phase 1 - build the list of vertices
 	glm::vec3 northPole{0.0f, 1.0f, 0.0f};
-	vertices.push_back({northPole, northPole});
+	vertices.push_back({northPole, northPole, {0.5f, 0.1f}});
 
 	for (int lat = 1; lat < segments*2; lat++)
 	{
 		float y = std::cos(lat*2*M_PI/segmentsPerDiameter);
 		float r = std::sin(lat*2*M_PI/segmentsPerDiameter);
+		float t = y/2.0f + 0.5f;
 
 		for(int lon = 0; lon < segmentsPerDiameter; lon++)
 		{
-			float x = r*std::sin(lon * 2*M_PI/segmentsPerDiameter);
-			float z = r*std::cos(lon * 2*M_PI/segmentsPerDiameter);
+			float x = r*std::sin(lon * 2*M_PI/(segmentsPerDiameter-1));
+			float z = r*std::cos(lon * 2*M_PI/(segmentsPerDiameter-1));
 			glm::vec3 v(x, y, z);
+			float s = float(lon) / segmentsPerDiameter;
 			assert(glm::length(v) - 1.0 < 0.001); // verify
-			vertices.push_back({v, v});
+			vertices.push_back({v, v, {s, t}});
 		}
 	}
 
 	glm::vec3 southPole{0.0f, -1.0f, 0.0f};
-	vertices.push_back({southPole, southPole});
+	vertices.push_back({southPole, southPole, {0.5f, 0.0f}});
 
 	// phase 2 - build faces
 

@@ -4,7 +4,7 @@ To learn:
  [ ] Generate ground
  [ ] ECS-based renderer
  [ ] Multiple lights
- [ ] Textures
+ [x] Textures
  [ ] Multiple textures: shine maps, bump maps
  [ ] Load model from file
  [ ] UI

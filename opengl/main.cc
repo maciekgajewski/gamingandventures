@@ -23,8 +23,8 @@ public:
 	void init()
 	{
 		material_.emplace();
-		mesh_ = OT::buildCubeMesh();
-		//mesh_ = OT::buildSphereMesh(10);
+		//mesh_ = OT::buildCubeMesh();
+		mesh_ = OT::buildSphereMesh(10);
 
 		// model transfrmation
 		transformationUniform_ = material_->GetShader().GetUniform("model");
@@ -61,7 +61,7 @@ public:
 		material_->Use();
 		material_->SetAmbientLight(glm::vec3(ambientLight_));
 		material_->SetLightColor({1.0f, 1.0f, 1.0f});
-		material_->SetLightPos({10.0f, 20.0f, -4.0f});
+		material_->SetLightPos({10.0f, -50.0f, -1.0f});
 		material_->SetDiffuseTexture(texture_);
 //		material_->SetLightAttenuation({1.0f, 0.0f, 0.0f}); // no attenuation
 
