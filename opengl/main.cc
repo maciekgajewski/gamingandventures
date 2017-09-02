@@ -1,6 +1,7 @@
 #include "window.hh"
 #include "io.hh"
 #include "shader.hh"
+#include "mesh_utilities.hh"
 #include "mesh.hh"
 
 #include <glad/glad.h>
@@ -17,57 +18,42 @@ public:
 
 	void init()
 	{
-		// cube
-		OT::Mesh::Vertex verticesRect[] = { // xyz  rgb
-			{{0.5f,  0.5f, 0.5f},	{1.0f, 0.0f, 0.0f}},
-			{{0.5f, -0.5f, 0.5f},	{0.5f, 0.5f, 0.5f}},
-			{{-0.5f, -0.5f, 0.5f},	{0.0f, 1.0f, 0.0f}},
-			{{-0.5f,  0.5f, 0.5f},	{0.0f, 0.0f, 1.0f}},
-			{{0.5f,  0.5f, -0.5f},	{1.0f, 0.0f, 0.0f}},
-			{{0.5f, -0.5f, -0.5f},	{0.5f, 0.5f, 0.5f}},
-			{{-0.5f, -0.5f, -0.5f},	{0.0f, 1.0f, 0.0f}},
-			{{-0.5f,  0.5f, -0.5f},	{0.0f, 0.0f, 1.0f}},
-		};
-
-		OT::Mesh::Face indicesRect[] = {
-			{3, 2, 0},
-			{2, 1, 0},
-
-			{0, 1, 4},
-			{1, 5, 4},
-
-			{4, 5, 7},
-			{5, 6, 7},
-
-			{7, 6, 3},
-			{6, 2, 3},
-
-			{5, 1, 6},
-			{1, 2, 6},
-
-			{0, 4, 3},
-			{4, 7, 3},
-		};
-
-		mesh_ = OT::Mesh(std::begin(verticesRect), std::end(verticesRect), std::begin(indicesRect), std::end(indicesRect));
+		mesh_ = OT::buildCubeMesh();
 
 		// shaders
 		shader_ = OT::Shader(OT::readFile("shaders/pvc_trans.vert"), OT::readFile("shaders/pvc_trans.frag"));
-		transformationUniform_ = shader_.GetUniform("trans");
-		trans_ = glm::mat4(1.0f);
-		transformationUniform_.Set(trans_);
 
+		// model transfrmation
+		transformationUniform_ = shader_.GetUniform("model");
+
+		modelTrans_ = glm::translate(glm::mat4(1.0f), {0.0f, 0.0f, -5.0f});
+		transformationUniform_.Set(modelTrans_);
+
+		// camera transformation
+		cameraTransformationUniform_ = shader_.GetUniform("camera");
+		cameraTrans_ = glm::mat4(1.0);
+
+		OT::Uniform projectionUniform = shader_.GetUniform("projection");
+		projectionTrans_ = glm::perspective(glm::radians(45.0f),
+			aspectRatio_,
+			0.1f, // near
+			1000.0f // far
+			);
+
+		glEnable(GL_DEPTH_TEST);
 	}
 
 	void mainLoop()
 	{
 		// clear
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// activate shader (material)
 		shader_.Use();
-		transformationUniform_.Set(trans_);
+		transformationUniform_.Set(modelTrans_);
+		cameraTransformationUniform_.Set(cameraTrans_);
+		shader_.GetUniform("projection").Set(projectionTrans_);
 
 		if (debug)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -79,22 +65,25 @@ public:
 
 	void rotate()
 	{
-		trans_ = glm::rotate(trans_,  glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0));
+		modelTrans_ = glm::rotate(modelTrans_,  glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0));
 		std::cout << "rorated" << std::endl;
 	}
 
 	bool debug = false;
 
+	void setAspectRatio(float ar) { aspectRatio_ = ar; }
+
 private:
 
-	unsigned rectVbo_ = 0; // vertex buffer object
-	unsigned rectVao_ = 0;
-	unsigned rectEao_ = 0;
-	unsigned vertices_ = 0;
-
 	OT::Shader shader_;
-	glm::mat4 trans_;
+	glm::mat4 modelTrans_;
+	glm::mat4 projectionTrans_;
+	glm::mat4 cameraTrans_;
+	float aspectRatio_;
+
 	OT::Uniform transformationUniform_;
+	OT::Uniform cameraTransformationUniform_;
+
 	OT::Mesh mesh_;
 };
 
@@ -102,7 +91,10 @@ class MainWindow : public OT::Window
 {
 public:
 
-	MainWindow(Scene& scene) : OT::Window(800, 600, "Hello"), scene_(scene) {}
+	MainWindow(Scene& scene) : OT::Window(800, 600, "Hello"), scene_(scene)
+	{
+		scene.setAspectRatio(800.0/600.0);
+	}
 
 protected:
 

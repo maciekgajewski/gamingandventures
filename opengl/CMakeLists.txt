@@ -23,6 +23,8 @@ add_executable(opengltest
 
 	shader.hh shader.cc
 	mesh.hh mesh.cc
+	mesh_utilities.hh mesh_utilities.cc
+	single_point_light_solid_phong_material.hh single_point_light_solid_phong_material.cc
 
 	${SHADERS}
 )

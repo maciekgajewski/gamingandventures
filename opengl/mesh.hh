@@ -29,6 +29,9 @@ public:
 
 	Mesh() = default;
 	Mesh(const Mesh&) = delete;
+	Mesh(Mesh&&) = default;
+
+	Mesh& operator=(Mesh&&) = default;
 
 	void Draw();
 
