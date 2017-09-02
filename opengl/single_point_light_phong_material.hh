@@ -6,6 +6,8 @@
 
 namespace OT {
 
+class Texture;
+
 class SinglePointLightPhongMaterial
 {
 public:
@@ -13,6 +15,7 @@ public:
 
 	void SetLightPos(const glm::vec3& lightPos) { shader_.GetUniform("lightPos").Set(lightPos); }
 	void SetLightColor(const glm::vec3& lightColor) { shader_.GetUniform("lightColor").Set(lightColor); }
+	void SetDiffuseTexture(const Texture& tex);
 
 	void SetAmbientLight(const glm::vec3& ambientLight) { shader_.GetUniform("ambientLight").Set(ambientLight); }
 

@@ -28,7 +28,13 @@ void Texture::LoadFromFile(const std::string& path, Texture::MipmapsOption gener
 
 	glGenTextures(1, &textureId_);
 	glBindTexture(GL_TEXTURE_2D, textureId_);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// TODO enable anisotropy here
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
 
 	if (generateMipmaps == GENERATE_MIPMAPS)
 	{
@@ -36,6 +42,15 @@ void Texture::LoadFromFile(const std::string& path, Texture::MipmapsOption gener
 	}
 
 	stbi_image_free(data);
+}
+
+void Texture::Activate(int unit) const
+{
+	assert(unit >=0 && unit < 16 && "Texture unit out of range");
+	assert(textureId_ > 0 && "Texture not initialized");
+
+	glActiveTexture(GL_TEXTURE0 + unit);
+	glBindTexture(GL_TEXTURE_2D, textureId_);
 }
 
 } // namespace OT

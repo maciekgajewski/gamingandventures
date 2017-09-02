@@ -62,6 +62,7 @@ public:
 		material_->SetAmbientLight(glm::vec3(ambientLight_));
 		material_->SetLightColor({1.0f, 1.0f, 1.0f});
 		material_->SetLightPos({10.0f, 20.0f, -4.0f});
+		material_->SetDiffuseTexture(texture_);
 //		material_->SetLightAttenuation({1.0f, 0.0f, 0.0f}); // no attenuation
 
 		transformationUniform_.Set(modelTrans_);
@@ -69,8 +70,6 @@ public:
 
 		material_->GetShader().GetUniform("projection").Set(projectionTrans_);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture_.GetId());
 		mesh_.Draw();
 	}
 
