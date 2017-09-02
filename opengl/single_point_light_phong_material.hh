@@ -11,7 +11,6 @@ class SinglePointLightPhongMaterial
 public:
 	SinglePointLightPhongMaterial();
 
-	void SetColor(const glm::vec3& color) { shader_.GetUniform("color").Set(color); }
 	void SetLightPos(const glm::vec3& lightPos) { shader_.GetUniform("lightPos").Set(lightPos); }
 	void SetLightColor(const glm::vec3& lightColor) { shader_.GetUniform("lightColor").Set(lightColor); }
 

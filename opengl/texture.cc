@@ -26,9 +26,8 @@ void Texture::LoadFromFile(const std::string& path, Texture::MipmapsOption gener
 	width_ = width;
 	height_ = height;
 
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glGenTextures(1, &textureId_);
+	glBindTexture(GL_TEXTURE_2D, textureId_);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 
 	if (generateMipmaps == GENERATE_MIPMAPS)

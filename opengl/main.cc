@@ -43,6 +43,7 @@ public:
 			);
 
 		// texture
+		texture_.LoadFromFile("textures/ground.jpg", OT::Texture::GENERATE_MIPMAPS);
 
 		// other
 		glEnable(GL_DEPTH_TEST);
@@ -63,13 +64,13 @@ public:
 		material_->SetLightPos({10.0f, 20.0f, -4.0f});
 //		material_->SetLightAttenuation({1.0f, 0.0f, 0.0f}); // no attenuation
 
-		material_->SetColor({1.0f, 0.5f, 0.5f});
-
 		transformationUniform_.Set(modelTrans_);
 		cameraTransformationUniform_.Set(cameraTrans_);
 
 		material_->GetShader().GetUniform("projection").Set(projectionTrans_);
 
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_.GetId());
 		mesh_.Draw();
 	}
 
@@ -158,10 +159,10 @@ protected:
 					scene_.rotate(-ROTATION_SPEED, {1.0f, 0.0f, 0.0f});
 					break;
 				case GLFW_KEY_A:
-					scene_.rotate(ROTATION_SPEED, {0.0f, 0.0f, 1.0f});
+					scene_.rotate(ROTATION_SPEED, {0.0f, 1.0f, 0.0f});
 					break;
 				case GLFW_KEY_D:
-					scene_.rotate(-ROTATION_SPEED, {0.0f, 0.0f, 1.0f});
+					scene_.rotate(-ROTATION_SPEED, {0.0f, 1.0f, 0.0f});
 					break;
 
 				// light control

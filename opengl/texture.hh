@@ -14,6 +14,8 @@ public:
 
 	void LoadFromFile(const std::string& path, MipmapsOption generateMipmaps);
 
+	unsigned GetId() const { return textureId_; }
+
 private:
 
 	unsigned textureId_ = 0;

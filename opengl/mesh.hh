@@ -15,8 +15,9 @@ public:
 	{
 		glm::vec3 pos;
 		glm::vec3 normal;
+		glm::vec2 st;
 	};
-	static_assert(sizeof(Vertex) == sizeof(float)*6, "Vertex layout wrong");
+	static_assert(sizeof(Vertex) == sizeof(float)*8, "Vertex layout wrong");
 
 	using Face = glm::uvec3;
 
