@@ -107,6 +107,64 @@ Mesh buildSphereMesh(int segments)
 	std::vector<Mesh::Vertex> vertices;
 	std::vector<Mesh::Face> faces;
 
+
+	// phase 1 - build the list of vertices
+	glm::vec3 northPole{0.0f, 1.0f, 0.0f};
+	vertices.push_back({northPole, northPole});
+
+	for (int lat = 1; lat < (segments/2); lat++)
+	{
+		float y = std::cos(lat*2*M_PI/segments);
+		float r = std::sin(lat*2*M_PI/segments);
+
+		for(int lon = 0; lon < segments; lon++)
+		{
+			float x = r*std::sin(lon * 2*M_PI/segments);
+			float z = r*std::cos(lon * 2*M_PI/segments);
+			glm::vec3 v(x, y, z);
+			assert(glm::length(v) - 1.0 < 0.001); // verify
+			vertices.push_back({v, v});
+		}
+	}
+
+	glm::vec3 southPole{0.0f, -1.0f, 0.0f};
+	vertices.push_back({southPole, southPole});
+
+	// phase 2 - build faces
+
+	// polar caps
+	for(int i = 0; i < segments; i++)
+	{
+		int j = (i+1)%segments; // index of the next meridan, wrapping around
+
+		Mesh::Face northFace(i+1, j+1, 0); // north polar cap
+		Mesh::Face southFace(vertices.size()-1, vertices.size()-2-i, vertices.size()-2-j);
+
+		faces.push_back(northFace);
+		faces.push_back(southFace);
+	}
+
+	// the rest
+	int topIdx = 1;
+	for (int lat = 1; lat < (segments/2)-1; lat++)
+	{
+		int bottomIdx = topIdx + segments;
+		for(int i = 0; i < segments; i++)
+		{
+			int j = (i+1)%segments; // index of the next meridan, wrapping around
+
+			Mesh::Face triangle1(topIdx + j, topIdx + i, bottomIdx + i);
+			Mesh::Face triangle2(topIdx + j, bottomIdx + i, bottomIdx + j);
+
+			faces.push_back(triangle1);
+			faces.push_back(triangle2);
+
+			assert(bottomIdx + j < int(vertices.size()-1)); // verify
+		}
+		topIdx += segments;
+	}
+
+/*
 	// Poles
 	glm::vec3 northPole{0.0f, 1.0f, 0.0f};
 	glm::vec3 southPole{0.0f, -1.0f, 0.0f};
@@ -163,7 +221,7 @@ Mesh buildSphereMesh(int segments)
 
 	// rings
 	for(r = 1; r <
-
+*/
 	return Mesh(
 		vertices.begin(), vertices.end(),
 		faces.begin(), faces.end());

@@ -23,7 +23,7 @@ public:
 	{
 		material_.emplace();
 		//mesh_ = OT::buildCubeMesh();
-		mesh_ = OT::buildSphereMesh();
+		mesh_ = OT::buildSphereMesh(40);
 
 		// model transfrmation
 		transformationUniform_ = material_->GetShader().GetUniform("model");
@@ -43,6 +43,7 @@ public:
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void mainLoop()
@@ -65,11 +66,6 @@ public:
 
 		material_->GetShader().GetUniform("projection").Set(projectionTrans_);
 
-		if (debug)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		else
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 		mesh_.Draw();
 	}
 
@@ -79,8 +75,6 @@ public:
 		modelTrans_ = glm::rotate(modelTrans_,  angle, axis);
 		std::cout << "rorated" << std::endl;
 	}
-
-	bool debug = false;
 
 	void setAspectRatio(float ar) { aspectRatio_ = ar; }
 
@@ -100,6 +94,18 @@ public:
 			ambientLight_ -= 0.05f;
 			std::cout << "ambient light: " << ambientLight_ << std::endl;
 		}
+	}
+
+	void debugOn()
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDisable(GL_CULL_FACE);
+	}
+
+	void debugOff()
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_CULL_FACE);
 	}
 
 private:
@@ -147,10 +153,10 @@ protected:
 					scene_.rotate(-ROTATION_SPEED, {1.0f, 0.0f, 0.0f});
 					break;
 				case GLFW_KEY_A:
-					scene_.rotate(ROTATION_SPEED, {0.0f, 1.0f, 0.0f});
+					scene_.rotate(ROTATION_SPEED, {0.0f, 0.0f, 1.0f});
 					break;
 				case GLFW_KEY_D:
-					scene_.rotate(-ROTATION_SPEED, {0.0f, 1.0f, 0.0f});
+					scene_.rotate(-ROTATION_SPEED, {0.0f, 0.0f, 1.0f});
 					break;
 
 				// light control
@@ -168,9 +174,9 @@ protected:
 		if (key == GLFW_KEY_P)
 		{
 			if (action == GLFW_PRESS)
-				scene_.debug = true;
+				scene_.debugOn();
 			else if (action == GLFW_RELEASE)
-				scene_.debug = false;
+				scene_.debugOff();
 		}
 
 	}
