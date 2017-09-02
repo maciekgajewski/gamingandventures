@@ -1,0 +1,15 @@
+To learn:
+
+ [ ] Generate sphere mesh
+ [ ] Generate ground
+ [ ] ECS-based renderer
+ [ ] Multiple lights
+ [ ] Textures
+ [ ] Multiple textures: shine maps, bump maps
+ [ ] Load model from file
+ [ ] UI
+ [ ] Mouse picking
+ [ ] oct-tree
+ [ ] Multiple lights
+ [ ] Drawing lines
+ [ ] Directional light
