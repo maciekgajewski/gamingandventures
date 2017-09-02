@@ -11,6 +11,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <boost/optional.hpp>
+
 #include <iostream>
 
 class Scene
@@ -19,16 +21,17 @@ public:
 
 	void init()
 	{
+		material_.emplace();
 		mesh_ = OT::buildCubeMesh();
 
 		// model transfrmation
-		transformationUniform_ = material_.GetShader().GetUniform("model");
+		transformationUniform_ = material_->GetShader().GetUniform("model");
 
 		modelTrans_ = glm::translate(glm::mat4(1.0f), {0.0f, 0.0f, -5.0f});
 		transformationUniform_.Set(modelTrans_);
 
 		// camera transformation
-		cameraTransformationUniform_ = material_.GetShader().GetUniform("camera");
+		cameraTransformationUniform_ = material_->GetShader().GetUniform("camera");
 		cameraTrans_ = glm::mat4(1.0);
 
 		projectionTrans_ = glm::perspective(glm::radians(45.0f),
@@ -47,17 +50,17 @@ public:
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// activate material
-		material_.Use();
-		material_.SetLightColor({1.0f, 1.0f, 1.0f});
-		material_.SetLightPos({10.0f, 20.0f, -20.0f});
-		material_.SetLightAttenuation({1.0f, 0.0f, 0.0f}); // no attenuation
+		material_->Use();
+//		material_->SetLightColor({1.0f, 1.0f, 1.0f});
+//		material_->SetLightPos({10.0f, 20.0f, -20.0f});
+//		material_->SetLightAttenuation({1.0f, 0.0f, 0.0f}); // no attenuation
 
-		material_.SetColor({1.0f, 0.5f, 0.5f});
+		material_->SetColor({1.0f, 0.5f, 0.5f});
 
 		transformationUniform_.Set(modelTrans_);
 		cameraTransformationUniform_.Set(cameraTrans_);
 
-		material_.GetShader().GetUniform("projection").Set(projectionTrans_);
+		material_->GetShader().GetUniform("projection").Set(projectionTrans_);
 
 		if (debug)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -67,9 +70,10 @@ public:
 		mesh_.Draw();
 	}
 
-	void rotate()
+	void rotate(float angle, const glm::vec3& axis)
 	{
-		modelTrans_ = glm::rotate(modelTrans_,  glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0));
+		//modelTrans_ = glm::rotate(modelTrans_,  glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0));
+		modelTrans_ = glm::rotate(modelTrans_,  angle, axis);
 		std::cout << "rorated" << std::endl;
 	}
 
@@ -90,7 +94,7 @@ private:
 
 	OT::Mesh mesh_;
 
-	OT::SinglePointLightSolidPhongMaterial material_;
+	boost::optional<OT::SinglePointLightSolidPhongMaterial> material_;
 };
 
 class MainWindow : public OT::Window
@@ -106,13 +110,30 @@ protected:
 
 	void onKey(int key, int scancode, int action, int mods) override
 	{
-		if (key == GLFW_KEY_R)
+		// on pressed actions
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
-			if (action == GLFW_PRESS || action == GLFW_REPEAT)
-				scene_.rotate();
+			static const float ROTATION_SPEED = 0.03;
+			switch (key)
+			{
+				case GLFW_KEY_W:
+					scene_.rotate(ROTATION_SPEED, {1.0f, 0.0f, 0.0f});
+					break;
+				case GLFW_KEY_S:
+					scene_.rotate(-ROTATION_SPEED, {1.0f, 0.0f, 0.0f});
+					break;
+				case GLFW_KEY_A:
+					scene_.rotate(ROTATION_SPEED, {0.0f, 1.0f, 0.0f});
+					break;
+				case GLFW_KEY_D:
+					scene_.rotate(-ROTATION_SPEED, {0.0f, 1.0f, 0.0f});
+					break;
+			}
 		}
 
-		if (key == GLFW_KEY_D)
+
+
+		if (key == GLFW_KEY_P)
 		{
 			if (action == GLFW_PRESS)
 				scene_.debug = true;

@@ -5,11 +5,9 @@
 namespace OT {
 
 SinglePointLightSolidPhongMaterial::SinglePointLightSolidPhongMaterial()
+	: shader_(readFile("shaders/single_light_solid_phong.vert"),
+		readFile("shaders/single_light_solid_phong.frag"))
 {
-	shader_ = Shader(
-		readFile("shaders/single_light_solid_phong.vert"),
-		readFile("shaders/single_light_solid_phong.frag"));
-
 }
 
 void SinglePointLightSolidPhongMaterial::Use()

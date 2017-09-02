@@ -66,14 +66,16 @@ Shader::Shader(const std::string& vertexShaderSource, const std::string& fragmen
 
 void Shader::Use()
 {
+	assert(shaderProgramId_ && "Shader not initialized");
 	glUseProgram(shaderProgramId_);
 }
 
 Uniform Shader::GetUniform(const char* name) const
 {
+	assert(shaderProgramId_ && "Shader not initialized");
 	int loc = glGetUniformLocation(shaderProgramId_, name);
 	if (loc == -1)
-		throw std::logic_error("No uniform "s + name + " found in shader");
+		throw std::logic_error("No uniform '"s + name + "' found in shader");
 
 	return Uniform(loc);
 }
