@@ -23,7 +23,7 @@ public:
 	{
 		material_.emplace();
 		//mesh_ = OT::buildCubeMesh();
-		mesh_ = OT::buildSphereMesh(40);
+		mesh_ = OT::buildSphereMesh(10);
 
 		// model transfrmation
 		transformationUniform_ = material_->GetShader().GetUniform("model");
