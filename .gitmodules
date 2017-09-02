@@ -7,3 +7,6 @@
 [submodule "opengl/x_glm"]
 	path = opengl/x_glm
 	url = https://github.com/g-truc/glm.git
+[submodule "opengl/x_stb"]
+	path = opengl/x_stb
+	url = https://github.com/nothings/stb.git

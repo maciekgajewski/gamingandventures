@@ -11,6 +11,10 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <x_stb/stb_image.h>
+
+
 #include <boost/optional.hpp>
 
 #include <iostream>
@@ -41,6 +45,14 @@ public:
 			1000.0f // far
 			);
 
+		// texture
+		int width, height, nrChannels;
+		std::string texturePath = "textures/ground.jpg";
+		unsigned char* data = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
+		if (!data)
+			throw std::runtime_error("Failed to load image '" + texturePath + "' : " + stbi_failure_reason());
+
+		// other
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
