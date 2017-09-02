@@ -51,6 +51,7 @@ public:
 
 		// activate material
 		material_->Use();
+		material_->SetAmbientLight(glm::vec3(ambientLight_));
 //		material_->SetLightColor({1.0f, 1.0f, 1.0f});
 //		material_->SetLightPos({10.0f, 20.0f, -20.0f});
 //		material_->SetLightAttenuation({1.0f, 0.0f, 0.0f}); // no attenuation
@@ -81,6 +82,24 @@ public:
 
 	void setAspectRatio(float ar) { aspectRatio_ = ar; }
 
+	void increaseAmbient()
+	{
+		if (ambientLight_ < 1.0f)
+		{
+			ambientLight_ += 0.05f;
+			std::cout << "ambient light: " << ambientLight_ << std::endl;
+		}
+	}
+
+	void decreaseAmbient()
+	{
+		if (ambientLight_ > 0.0f)
+		{
+			ambientLight_ -= 0.05f;
+			std::cout << "ambient light: " << ambientLight_ << std::endl;
+		}
+	}
+
 private:
 
 	glm::mat4 modelTrans_;
@@ -95,6 +114,7 @@ private:
 	OT::Mesh mesh_;
 
 	boost::optional<OT::SinglePointLightSolidPhongMaterial> material_;
+	float ambientLight_ = 1.0f;
 };
 
 class MainWindow : public OT::Window
@@ -116,6 +136,8 @@ protected:
 			static const float ROTATION_SPEED = 0.03;
 			switch (key)
 			{
+				// rotation control
+				// WSAD
 				case GLFW_KEY_W:
 					scene_.rotate(ROTATION_SPEED, {1.0f, 0.0f, 0.0f});
 					break;
@@ -128,10 +150,18 @@ protected:
 				case GLFW_KEY_D:
 					scene_.rotate(-ROTATION_SPEED, {0.0f, 1.0f, 0.0f});
 					break;
+
+				// light control
+				// R-F - ambient light
+				case GLFW_KEY_R:
+					scene_.increaseAmbient();
+					break;
+				case GLFW_KEY_F:
+					scene_.decreaseAmbient();
+					break;
+
 			}
 		}
-
-
 
 		if (key == GLFW_KEY_P)
 		{

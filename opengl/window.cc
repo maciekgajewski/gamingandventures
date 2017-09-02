@@ -65,7 +65,6 @@ bool Window::shouldClose() const
 
 void Window::windowResized(int w, int h)
 {
-	std::cout << "window resized to " << w << "x" << h << std::endl;
 	if (isContext_)
 		glViewport(0, 0, w, h);
 
@@ -74,7 +73,6 @@ void Window::windowResized(int w, int h)
 
 void Window::keyEvent(int key, int scancode, int action, int mods)
 {
-	std::cout << "key action. key: " << key << ", action: " << action << std::endl;
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		close();
 	else
