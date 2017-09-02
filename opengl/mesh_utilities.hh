@@ -10,5 +10,7 @@ class Mesh;
 PvcMesh buildCubePvcMesh();
 Mesh buildCubeMesh();
 
+// Spehere mesh. Radius: 1.0
+Mesh buildSphereMesh(int segments = 20);
 
 }

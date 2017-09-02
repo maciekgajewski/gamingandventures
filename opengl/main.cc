@@ -22,7 +22,8 @@ public:
 	void init()
 	{
 		material_.emplace();
-		mesh_ = OT::buildCubeMesh();
+		//mesh_ = OT::buildCubeMesh();
+		mesh_ = OT::buildSphereMesh();
 
 		// model transfrmation
 		transformationUniform_ = material_->GetShader().GetUniform("model");
@@ -41,6 +42,7 @@ public:
 			);
 
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 	}
 
 	void mainLoop()
