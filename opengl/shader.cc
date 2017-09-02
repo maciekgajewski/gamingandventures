@@ -62,6 +62,8 @@ Shader::Shader(const std::string& vertexShaderSource, const std::string& fragmen
 	glDeleteShader(fragmentShader);
 }
 
+
+
 void Shader::Use()
 {
 	glUseProgram(shaderProgramId_);
@@ -78,7 +80,8 @@ Uniform Shader::GetUniform(const char* name) const
 
 Shader::~Shader()
 {
-	glDeleteProgram(shaderProgramId_);
+	if (shaderProgramId_)
+		glDeleteProgram(shaderProgramId_);
 }
 
 }

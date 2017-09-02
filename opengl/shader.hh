@@ -39,6 +39,7 @@ public:
 	Shader() = default;
 	Shader(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
 	Shader(const Shader&) = delete;
+	Shader(Shader&& other) { std::swap(shaderProgramId_, other.shaderProgramId_); }
 	~Shader();
 
 	void Use();

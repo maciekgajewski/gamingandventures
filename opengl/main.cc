@@ -3,6 +3,7 @@
 #include "shader.hh"
 #include "mesh_utilities.hh"
 #include "mesh.hh"
+#include "single_point_light_solid_phong_material.hh"
 
 #include <glad/glad.h>
 
@@ -20,20 +21,16 @@ public:
 	{
 		mesh_ = OT::buildCubeMesh();
 
-		// shaders
-		shader_ = OT::Shader(OT::readFile("shaders/pvc_trans.vert"), OT::readFile("shaders/pvc_trans.frag"));
-
 		// model transfrmation
-		transformationUniform_ = shader_.GetUniform("model");
+		transformationUniform_ = material_.GetShader().GetUniform("model");
 
 		modelTrans_ = glm::translate(glm::mat4(1.0f), {0.0f, 0.0f, -5.0f});
 		transformationUniform_.Set(modelTrans_);
 
 		// camera transformation
-		cameraTransformationUniform_ = shader_.GetUniform("camera");
+		cameraTransformationUniform_ = material_.GetShader().GetUniform("camera");
 		cameraTrans_ = glm::mat4(1.0);
 
-		OT::Uniform projectionUniform = shader_.GetUniform("projection");
 		projectionTrans_ = glm::perspective(glm::radians(45.0f),
 			aspectRatio_,
 			0.1f, // near
@@ -49,11 +46,18 @@ public:
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// activate shader (material)
-		shader_.Use();
+		// activate material
+		material_.Use();
+		material_.SetLightColor({1.0f, 1.0f, 1.0f});
+		material_.SetLightPos({10.0f, 20.0f, -20.0f});
+		material_.SetLightAttenuation({1.0f, 0.0f, 0.0f}); // no attenuation
+
+		material_.SetColor({1.0f, 0.5f, 0.5f});
+
 		transformationUniform_.Set(modelTrans_);
 		cameraTransformationUniform_.Set(cameraTrans_);
-		shader_.GetUniform("projection").Set(projectionTrans_);
+
+		material_.GetShader().GetUniform("projection").Set(projectionTrans_);
 
 		if (debug)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -75,16 +79,18 @@ public:
 
 private:
 
-	OT::Shader shader_;
 	glm::mat4 modelTrans_;
 	glm::mat4 projectionTrans_;
 	glm::mat4 cameraTrans_;
+
 	float aspectRatio_;
 
 	OT::Uniform transformationUniform_;
 	OT::Uniform cameraTransformationUniform_;
 
 	OT::Mesh mesh_;
+
+	OT::SinglePointLightSolidPhongMaterial material_;
 };
 
 class MainWindow : public OT::Window
