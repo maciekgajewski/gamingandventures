@@ -1,6 +1,7 @@
 #include "window.hh"
 #include "io.hh"
 #include "shader.hh"
+#include "mesh.hh"
 
 #include <glad/glad.h>
 
@@ -17,36 +18,38 @@ public:
 	void init()
 	{
 		// cube
-		float verticesRect[] = { // xyz  rgb
-			 0.5f,  0.5f, 0.5f,		1.0f, 0.0f, 0.0f,
-			 0.5f, -0.5f, 0.5f,		0.5f, 0.5f, 0.5f,
-			-0.5f, -0.5f, 0.5f,		0.0f, 1.0f, 0.0f,
-			 -0.5f,  0.5f, 0.5f,	0.0f, 0.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,	1.0f, 0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,	0.5f, 0.5f, 0.5f,
-			-0.5f, -0.5f, -0.5f,	0.0f, 1.0f, 0.0f,
-			 -0.5f,  0.5f, -0.5f,	0.0f, 0.0f, 1.0f,
+		OT::Mesh::Vertex verticesRect[] = { // xyz  rgb
+			{{0.5f,  0.5f, 0.5f},	{1.0f, 0.0f, 0.0f}},
+			{{0.5f, -0.5f, 0.5f},	{0.5f, 0.5f, 0.5f}},
+			{{-0.5f, -0.5f, 0.5f},	{0.0f, 1.0f, 0.0f}},
+			{{-0.5f,  0.5f, 0.5f},	{0.0f, 0.0f, 1.0f}},
+			{{0.5f,  0.5f, -0.5f},	{1.0f, 0.0f, 0.0f}},
+			{{0.5f, -0.5f, -0.5f},	{0.5f, 0.5f, 0.5f}},
+			{{-0.5f, -0.5f, -0.5f},	{0.0f, 1.0f, 0.0f}},
+			{{-0.5f,  0.5f, -0.5f},	{0.0f, 0.0f, 1.0f}},
 		};
-		unsigned indicesRect[] = {
-			3, 2, 0,
-			2, 1, 0,
 
-			0, 1, 4,
-			1, 5, 4,
+		OT::Mesh::Face indicesRect[] = {
+			{3, 2, 0},
+			{2, 1, 0},
 
-			4, 5, 7,
-			5, 6, 7,
+			{0, 1, 4},
+			{1, 5, 4},
 
-			7, 6, 3,
-			6, 2, 3,
+			{4, 5, 7},
+			{5, 6, 7},
 
-			5, 1, 6,
-			1, 2, 6,
+			{7, 6, 3},
+			{6, 2, 3},
 
-			0, 4, 3,
-			4, 7, 3,
+			{5, 1, 6},
+			{1, 2, 6},
+
+			{0, 4, 3},
+			{4, 7, 3},
 		};
-		vertices_ = 6*6;
+
+		mesh_ = OT::Mesh(std::begin(verticesRect), std::end(verticesRect), std::begin(indicesRect), std::end(indicesRect));
 
 		// shaders
 		shader_ = OT::Shader(OT::readFile("shaders/pvc_trans.vert"), OT::readFile("shaders/pvc_trans.frag"));
@@ -54,28 +57,6 @@ public:
 		trans_ = glm::mat4(1.0f);
 		transformationUniform_.Set(trans_);
 
-		// rectangle ======
-		glGenVertexArrays(1, &rectVao_);
-		glBindVertexArray(rectVao_);
-
-		glGenBuffers(1, &rectEao_);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesRect), indicesRect, GL_STATIC_DRAW);
-
-		glGenBuffers(1, &rectVbo_);
-		glBindBuffer(GL_ARRAY_BUFFER, rectVbo_);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(verticesRect), verticesRect, GL_STATIC_DRAW);
-
-		// first param: xyz
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); // uses currently bound VAO
-		glEnableVertexAttribArray(0);
-
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
 	}
 
 	void mainLoop()
@@ -93,14 +74,7 @@ public:
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-//		if (drawRect)
-//			color.Set(glm::vec3(1.0f, 0.0f, 0.0f));
-//		else
-//			color.Set(glm::vec3(0.0f, 1.0f, 1.0f));
-
-		glBindVertexArray(rectVao_);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEao_); // why is this needed?
-		glDrawElements(GL_TRIANGLES, vertices_, GL_UNSIGNED_INT, 0);
+		mesh_.Draw();
 	}
 
 	void rotate()
@@ -121,6 +95,7 @@ private:
 	OT::Shader shader_;
 	glm::mat4 trans_;
 	OT::Uniform transformationUniform_;
+	OT::Mesh mesh_;
 };
 
 class MainWindow : public OT::Window

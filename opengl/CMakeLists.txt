@@ -22,6 +22,7 @@ add_executable(opengltest
 	io.hh io.cc
 
 	shader.hh shader.cc
+	mesh.hh mesh.cc
 
 	${SHADERS}
 )
