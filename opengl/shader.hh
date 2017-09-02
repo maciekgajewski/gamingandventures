@@ -37,7 +37,12 @@ class Shader
 {
 public:
 	Shader() = default;
-	Shader(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
+	Shader(
+		const std::string& vertexShaderSource,
+		const std::string& vertexShaderName,
+		const std::string& fragmentShaderSource,
+		const std::string& fragmentShaderName
+		);
 	Shader(const Shader&) = delete;
 	Shader(Shader&& other) { std::swap(shaderProgramId_, other.shaderProgramId_); }
 	~Shader();

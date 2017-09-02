@@ -1,17 +1,17 @@
-#include "mesh.hh"
+#include "pvc_mesh.hh"
 
 #include <glad/glad.h>
 
 namespace OT {
 
-void Mesh::Draw()
+void PvcMesh::Draw()
 {
 	glBindVertexArray(vao_);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eao_); // why is this needed?
 	glDrawElements(GL_TRIANGLES, faces_.size() * 3, GL_UNSIGNED_INT, 0);
 }
 
-void Mesh::Setup()
+void PvcMesh::Setup()
 {
 	glGenVertexArrays(1, &vao_);
 	glBindVertexArray(vao_);
@@ -28,7 +28,6 @@ void Mesh::Setup()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); // uses currently bound VAO
 	glEnableVertexAttribArray(0);
 
-	// second param: normals
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 

@@ -6,33 +6,33 @@
 
 namespace OT {
 
-// Per-vertex-normal
-class Mesh
+// Per-vertex-color
+class PvcMesh
 {
 public:
 
 	struct Vertex
 	{
 		glm::vec3 pos;
-		glm::vec3 normal;
+		glm::vec3 color;
 	};
 	static_assert(sizeof(Vertex) == sizeof(float)*6, "Vertex layout wrong");
 
 	using Face = glm::uvec3;
 
 	template<typename VertexIt, typename FaceIt>
-	Mesh(VertexIt vb, VertexIt ve, FaceIt fb, FaceIt fe)
+	PvcMesh(VertexIt vb, VertexIt ve, FaceIt fb, FaceIt fe)
 		: vertices_(vb, ve)
 		, faces_(fb, fe)
 	{
 		Setup();
 	}
 
-	Mesh() = default;
-	Mesh(const Mesh&) = delete;
-	Mesh(Mesh&&) = default;
+	PvcMesh() = default;
+	PvcMesh(const PvcMesh&) = delete;
+	PvcMesh(PvcMesh&&) = default;
 
-	Mesh& operator=(Mesh&&) = default;
+	PvcMesh& operator=(PvcMesh&&) = default;
 
 	void Draw();
 

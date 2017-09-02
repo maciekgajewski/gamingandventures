@@ -9,7 +9,7 @@ namespace OT {
 
 using namespace std::literals;
 
-static unsigned loadShader(const std::string& source, unsigned shaderType)
+static unsigned loadShader(const std::string& source, unsigned shaderType, const std::string& name)
 {
 	assert(shaderType == GL_FRAGMENT_SHADER || shaderType == GL_VERTEX_SHADER);
 
@@ -24,7 +24,7 @@ static unsigned loadShader(const std::string& source, unsigned shaderType)
 	if(!success)
 	{
 		glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
-		std::cout << "Error compiling shader " << std::endl;
+		std::cout << "Error compiling shader " << name << std::endl;
 		std::cout << infoLog << std::endl;
 		throw std::runtime_error("Error compiling shader");
 	}
@@ -52,10 +52,14 @@ static unsigned linkShaders(unsigned vertexShader, unsigned fragmentShader)
 }
 
 
-Shader::Shader(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
+Shader::Shader(
+		const std::string& vertexShaderSource,
+		const std::string& vertexShaderName,
+		const std::string& fragmentShaderSource,
+		const std::string& fragmentShaderName)
 {
-	unsigned vertexShader = loadShader(vertexShaderSource, GL_VERTEX_SHADER);
-	unsigned fragmentShader = loadShader(fragmentShaderSource, GL_FRAGMENT_SHADER);
+	unsigned vertexShader = loadShader(vertexShaderSource, GL_VERTEX_SHADER, vertexShaderName);
+	unsigned fragmentShader = loadShader(fragmentShaderSource, GL_FRAGMENT_SHADER, fragmentShaderName);
 	shaderProgramId_ = linkShaders(vertexShader, fragmentShader);
 
 	glDeleteShader(vertexShader);

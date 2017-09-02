@@ -52,8 +52,8 @@ public:
 		// activate material
 		material_->Use();
 		material_->SetAmbientLight(glm::vec3(ambientLight_));
-//		material_->SetLightColor({1.0f, 1.0f, 1.0f});
-//		material_->SetLightPos({10.0f, 20.0f, -20.0f});
+		material_->SetLightColor({1.0f, 1.0f, 1.0f});
+		material_->SetLightPos({10.0f, 20.0f, -4.0f});
 //		material_->SetLightAttenuation({1.0f, 0.0f, 0.0f}); // no attenuation
 
 		material_->SetColor({1.0f, 0.5f, 0.5f});
@@ -114,7 +114,7 @@ private:
 	OT::Mesh mesh_;
 
 	boost::optional<OT::SinglePointLightSolidPhongMaterial> material_;
-	float ambientLight_ = 1.0f;
+	float ambientLight_ = 0.1f;
 };
 
 class MainWindow : public OT::Window

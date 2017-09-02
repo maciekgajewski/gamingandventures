@@ -1,14 +1,15 @@
 #include "mesh_utilities.hh"
 
 #include "mesh.hh"
+#include "pvc_mesh.hh"
 
 namespace OT
 {
 
-Mesh buildCubeMesh()
+PvcMesh buildCubePvcMesh()
 {
 	    // cube
-	    OT::Mesh::Vertex vertices[] = { // xyz  rgb
+		PvcMesh::Vertex vertices[] = { // xyz  rgb
 		    {{0.5f,  0.5f, 0.5f},	{1.0f, 0.0f, 0.0f}},
 		    {{0.5f, -0.5f, 0.5f},	{0.5f, 0.5f, 0.5f}},
 		    {{-0.5f, -0.5f, 0.5f},	{0.0f, 1.0f, 0.0f}},
@@ -19,7 +20,7 @@ Mesh buildCubeMesh()
 		    {{-0.5f,  0.5f, -0.5f},	{0.0f, 0.0f, 1.0f}},
 		};
 
-		OT::Mesh::Face faces[] = {
+		PvcMesh::Face faces[] = {
 		    {3, 2, 0},
 		    {2, 1, 0},
 
@@ -39,7 +40,61 @@ Mesh buildCubeMesh()
 		    {4, 7, 3},
 		};
 
-	return OT::Mesh(std::begin(vertices), std::end(vertices), std::begin(faces), std::end(faces));
+	return PvcMesh(std::begin(vertices), std::end(vertices), std::begin(faces), std::end(faces));
+}
+
+Mesh buildCubeMesh()
+{
+	Mesh::Vertex vertices[] = { // xyz nnn
+		{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+		{{ 0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+		{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+		{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+		{{-0.5f,  0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+		{{-0.5f, -0.5f, -0.5f}, { 0.0f,  0.0f, -1.0f}},
+
+		{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+		{{ 0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+		{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+		{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+		{{-0.5f,  0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+		{{-0.5f, -0.5f,  0.5f}, { 0.0f,  0.0f,  1.0f}},
+
+		{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+		{{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
+		{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
+		{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}},
+		{{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+		{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}},
+
+		{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}},
+		{{ 0.5f,  0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}},
+		{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}},
+		{{ 0.5f, -0.5f, -0.5f}, { 1.0f,  0.0f,  0.0f}},
+		{{ 0.5f, -0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}},
+		{{ 0.5f,  0.5f,  0.5f}, { 1.0f,  0.0f,  0.0f}},
+
+		{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}},
+		{{ 0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}},
+		{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}},
+		{{ 0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}},
+		{{-0.5f, -0.5f,  0.5f}, { 0.0f, -1.0f,  0.0f}},
+		{{-0.5f, -0.5f, -0.5f}, { 0.0f, -1.0f,  0.0f}},
+
+		{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}},
+		{{ 0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}},
+		{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}},
+		{{ 0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}},
+		{{-0.5f,  0.5f,  0.5f}, { 0.0f,  1.0f,  0.0f}},
+		{{-0.5f,  0.5f, -0.5f}, { 0.0f,  1.0f,  0.0f}}
+	};
+
+	Mesh::Face faces[12];
+
+	for(int i = 0; i < 12; i++)
+		faces[i] = {3*i+0, 3*i+1, 3*i+2};
+
+	return Mesh(std::begin(vertices), std::end(vertices), std::begin(faces), std::end(faces));
 }
 
 }
