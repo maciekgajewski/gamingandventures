@@ -9,7 +9,8 @@ To learn:
  [ ] Load model from file
  [ ] UI
  [ ] Mouse picking
- [ ] oct-tree
- [ ] Multiple lights
+ [ ] Oct-tree
  [ ] Drawing lines
  [ ] Directional light
+ [ ] Skybox
+ [ ] Sound (FMOD)
