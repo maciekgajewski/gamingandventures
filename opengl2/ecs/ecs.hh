@@ -46,10 +46,6 @@ public:
 	template<typename CT>
 	ComponentType<CT>& GetUniqueComponentType();
 
-	// Iterates over entities with specific components
-//	template<typename CT, typename... CTs, typename F>
-//	void ForEach(F fun);
-
 private:
 
 	std::unordered_map<EntityId, std::string> entityNames_;

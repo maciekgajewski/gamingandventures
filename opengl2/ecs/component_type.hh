@@ -66,7 +66,7 @@ public:
 		}
 	}
 
-	CT* Find(EntityId id, bool& bother)
+	CT* FindOrDontBother(EntityId id, bool& bother)
 	{
 		if (!bother)
 			return nullptr;

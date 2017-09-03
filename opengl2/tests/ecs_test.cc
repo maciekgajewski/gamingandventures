@@ -1,4 +1,5 @@
 #include <ecs/ecs.hh>
+#include <ecs/visitor.hh>
 
 #include <gtest/gtest.h>
 
@@ -39,6 +40,31 @@ TEST(EcsTests, AddingElements)
 
 }
 
+TEST(EcsTests, Visitation)
+{
+	Ecs ecs;
+	ecs.RegisterUniqueComponentType<NumAspect>("NumAspect");
+	ecs.RegisterUniqueComponentType<StringAspect>("StringAspect");
+
+	auto stringId = ecs.CreateEntity("string entity");
+	ecs.AddUniqueComponentToEntity<StringAspect>(stringId, {"str1"});
+
+
+	auto bothId = ecs.CreateEntity("string int entity");
+	ecs.AddUniqueComponentToEntity<StringAspect>(bothId, {"str2"});
+	ecs.AddUniqueComponentToEntity<NumAspect>(bothId, {2});
+
+	auto visitor = BuildVisitor(ecs, CTypeId<StringAspect>(0), CTypeId<NumAspect>(0));
+
+	int stringCount = 0;
+	visitor.ForEach([&](EntityId, StringAspect&)
+	{
+		stringCount++;
+	});
+
+	EXPECT_EQ(2, stringCount);
+
+}
 
 	// Iterate!
 	/* TODO
