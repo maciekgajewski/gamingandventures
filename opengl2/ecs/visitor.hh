@@ -4,6 +4,8 @@
 #include "ecs.hh"
 
 #include <array>
+#include <type_traits>
+#include <iostream> // TODO
 
 namespace Ecs {
 
@@ -48,16 +50,23 @@ template<typename PrimaryCT, typename... CTs>
 class Visitor;
 
 
-// Builds visitor for unique types
+// Builds visitor for non-unique types
 template<typename PrimaryCT,  typename... CTs>
 Visitor<PrimaryCT, CTs...> BuildVisitor(Ecs& ecs, CTypeId<PrimaryCT> primaryId, CTypeId<CTs>... ids)
 {
 	// build an array of pointers to storages
-	typename Visitor<PrimaryCT, CTs...>::SecondaryArrayType secondaryTypes = {
-		&ecs.GetComponentType<CTs>(ids.id)...
+	typename Visitor<PrimaryCT, CTs...>::SecondaryTupleType secondary{
+		ecs.GetComponentType<CTs>(ids.id)...
 		};
 
-	return Visitor<PrimaryCT, CTs...>(ecs.GetComponentType<PrimaryCT>(primaryId.id), secondaryTypes);
+	return Visitor<PrimaryCT, CTs...>(ecs.GetComponentType<PrimaryCT>(primaryId.id), secondary);
+}
+
+// Builds visitor for unique types
+template<typename... CTs>
+Visitor<CTs...> BuildUniqueTypeVisitor(Ecs& ecs)
+{
+	return BuildVisitor(ecs, CTypeId<CTs>(ecs.GetUniqueComponentTypeId<CTs>())...);
 }
 
 
@@ -66,9 +75,10 @@ class Visitor
 {
 public:
 
-	using SecondaryArrayType = std::array<AbstractComponentType*, sizeof...(CTs)>;
+	//using SecondaryArrayType = std::array<AbstractComponentType*, sizeof...(CTs)>;
+	using SecondaryTupleType = std::tuple<ComponentType<CTs>&...>;
 
-	Visitor(ComponentType<PrimaryCT>& pc, const SecondaryArrayType& secs)
+	Visitor(ComponentType<PrimaryCT>& pc, const SecondaryTupleType& secs)
 		: primaryType_(pc)
 		, secondaryTypes_(secs)
 	{
@@ -84,25 +94,39 @@ public:
 	{
 		primaryType_.ForEach([&](EntityId id, PrimaryCT& component)
 		{
-//			bool allPresent = true;
-//			Meta::ForwardIf(fun, id, allPresent, component, (secondaryTypes_<CTs>().Find(id, allPresent))...);
-			VisitSecondaries<F, typename Meta::GenSeq<sizeof...(CTs)>::type>(fun, id, component);
+			VisitSecondaries<sizeof...(CTs)>(fun, id, component);
 		});
 	}
 
 
 private:
 
-	template<typename F, int... SEQ>
-	void VisitSecondaries(F fun, EntityId id, PrimaryCT& component)
+	// recursive array visitator
+	template<int LEFT_TO_VISIT, typename F>
+	std::enable_if_t<LEFT_TO_VISIT == 0>
+	VisitSecondaries(F fun, EntityId id, PrimaryCT& primary, CTs&... cts)
 	{
-		bool allPresent = true;
-		Meta::ForwardIf(fun, id, allPresent, component,
-			static_cast<ComponentType<CTs>*>(secondaryTypes_[SEQ].Find(id, allPresent))...);
+		fun(id, primary, cts...);
+	}
+
+	template<int LEFT_TO_VISIT, typename F, typename... ResovledCTs>
+	std::enable_if_t<(LEFT_TO_VISIT > 0)>
+	VisitSecondaries(F fun, EntityId id, PrimaryCT& primary, ResovledCTs&... foundPreviously)
+	{
+		constexpr int NEXT_TO_FIND = sizeof...(CTs) - LEFT_TO_VISIT;
+
+		auto& compomnentType = std::get<NEXT_TO_FIND>(secondaryTypes_);
+		auto* foundNow = compomnentType.Find(id);
+
+		if (!foundNow)
+			return;
+
+		VisitSecondaries<LEFT_TO_VISIT-1>(
+			fun, id, primary, foundPreviously..., *foundNow);
 	}
 
 	ComponentType<PrimaryCT>& primaryType_;
-	SecondaryArrayType secondaryTypes_;
+	SecondaryTupleType secondaryTypes_;
 };
 
 

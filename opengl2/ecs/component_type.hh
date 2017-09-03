@@ -66,15 +66,11 @@ public:
 		}
 	}
 
-	CT* FindOrDontBother(EntityId id, bool& bother)
+	CT* Find(EntityId id)
 	{
-		if (!bother)
-			return nullptr;
-
 		auto it = mData.find(id);
 		if (it == mData.end())
 		{
-			bother = false;
 			return nullptr;
 		}
 		else

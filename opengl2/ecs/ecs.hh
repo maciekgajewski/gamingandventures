@@ -30,6 +30,10 @@ public:
 	template<typename CT>
 	ComponentTypeId RegisterUniqueComponentType(const std::string& typeName);
 
+	// Returs Id of unique type, thorws if no such type
+	template<typename CT>
+	ComponentTypeId GetUniqueComponentTypeId();
+
 	// Adds uniquely-typed component to entity
 	template<typename CT>
 	CT& AddComponentToEntity(EntityId eid, ComponentTypeId cid, const CT& value = CT{});
@@ -112,15 +116,23 @@ ComponentType<CT>& Ecs::GetComponentType(ComponentTypeId id)
 	return static_cast<ComponentType<CT>&>(abstractType);
 }
 
+
 template<typename CT>
-ComponentType<CT>& Ecs::GetUniqueComponentType()
+ComponentTypeId Ecs::GetUniqueComponentTypeId()
 {
 	std::type_index expectedTi(typeid(CT));
 	auto typeIt = uniqueTypes_.find(expectedTi);
 	if (typeIt == uniqueTypes_.end())
-		throw std::logic_error("No such uique type");
+		throw std::logic_error(std::string("Not a registered unique type: '") + typeid(CT).name() + "'");
 
-	return GetComponentType<CT>(typeIt->second);
+	return typeIt->second;
+}
+
+template<typename CT>
+ComponentType<CT>& Ecs::GetUniqueComponentType()
+{
+	ComponentTypeId id = GetUniqueComponentTypeId<CT>();
+	return GetComponentType<CT>(id);
 }
 
 
