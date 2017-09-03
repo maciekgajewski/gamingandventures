@@ -10,8 +10,6 @@
 
 RenderingSystem::RenderingSystem()
 {
-	cameraTrans_ = glm::mat4(1.0f);
-
 	ambientLight_ = glm::vec3(1.0f);
 	pointLightPos_ = glm::vec3(0.0f);
 	pointLightColor_ = glm::vec3(0.0f);
@@ -40,7 +38,7 @@ void RenderingSystem::Render(Ecs::Ecs& database)
 	material_.SetLightColor(pointLightColor_);
 	material_.SetLightPos(pointLightPos_);
 
-	material_.GetShader().GetUniform("camera").Set(cameraTrans_);
+	material_.GetShader().GetUniform("camera").Set(camera_.CalculateTransformation());
 	material_.GetShader().GetUniform("projection").Set(projectionTrans_);
 
 	OT::Uniform modelUniform = material_.GetShader().GetUniform("model");
@@ -63,6 +61,11 @@ void RenderingSystem::Render(Ecs::Ecs& database)
 			m.Draw();
 		});
 
+}
+
+void RenderingSystem::SetCamera(const Camera& cam)
+{
+	camera_ = cam;
 }
 
 void RenderingSystem::SetCameraAspectRatio(float aspectRatio)

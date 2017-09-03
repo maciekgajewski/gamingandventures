@@ -4,6 +4,7 @@
 #include "texture.hh"
 #include "mesh.hh"
 #include "single_point_light_phong_material.hh"
+#include "camera.hh"
 
 #include <glm/glm.hpp>
 
@@ -92,7 +93,7 @@ public:
 	void Render(Ecs::Ecs& database);
 
 	// Global settings
-	void SetCameraPosition(const glm::vec3& pos, const glm::vec3& look, const glm::vec3& up); // TODO make entity
+	void SetCamera(const Camera& cam);
 	void SetCameraAspectRatio(float aspectRatio);
 	void SetAmbientLight(const glm::vec3& color) { ambientLight_ = color; }
 	void SetPointLight(const glm::vec3& position, const glm::vec3& color)
@@ -106,8 +107,8 @@ public:
 
 private:
 
+	Camera camera_;
 	glm::mat4 projectionTrans_;
-	glm::mat4 cameraTrans_;
 
 	// our poor lightining system
 	glm::vec3 ambientLight_;
