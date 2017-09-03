@@ -1,7 +1,7 @@
 #include "texture.hh"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <x_stb/stb_image.h>
+#include <stb_image.h>
 
 #include <glad/glad.h>
 

@@ -6,16 +6,27 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 FIND_PACKAGE(OpenGL REQUIRED)
 
+add_subdirectory(ecs)
+add_subdirectory(tests)
+
 # externals
+
+# glad - code genrated and downloaded
 add_subdirectory(glad)
 
+# GLM - the maths library
 set(GLM_STATIC_LIBRARY_ENABLE 1)
-add_subdirectory(x_glm/glm)
-include_directories(x_glm)
+add_subdirectory(../x_glm/glm glm)
+include_directories(../x_glm)
 
+# STB - single file libs, header-only
+include_directories(../x_stb)
+
+# Google test
+add_subdirectory(../x_googletest googletest)
 
 file(GLOB SHADERS shaders/*)
-add_executable(opengltest
+add_executable(opengltest2
 
 	main.cc
 	window.hh window.cc
@@ -32,7 +43,7 @@ add_executable(opengltest
 	${SHADERS}
 )
 
-target_link_libraries(opengltest
+target_link_libraries(opengltest2
 	glfw
 	glad
 	glm_static
