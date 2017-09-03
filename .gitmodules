@@ -5,8 +5,8 @@
 	path = hordetest/x_horde
 	url = https://github.com/horde3d/Horde3D.git
 [submodule "opengl/x_glm"]
-	path = opengl/x_glm
+	path = x_glm
 	url = https://github.com/g-truc/glm.git
 [submodule "opengl/x_stb"]
-	path = opengl/x_stb
+	path = x_stb
 	url = https://github.com/nothings/stb.git
