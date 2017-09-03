@@ -2,7 +2,7 @@ To learn:
 
  [x] Generate sphere mesh
  [ ] Generate ground
- [ ] ECS-based renderer
+ [x] ECS-based renderer
  [ ] Multiple lights
  [x] Textures
  [ ] Multiple textures: shine maps, bump maps
@@ -13,4 +13,4 @@ To learn:
  [ ] Drawing lines
  [ ] Directional light
  [ ] Skybox
- [ ] Sound (FMOD)
+ [ ] Sound (FMod)
