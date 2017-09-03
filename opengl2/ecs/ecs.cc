@@ -1,3 +1,4 @@
+// (C) 2017 Maciej Gajewski
 #include "ecs.hh"
 
 #include <cassert>
@@ -12,7 +13,7 @@ EntityId Ecs::CreateEntity(const std::string& name)
 	if (mNextFreeEntityId == 0)
 		throw std::runtime_error("Exchausted entity ids");
 
-	auto r = mEntityNames.insert({id, name});
+	auto r = entityNames_.insert({id, name});
 	assert(r.second);
 	(void)r;
 
