@@ -43,7 +43,7 @@ public:
 			);
 
 		// texture
-		texture_.LoadFromFile("textures/ground.jpg", OT::Texture::GENERATE_MIPMAPS);
+		texture_.LoadFromFile("../textures/ground.jpg", OT::Texture::GENERATE_MIPMAPS);
 
 		// other
 		glEnable(GL_DEPTH_TEST);
