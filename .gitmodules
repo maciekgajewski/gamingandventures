@@ -1,5 +1,5 @@
 [submodule "balls1/x_googletest"]
-	path = balls1/x_googletest
+	path = x_googletest
 	url = https://github.com/google/googletest.git
 [submodule "hordetest/x_horde"]
 	path = hordetest/x_horde
