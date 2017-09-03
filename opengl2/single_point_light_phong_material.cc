@@ -6,9 +6,15 @@
 namespace OT {
 
 SinglePointLightPhongMaterial::SinglePointLightPhongMaterial()
-	: shader_(readFile("shaders/single_light_phong.vert"), "single_light_phong.vert",
-		readFile("shaders/single_light_phong.frag"), "single_light_phong.frag")
+	: shader_()
 {
+}
+
+void SinglePointLightPhongMaterial::Init()
+{
+	shader_ = OT::Shader(
+		readFile("shaders/single_light_phong.vert"), "single_light_phong.vert",
+		readFile("shaders/single_light_phong.frag"), "single_light_phong.frag");
 }
 
 void SinglePointLightPhongMaterial::SetDiffuseTexture(const Texture& tex)

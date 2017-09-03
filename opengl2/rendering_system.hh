@@ -3,6 +3,7 @@
 
 #include "texture.hh"
 #include "mesh.hh"
+#include "single_point_light_phong_material.hh"
 
 #include <glm/glm.hpp>
 
@@ -68,6 +69,8 @@ public:
 
 	MeshId GetOrGenerate(const std::string& name, std::function<OT::Mesh()> generator);
 
+	OT::Mesh& Get(MeshId id) { return meshes_[id].mesh; }
+
 private:
 
 	struct LoadedMesh
@@ -76,7 +79,7 @@ private:
 		std::string path;
 	};
 
-	std::unordered_map<TextureId, LoadedMesh> meshes_;
+	std::unordered_map<MeshId, LoadedMesh> meshes_;
 };
 
 class RenderingSystem
@@ -90,9 +93,27 @@ public:
 
 	// Global settings
 	void SetCameraPosition(const glm::vec3& pos, const glm::vec3& look, const glm::vec3& up); // TODO make entity
-	void SetAmbientLight(const glm::vec3& color);
+	void SetCameraAspectRatio(float aspectRatio);
+	void SetAmbientLight(const glm::vec3& color) { ambientLight_ = color; }
+	void SetPointLight(const glm::vec3& position, const glm::vec3& color)
+	{
+		pointLightPos_ = position;
+		pointLightColor_ = color;
+	}
 
 	TextureStore textureStore;
 	MeshStore meshStore;
+
+private:
+
+	glm::mat4 projectionTrans_;
+	glm::mat4 cameraTrans_;
+
+	// our poor lightining system
+	glm::vec3 ambientLight_;
+	glm::vec3 pointLightPos_;
+	glm::vec3 pointLightColor_;
+
+	OT::SinglePointLightPhongMaterial material_;
 };
 

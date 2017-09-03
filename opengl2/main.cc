@@ -48,7 +48,7 @@ int main()
 
 
 		renderingSystem.Init(database);
-
+		renderingSystem.SetCameraAspectRatio(800.0 / 600.0);
 
 		// load world
 		createWorld(database, renderingSystem);
@@ -56,7 +56,8 @@ int main()
 		// main loop
 		while (!window.shouldClose())
 		{
-			// TODO
+			renderingSystem.Render(database);
+			// TODO physics and others
 
 			window.swapBuffers();
 			glfwPollEvents();
