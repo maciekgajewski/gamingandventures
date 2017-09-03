@@ -15,7 +15,6 @@ namespace Ecs {
 using EntityId = std::uint64_t;
 using ComponentTypeId = std::uint64_t;
 
-
 class Ecs
 {
 public:
@@ -26,9 +25,12 @@ public:
 	// Deletes entity and all associated components
 	void DeleteEntity(EntityId id);
 
-	// Registers a unique C++ component type
+	// Registers a unique C++ component type. The C++ will be bound to the returned ID.
+	// Only one compennt with this C++ type can exist.
+	//
+	// Use AddComponentType when re-using C++ types is needed
 	template<typename CT>
-	ComponentTypeId RegisterComponentType(const std::string& typeName);
+	ComponentTypeId RegisterUniqueComponentType(const std::string& typeName);
 
 	// Adds component to entity
 	template<typename CT>
@@ -108,16 +110,23 @@ private:
 	std::uint64_t mNextFreeEntityId = 0;
 
 	std::vector<std::unique_ptr<AbstractComponentType>> mComponentTypes;
+
+	std::unordered_map<std::type_index, ComponentTypeId> mUniqueTypes;
 };
 
-
 template<typename CT>
-ComponentTypeId Ecs::RegisterComponentType(const std::string& typeName)
+ComponentTypeId Ecs::RegisterUniqueComponentType(const std::string& typeName)
 {
+	if (mUniqueTypes.find(std::type_index(typeid(CT))) != mUniqueTypes.end())
+		throw std::logic_error(std::string("C++ type '") + typeid(CT).name() + "' already resgistered");
+
 	ComponentTypeId id = mComponentTypes.size();
 	auto type = std::make_unique<ComponentType<CT>>(typeName, std::type_index(typeid(CT)), id);
 
 	mComponentTypes.push_back(std::move(type));
+
+	mUniqueTypes.emplace(std::type_index(typeid(CT)), id);
+
 	return id;
 }
 

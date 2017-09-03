@@ -16,11 +16,18 @@ struct StringAspect
 	std::string s;
 };
 
+TEST(EcsTests, RegisteringTheSameUniqueTypeTwiceFails)
+{
+	Ecs ecs;
+	ecs.RegisterUniqueComponentType<NumAspect>("NumAspect");
+	EXPECT_THROW(ecs.RegisterUniqueComponentType<NumAspect>("NumAspect2"), std::logic_error);
+}
+
 TEST(EcsTests, BasicIterate)
 {
 	Ecs ecs;
-	ecs.RegisterComponentType<NumAspect>("NumAspect");
-	ecs.RegisterComponentType<StringAspect>("StringAspect");
+	ecs.RegisterUniqueComponentType<NumAspect>("NumAspect");
+	ecs.RegisterUniqueComponentType<StringAspect>("StringAspect");
 
 	auto stringId = ecs.CreateEntity("string entity");
 	ecs.AddComponentToEntity<StringAspect>(stringId, {"str1"});
