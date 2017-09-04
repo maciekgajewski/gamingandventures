@@ -14,4 +14,4 @@ To learn:
  [ ] Directional light
  [ ] Skybox
  [ ] Sound (FMod)
- [ ] Shining in Phong
+ [x] Shining in Phong
