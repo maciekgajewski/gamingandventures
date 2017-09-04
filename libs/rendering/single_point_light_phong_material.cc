@@ -13,7 +13,7 @@ SinglePointLightPhongMaterial::SinglePointLightPhongMaterial()
 
 void SinglePointLightPhongMaterial::Init()
 {
-	shader_ = OT::Shader(
+	shader_ = Rendering::Shader(
 		readFile("shaders/single_light_phong.vert"), "single_light_phong.vert",
 		readFile("shaders/single_light_phong.frag"), "single_light_phong.frag");
 }

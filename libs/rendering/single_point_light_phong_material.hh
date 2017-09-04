@@ -30,11 +30,11 @@ public:
 
 	void Use();
 
-	Shader& GetShader() { return shader_; }
+	Rendering::Shader& GetShader() { return shader_; }
 
 private:
 
-	Shader shader_;
+	Rendering::Shader shader_;
 };
 
 } // namespace OT

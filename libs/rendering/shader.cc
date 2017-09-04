@@ -5,7 +5,7 @@
 #include <cassert>
 #include <iostream>
 
-namespace OT {
+namespace Rendering {
 
 using namespace std::literals;
 

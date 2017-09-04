@@ -42,7 +42,7 @@ void RenderingSystem::Render(Ecs::Ecs& database)
 	material_.GetShader().GetUniform("projection").Set(projectionTrans_);
 	material_.GetShader().GetUniform("viewPos").Set(camera_.GetPosition());
 
-	OT::Uniform modelUniform = material_.GetShader().GetUniform("model");
+	Rendering::Uniform modelUniform = material_.GetShader().GetUniform("model");
 
 	// Iterate
 	auto visitor = Ecs::BuildUniqueTypeVisitor<Components::Material, Components::Mesh, Components::Transformation>(database);

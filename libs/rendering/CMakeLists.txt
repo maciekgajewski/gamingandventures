@@ -9,6 +9,7 @@ add_library(rendering
 	single_point_light_phong_material.cc single_point_light_phong_material.hh
 	single_point_light_solid_phong_material.cc single_point_light_solid_phong_material.hh
 	texture.cc texture.hh
+	renderer.cc renderer.hh
 )
 
 target_include_directories(rendering INTERFACE ..)
@@ -17,6 +18,5 @@ target_link_libraries(rendering
 	ecs
 
 	glad
-
-	)
+)
 

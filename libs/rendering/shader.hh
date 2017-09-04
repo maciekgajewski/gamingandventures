@@ -8,7 +8,7 @@
 #include <string>
 
 
-namespace OT {
+namespace Rendering {
 
 class Uniform
 {
@@ -57,11 +57,22 @@ public:
 	~Shader();
 
 	void Use();
+
+	// Manipulating uniforms
 	Uniform GetUniform(const char* name) const;
 
+	template<typename T>
+	void SetUniform(const char* name, const T& v)
+	{
+		GetUniform(name).Set(v);
+	}
 
 	Shader& operator=(Shader&& other) { std::swap(shaderProgramId_, other.shaderProgramId_); return *this; }
 	Shader& operator=(const Shader&) = delete;
+
+public: // Renderer access
+
+	unsigned glId() const { return shaderProgramId_; }
 
 private:
 
