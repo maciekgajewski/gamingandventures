@@ -91,6 +91,7 @@ void createWorld(Ecs::Ecs& database, RenderingSystem& renderer)
 
 	Components::Material& mat2 = database.AddUniqueComponentToEntity<Components::Material>(ballId);
 	mat2.diffuseTextureId = renderer.textureStore.LoadTexture("textures/ground.jpg");
+	mat2.shininess = 2.0f;
 
 	Components::Transformation& tr2 = database.AddUniqueComponentToEntity<Components::Transformation>(ballId);
 	tr2.transformation = glm::translate(glm::mat4(1.0), glm::vec3(-2.0f, 2.0f, -12.0f));

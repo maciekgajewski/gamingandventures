@@ -32,6 +32,10 @@ public:
 		glUniform1i(location_, v);
 	}
 
+	void Set(float v)
+	{
+		glUniform1f(location_, v);
+	}
 
 private:
 

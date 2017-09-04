@@ -25,7 +25,7 @@ namespace Components
 struct Material
 {
 	TextureId diffuseTextureId = 0;
-	int shininess = 128;
+	float shininess = 0.5f;
 };
 
 struct Mesh

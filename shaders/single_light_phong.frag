@@ -12,7 +12,7 @@ uniform vec3 lightPos;
 uniform vec3 lightColor;
 
 uniform vec3 viewPos;
-uniform int shininess;
+uniform float shininess;
 
 uniform sampler2D diffuseTexture;
 
@@ -29,9 +29,9 @@ void main()
 	// specular
 	vec3 viewDir = normalize(viewPos - position);
 	vec3 reflectDir = reflect(-lightDir, norm);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-	vec3 specular = 0.5 * spec * lightColor;
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+	vec3 specular = spec * lightColor;
 
-	FragColor = vec4((diffuse + ambientLight + specular)*color.rgb, 1.0);
+	FragColor = vec4((diffuse + ambientLight + shininess*specular)*color.rgb, 1.0);
 	//FragColor = vec4(textureCoord, 0.00001*ambientLight.x*lightPos.y*lightColor.z, 0.0);
 }
