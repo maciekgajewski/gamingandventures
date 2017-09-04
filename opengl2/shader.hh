@@ -27,6 +27,11 @@ public:
 		glUniformMatrix4fv(location_, 1, GL_FALSE, glm::value_ptr(m));
 	}
 
+	void Set(std::int32_t v)
+	{
+		glUniform1i(location_, v);
+	}
+
 
 private:
 

@@ -25,7 +25,7 @@ include_directories(../x_stb)
 # Google test
 add_subdirectory(../x_googletest googletest)
 
-file(GLOB SHADERS shaders/*)
+file(GLOB SHADERS ../shaders/*)
 add_executable(opengltest2
 
 	main.cc

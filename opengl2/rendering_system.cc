@@ -40,6 +40,7 @@ void RenderingSystem::Render(Ecs::Ecs& database)
 
 	material_.GetShader().GetUniform("camera").Set(camera_.CalculateTransformation());
 	material_.GetShader().GetUniform("projection").Set(projectionTrans_);
+	material_.GetShader().GetUniform("viewPos").Set(camera_.GetPosition());
 
 	OT::Uniform modelUniform = material_.GetShader().GetUniform("model");
 
@@ -56,6 +57,7 @@ void RenderingSystem::Render(Ecs::Ecs& database)
 
 			OT::Texture& texture = textureStore.GetTexture(material.diffuseTextureId);
 			material_.SetDiffuseTexture(texture);
+			material_.GetShader().GetUniform("shininess").Set(material.shininess);
 
 			OT::Mesh& m = meshStore.Get(mesh.meshId);
 			m.Draw();
