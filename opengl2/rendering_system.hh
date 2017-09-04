@@ -102,6 +102,8 @@ public:
 		pointLightColor_ = color;
 	}
 
+	void SetClearColor(const glm::vec3& color) { clearColor_ = color; }
+
 	TextureStore textureStore;
 	MeshStore meshStore;
 
@@ -109,6 +111,8 @@ private:
 
 	Camera camera_;
 	glm::mat4 projectionTrans_;
+
+	glm::vec3 clearColor_ = glm::vec3(0.0f);
 
 	// our poor lightining system
 	glm::vec3 ambientLight_;

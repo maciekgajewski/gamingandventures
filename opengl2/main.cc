@@ -98,10 +98,28 @@ void createWorld(Ecs::Ecs& database, RenderingSystem& renderer)
 	Components::Mesh& mesh2 = database.AddUniqueComponentToEntity<Components::Mesh>(ballId);
 	mesh2.meshId = renderer.meshStore.GetOrGenerate("sphere", [&] () { return OT::buildSphereMesh(); });
 
+	// ball 3
+	ballId = database.CreateEntity("Ball 3");
+
+	Components::Material& mat3 = database.AddUniqueComponentToEntity<Components::Material>(ballId);
+	mat3.diffuseTextureId = renderer.textureStore.LoadTexture("textures/ground.jpg");
+
+	Components::Transformation& tr3 = database.AddUniqueComponentToEntity<Components::Transformation>(ballId);
+	tr3.transformation = glm::translate(glm::mat4(1.0), glm::vec3(-1.0f, -2.0f, -9.0f));
+
+	Components::Mesh& mesh3 = database.AddUniqueComponentToEntity<Components::Mesh>(ballId);
+	mesh3.meshId = renderer.meshStore.GetOrGenerate("sphere", [&] () { return OT::buildSphereMesh(); });
+
 	// camera
 	Camera cam;
 	cam.SetPosition(glm::vec3(0.0f));
 	cam.LookAt(glm::vec3(1.0f, 1.0f, -5.0f)); // first ball
 	cam.LookAt(glm::vec3(-2.0f, 2.0f, -12.0f)); // second ball
 	renderer.SetCamera(cam);
+
+	// light
+	renderer.SetAmbientLight(glm::vec3(0.05));
+	renderer.SetPointLight({1.0f, 5.0f, -4.0f}, glm::vec3(1.0));
+
+	renderer.SetClearColor(glm::vec3(0.05));
 }
