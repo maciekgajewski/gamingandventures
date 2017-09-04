@@ -22,7 +22,11 @@ include_directories(x_stb)
 add_subdirectory(x_googletest googletest)
 
 # libraries
+add_subdirectory(libs)
 
 # apps
 add_subdirectory(opengl2)
+
+# tests
+add_subdirectory(tests)
 

@@ -1,6 +1,7 @@
 #include "single_point_light_phong_material.hh"
 
-#include "io.hh"
+#include <utils/io.hh>
+
 #include "texture.hh"
 
 namespace OT {

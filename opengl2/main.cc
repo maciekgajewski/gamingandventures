@@ -1,7 +1,8 @@
 // (C) 2017 Maciej Gajewski
 #include "main_window.hh"
-#include "rendering_system.hh"
-#include "mesh_utilities.hh"
+
+#include <rendering/rendering_system.hh>
+#include <rendering/mesh_utilities.hh>
 
 #include <ecs/ecs.hh>
 

@@ -1,6 +1,6 @@
 #include "single_point_light_solid_phong_material.hh"
 
-#include "io.hh"
+#include <utils/io.hh>
 
 namespace OT {
 
