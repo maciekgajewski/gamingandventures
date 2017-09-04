@@ -7,7 +7,7 @@
 
 #include <stdexcept>
 
-namespace OT {
+namespace Rendering {
 
 Texture::Texture()
 {

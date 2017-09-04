@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace OT {
+namespace Rendering {
 
 class Texture
 {

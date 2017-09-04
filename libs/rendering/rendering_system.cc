@@ -55,7 +55,7 @@ void RenderingSystem::Render(Ecs::Ecs& database)
 		{
 			modelUniform.Set(trans.transformation);
 
-			OT::Texture& texture = textureStore.GetTexture(material.diffuseTextureId);
+			Rendering::Texture& texture = textureStore.GetTexture(material.diffuseTextureId);
 			material_.SetDiffuseTexture(texture);
 			material_.GetShader().GetUniform("shininess").Set(material.shininess);
 
@@ -92,7 +92,7 @@ TextureId TextureStore::LoadTexture(const std::string& path)
 	if (it == textures_.end())
 	{
 		LoadedTexture t;
-		t.texture.LoadFromFile(path, OT::Texture::GENERATE_MIPMAPS);
+		t.texture.LoadFromFile(path, Rendering::Texture::GENERATE_MIPMAPS);
 		t.path = path;
 		id = textures_.size() + 1;
 

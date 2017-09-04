@@ -47,7 +47,7 @@ public:
 
 	TextureId LoadTexture(const std::string& path);
 
-	OT::Texture& GetTexture(TextureId id)
+	Rendering::Texture& GetTexture(TextureId id)
 	{
 		return textures_[id].texture;
 	}
@@ -57,7 +57,7 @@ private:
 	struct LoadedTexture
 	{
 		std::string path;
-		OT::Texture texture;
+		Rendering::Texture texture;
 	};
 
 	std::unordered_map<TextureId, LoadedTexture> textures_;

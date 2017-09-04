@@ -18,7 +18,7 @@ void SinglePointLightPhongMaterial::Init()
 		readFile("shaders/single_light_phong.frag"), "single_light_phong.frag");
 }
 
-void SinglePointLightPhongMaterial::SetDiffuseTexture(const Texture& tex)
+void SinglePointLightPhongMaterial::SetDiffuseTexture(const Rendering::Texture& tex)
 {
 	tex.Activate(0);
 }
