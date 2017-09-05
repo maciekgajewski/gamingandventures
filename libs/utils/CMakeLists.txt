@@ -8,5 +8,5 @@ target_include_directories(utils INTERFACE ..)
 target_link_libraries(utils
 
 	glad
-	glfw
+	glfw3
 )

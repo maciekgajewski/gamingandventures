@@ -2,9 +2,17 @@ project(gamingadventures)
 cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 FIND_PACKAGE(OpenGL REQUIRED)
+find_package(Boost 1.50 REQUIRED)
+
+include_directories(${Boost_INCLUDE_DIRS})
+
+if(GLFW_ROOT)
+	include_directories(${GLFW_ROOT}/include)
+	LINK_DIRECTORIES(${GLFW_ROOT}/lib)
+endif()
 
 # externals
 # glad - code genrated and downloaded
