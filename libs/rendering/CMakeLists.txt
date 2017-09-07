@@ -10,6 +10,8 @@ add_library(rendering
 	single_point_light_solid_phong_material.cc single_point_light_solid_phong_material.hh
 	texture.cc texture.hh
 	renderer.cc renderer.hh
+	texture_manager.cc texture_manager.hh
+	shader_manager.cc shader_manager.hh
 )
 
 target_include_directories(rendering INTERFACE ..)

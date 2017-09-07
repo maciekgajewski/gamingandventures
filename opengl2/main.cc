@@ -1,8 +1,11 @@
 // (C) 2017 Maciej Gajewski
 #include "main_window.hh"
 
-#include <rendering/rendering_system.hh>
+#include "rednering_system.hh"
+
+//#include <rendering/rendering_system.hh>
 #include <rendering/mesh_utilities.hh>
+#include <rendering/renderer.hh>
 
 #include <ecs/ecs.hh>
 
@@ -36,7 +39,6 @@ int main()
 	try
 	{
 		Ecs::Ecs database;
-		RenderingSystem renderingSystem;
 
 		MainWindow window;
 		window.makeContextCurrent();
@@ -45,6 +47,10 @@ int main()
 		{
 			throw std::runtime_error("Failed to initialize GLAD");
 		}
+
+		Rendering::Renderer renderer;
+		RenderingSystem renderingSystem(renderer, database);
+
 		glViewport(0, 0, 800, 600);
 
 

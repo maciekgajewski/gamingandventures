@@ -1,6 +1,9 @@
 // (C) 2017 Maciej Gajewski
 #pragma once
 
+#include "texture_manager.hh"
+#include "shader_manager.hh"
+
 #include <glm/glm.hpp>
 
 namespace Rendering {
@@ -26,7 +29,13 @@ public:
 	void UseShader(Shader& shader);
 	void ActivateTexture(Texture& unit);
 
+	TextureManager& Textures() { return textureManager_; }
+	ShaderManager& Shaders() { return shaderManager_; }
+
 private:
+
+	TextureManager textureManager_;
+	ShaderManager shaderManager_;
 
 };
 
