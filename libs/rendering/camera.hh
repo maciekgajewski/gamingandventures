@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 
+namespace Rendering {
+
 class Camera
 {
 public:
@@ -29,3 +31,4 @@ private:
 	glm::vec3 up_ = {0.0f, 1.0f, 0.0f};
 };
 
+}

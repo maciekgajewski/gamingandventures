@@ -1,6 +1,6 @@
 #pragma once
 
-namespace OT
+namespace Rendering
 {
 
 class PvcMesh;

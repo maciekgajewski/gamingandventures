@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <functional>
 
+#if 0
 namespace Ecs { class Ecs; }
 
 using TextureId = std::uint64_t;
@@ -20,23 +21,6 @@ using MeshId =std::uint64_t;
 // rendering components
 namespace Components
 {
-
-// Required for rendering
-struct Material
-{
-	TextureId diffuseTextureId = 0;
-	float shininess = 0.5f;
-};
-
-struct Mesh
-{
-	MeshId meshId = 0;
-};
-
-struct Transformation
-{
-	glm::mat4 transformation = glm::mat4(1.0f);
-};
 
 }
 
@@ -121,4 +105,4 @@ private:
 
 	OT::SinglePointLightPhongMaterial material_;
 };
-
+#endif

@@ -1,11 +1,13 @@
 // (C) 2017 Maciej Gajewski
 #include "main_window.hh"
 
-#include "rednering_system.hh"
+#include "rendering_system.hh"
 
 //#include <rendering/rendering_system.hh>
 #include <rendering/mesh_utilities.hh>
 #include <rendering/renderer.hh>
+#include <rendering/components.hh>
+
 
 #include <ecs/ecs.hh>
 
@@ -20,7 +22,7 @@
 #include <iostream>
 
 
-void createWorld(Ecs::Ecs& database, RenderingSystem& renderer);
+void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem);
 
 int main()
 {
@@ -54,16 +56,16 @@ int main()
 		glViewport(0, 0, 800, 600);
 
 
-		renderingSystem.Init(database);
-		renderingSystem.SetCameraAspectRatio(800.0 / 600.0);
+		renderingSystem.Init();
+		//renderingSystem.SetCameraAspectRatio(800.0 / 600.0);
 
 		// load world
-		createWorld(database, renderingSystem);
+		createWorld(database, renderer, renderingSystem);
 
 		// main loop
 		while (!window.shouldClose())
 		{
-			renderingSystem.Render(database);
+			renderingSystem.Render();
 			// TODO physics and others
 
 			window.swapBuffers();
@@ -79,55 +81,54 @@ int main()
 	glfwTerminate();
 }
 
-void createWorld(Ecs::Ecs& database, RenderingSystem& renderer)
+void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem)
 {
 	// ball 1
 	Ecs::EntityId ballId = database.CreateEntity("Ball 1");
 
-	Components::Material& mat = database.AddUniqueComponentToEntity<Components::Material>(ballId);
-	mat.diffuseTextureId = renderer.textureStore.LoadTexture("textures/ball.jpg");
+	Rendering::Components::Material& mat = database.AddUniqueComponentToEntity<Rendering::Components::Material>(ballId);
+	mat.diffuseTexture = renderer.Textures().Load("textures/ball.jpg");
 
-	Components::Transformation& tr = database.AddUniqueComponentToEntity<Components::Transformation>(ballId);
+	Rendering::Components::Transformation& tr = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(ballId);
 	tr.transformation = glm::translate(glm::mat4(1.0), glm::vec3(1.0f, 1.0f, -5.0f));
 
-	Components::Mesh& mesh = database.AddUniqueComponentToEntity<Components::Mesh>(ballId);
-	mesh.meshId = renderer.meshStore.GetOrGenerate("sphere", [&] () { return OT::buildSphereMesh(); });
+	Rendering::Components::Mesh& mesh = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(ballId);
+	mesh.mesh = renderer.Meshes().CreateSphere();
 
 	// ball 2
 	ballId = database.CreateEntity("Ball 2");
 
-	Components::Material& mat2 = database.AddUniqueComponentToEntity<Components::Material>(ballId);
-	mat2.diffuseTextureId = renderer.textureStore.LoadTexture("textures/ground.jpg");
+	Rendering::Components::Material& mat2 = database.AddUniqueComponentToEntity<Rendering::Components::Material>(ballId);
+	mat2.diffuseTexture = renderer.Textures().Load("textures/ground.jpg");
 	mat2.shininess = 2.0f;
 
-	Components::Transformation& tr2 = database.AddUniqueComponentToEntity<Components::Transformation>(ballId);
+	Rendering::Components::Transformation& tr2 = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(ballId);
 	tr2.transformation = glm::translate(glm::mat4(1.0), glm::vec3(-2.0f, 2.0f, -12.0f));
 
-	Components::Mesh& mesh2 = database.AddUniqueComponentToEntity<Components::Mesh>(ballId);
-	mesh2.meshId = renderer.meshStore.GetOrGenerate("sphere", [&] () { return OT::buildSphereMesh(); });
+	Rendering::Components::Mesh& mesh2 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(ballId);
+	mesh2.mesh = renderer.Meshes().CreateSphere();
 
 	// ball 3
 	ballId = database.CreateEntity("Ball 3");
 
-	Components::Material& mat3 = database.AddUniqueComponentToEntity<Components::Material>(ballId);
-	mat3.diffuseTextureId = renderer.textureStore.LoadTexture("textures/ground.jpg");
+	Rendering::Components::Material& mat3 = database.AddUniqueComponentToEntity<Rendering::Components::Material>(ballId);
+	mat3.diffuseTexture = renderer.Textures().Load("textures/ball.jpg");
 
-	Components::Transformation& tr3 = database.AddUniqueComponentToEntity<Components::Transformation>(ballId);
+	Rendering::Components::Transformation& tr3 = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(ballId);
 	tr3.transformation = glm::translate(glm::mat4(1.0), glm::vec3(-1.0f, -2.0f, -9.0f));
 
-	Components::Mesh& mesh3 = database.AddUniqueComponentToEntity<Components::Mesh>(ballId);
-	mesh3.meshId = renderer.meshStore.GetOrGenerate("sphere", [&] () { return OT::buildSphereMesh(); });
+	Rendering::Components::Mesh& mesh3 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(ballId);
+	mesh3.mesh = renderer.Meshes().CreateSphere();
 
 	// camera
-	Camera cam;
+	Rendering::Camera cam;
 	cam.SetPosition(glm::vec3(0.0f));
 	cam.LookAt(glm::vec3(1.0f, 1.0f, -5.0f)); // first ball
 	cam.LookAt(glm::vec3(-2.0f, 2.0f, -12.0f)); // second ball
-	renderer.SetCamera(cam);
+	renderingSystem.SetCamera(cam);
 
 	// light
-	renderer.SetAmbientLight(glm::vec3(0.05));
-	renderer.SetPointLight({1.0f, 5.0f, -4.0f}, glm::vec3(1.0));
+	renderingSystem.SetAmbientLight(glm::vec3(0.05));
+	renderingSystem.SetPointLight({1.0f, 5.0f, -4.0f}, glm::vec3(1.0));
 
-	renderer.SetClearColor(glm::vec3(0.05));
 }

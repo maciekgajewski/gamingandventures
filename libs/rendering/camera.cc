@@ -3,6 +3,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+namespace Rendering {
+
 Camera::Camera()
 {
 
@@ -13,4 +15,4 @@ glm::mat4 Camera::CalculateTransformation() const
 	return glm::lookAt(pos_, pos_+direction_, up_);
 }
 
-
+}

@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-namespace OT {
+namespace Rendering {
 
 void PvcMesh::Draw()
 {

@@ -4,7 +4,7 @@
 #include <ios>
 #include <iterator>
 
-namespace OT {
+namespace Utils {
 
 std::string readFile(const std::string& path)
 {

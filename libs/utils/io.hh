@@ -3,7 +3,7 @@
 #include <string>
 
 
-namespace OT {
+namespace Utils {
 
 std::string readFile(const std::string& path);
 

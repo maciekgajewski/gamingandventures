@@ -19,7 +19,7 @@ class TextureManager
 public:
 	TextureManager();
 
-	Texture* Load(const std::string& name, Texture::MipmapsOption mipmaps);
+	Texture* Load(const std::string& name, Texture::MipmapsOption mipmaps = Texture::GENERATE_MIPMAPS);
 
 	// TODO
 	// Texture* Create(w, h, format);

@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace OT {
+namespace Rendering {
 
 // Per-vertex-color
 class PvcMesh
