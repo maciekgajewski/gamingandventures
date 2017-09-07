@@ -68,12 +68,6 @@ Shader::Shader(
 
 
 
-void Shader::Use()
-{
-	assert(shaderProgramId_ && "Shader not initialized");
-	glUseProgram(shaderProgramId_);
-}
-
 Uniform Shader::GetUniform(const char* name) const
 {
 	assert(shaderProgramId_ && "Shader not initialized");

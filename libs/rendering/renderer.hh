@@ -21,16 +21,17 @@ public:
 	Renderer();
 
 	void SetClearColor(const glm::vec3& color);
+	void SetViewport(int x, int y, int w, int h);
 
 	enum class ClearedBuffers { Color, Depth, ColorDepth };
 	void ClearBuffers(ClearedBuffers b);
 
 	void SetDepthTest(bool enabled);
-
+	void SetFaceCulling(bool enabled);
 	void SetWireframeMode(bool wireframe);
 
 	void UseShader(Shader& shader);
-	void ActivateTexture(Texture& unit);
+	void ActivateTexture(Texture& texture, unsigned unit);
 
 	TextureManager& Textures() { return textureManager_; }
 	ShaderManager& Shaders() { return shaderManager_; }

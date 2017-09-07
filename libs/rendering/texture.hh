@@ -14,8 +14,9 @@ public:
 
 	void LoadFromFile(const std::string& path, MipmapsOption generateMipmaps);
 
-	// Activates textue as specified sampler unit
-	void Activate(int unit) const;
+public: // renderer API
+
+	unsigned glId() { return textureId_; }
 
 private:
 

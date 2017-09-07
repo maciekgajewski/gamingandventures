@@ -53,11 +53,9 @@ int main()
 		Rendering::Renderer renderer;
 		RenderingSystem renderingSystem(renderer, database);
 
-		glViewport(0, 0, 800, 600);
-
+		renderingSystem.SetViewport(0, 0, 800, 600);
 
 		renderingSystem.Init();
-		//renderingSystem.SetCameraAspectRatio(800.0 / 600.0);
 
 		// load world
 		createWorld(database, renderer, renderingSystem);

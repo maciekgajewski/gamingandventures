@@ -25,8 +25,8 @@ public:
 	void Render();
 
 	// Settings
+	void SetViewport(int x, int y, int w, int h);
 	void SetCamera(const Rendering::Camera& cam);
-	void SetCameraAspectRatio(float aspectRatio);
 	void SetAmbientLight(const glm::vec3& color) { ambientLight_ = color; }
 	void SetPointLight(const glm::vec3& position, const glm::vec3& color)
 	{
@@ -37,7 +37,7 @@ public:
 private:
 
 	Rendering::Renderer& renderer_;
-	Ecs::Ecs& data_;
+	Ecs::Ecs& database_;
 
 	Rendering::Shader* solidShader_ = nullptr;
 

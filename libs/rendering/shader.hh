@@ -56,8 +56,6 @@ public:
 	Shader(Shader&& other) { std::swap(shaderProgramId_, other.shaderProgramId_); }
 	~Shader();
 
-	void Use();
-
 	// Manipulating uniforms
 	Uniform GetUniform(const char* name) const;
 

@@ -44,13 +44,4 @@ void Texture::LoadFromFile(const std::string& path, Texture::MipmapsOption gener
 	stbi_image_free(data);
 }
 
-void Texture::Activate(int unit) const
-{
-	assert(unit >=0 && unit < 16 && "Texture unit out of range");
-	assert(textureId_ > 0 && "Texture not initialized");
-
-	glActiveTexture(GL_TEXTURE0 + unit);
-	glBindTexture(GL_TEXTURE_2D, textureId_);
-}
-
 } // namespace OT
