@@ -1,5 +1,5 @@
 #version 330 core
-out vec4 gl_FragColor;
+out vec4 FragColor;
 
 // per-fragment positon and normal passed from vertex shader
 in vec3 normal;
@@ -32,6 +32,6 @@ void main()
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
 	vec3 specular = spec * lightColor;
 
-	gl_FragColor = vec4((diffuse + ambientLight + shininess*specular)*color.rgb, 1.0);
-	//gl_FragColor = vec4(textureCoord, 0.00001*ambientLight.x*lightPos.y*lightColor.z, 0.0);
+	FragColor = vec4((diffuse + ambientLight + shininess*specular)*color.rgb, 1.0);
+	//FragColor = vec4(textureCoord, 0.00001*ambientLight.x*lightPos.y*lightColor.z, 0.0);
 }

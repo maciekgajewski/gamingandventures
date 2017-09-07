@@ -5,6 +5,6 @@ add_library(glad STATIC
 
 target_include_directories(glad PUBLIC include)
 
-if(LINUX)
+if(UNIX)
 	target_link_libraries(glad dl)
 endif()
