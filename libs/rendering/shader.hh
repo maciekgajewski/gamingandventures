@@ -22,6 +22,11 @@ public:
 		glUniform3f(location_, v.x, v.y, v.z);
 	}
 
+	void Set(const glm::vec4& v)
+	{
+		glUniform4f(location_, v.r, v.g, v.b, v.a);
+	}
+
 	void Set(const glm::mat4& m)
 	{
 		glUniformMatrix4fv(location_, 1, GL_FALSE, glm::value_ptr(m));

@@ -3,6 +3,7 @@
 
 #include "rendering_system.hh"
 #include "input_system.hh"
+#include "components.hh"
 
 #include <rendering/mesh_utilities.hh>
 #include <rendering/renderer.hh>
@@ -63,7 +64,7 @@ int main()
 		renderingSystem.SetViewport(0, 0, 800, 600);
 
 
-		InputSystem inputSystem(renderer, database);
+		InputSystem inputSystem(renderingSystem, database);
 		inputSystem.Init();
 		inputSystem.SetViewport(0, 0, 800, 600);
 		is = &inputSystem;
@@ -110,6 +111,8 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh.mesh = renderer.Meshes().CreateSphere();
 
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { 0x00ff0000, mesh.mesh };
+
 	// ball 2
 	entityId = database.CreateEntity("Ball 2");
 
@@ -123,6 +126,8 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh2 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh2.mesh = renderer.Meshes().CreateSphere();
 
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { 0x00ffff00, mesh2.mesh };
+
 	// ball 3
 	entityId = database.CreateEntity("Ball 3");
 
@@ -134,6 +139,8 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 
 	Rendering::Components::Mesh& mesh3 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh3.mesh = renderer.Meshes().CreateSphere();
+
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { 0x0000ff00, mesh3.mesh };
 
 	// cube
 	entityId = database.CreateEntity("Cube 1");
@@ -156,6 +163,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh4 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh4.mesh = renderer.Meshes().CreateCube();
 
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { 0x0000ffff, mesh4.mesh };
 
 	// camera
 	Rendering::Camera cam;

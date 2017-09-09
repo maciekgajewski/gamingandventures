@@ -29,6 +29,7 @@ public:
 	// Renders a frame
 	void Render();
 	void RenderToFile();
+	void RenderPickMap();
 
 	// Settings
 	void SetViewport(int x, int y, int w, int h);
@@ -48,6 +49,7 @@ private:
 	Ecs::Ecs& database_;
 
 	Rendering::Shader* solidShader_ = nullptr;
+	Rendering::Shader* pickShader_ = nullptr;
 
 	Rendering::Camera camera_;
 	glm::mat4 projectionTrans_;

@@ -25,6 +25,8 @@ Texture::~Texture()
 Texture::Texture(Texture&& other)
 {
 	std::swap(textureId_, other.textureId_);
+	std::swap(width_, other.width_);
+	std::swap(height_, other.height_);
 }
 
 void Texture::CreateEmpty(int width, int height)
