@@ -24,6 +24,11 @@
 
 void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem);
 
+void onCursorPos(GLFWwindow* /*window*/, double xpos, double ypos)
+{
+	std::cout << "x=" << xpos << ", y=" << ypos << std::endl;
+}
+
 int main()
 {
 	std::cout << "hello" << std::endl;
@@ -55,6 +60,11 @@ int main()
 
 		renderingSystem.Init();
 		renderingSystem.SetViewport(0, 0, 800, 600);
+
+
+		// intercept input
+		::glfwSetCursorPosCallback(window.win(), onCursorPos);
+
 
 		// load world
 		createWorld(database, renderer, renderingSystem);

@@ -20,6 +20,8 @@ public:
 
 	bool shouldClose() const;
 
+	GLFWwindow* win() { return window_; }
+
 protected:
 
 	virtual void onResized(int w, int h) {}
