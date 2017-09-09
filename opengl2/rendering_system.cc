@@ -50,7 +50,7 @@ void RenderingSystem::DoRender()
 	renderer_.SetWireframeMode(false);
 	renderer_.SetFaceCulling(true);
 
-	renderer_.SetClearColor(glm::vec3(0.05));
+	renderer_.SetClearColor(glm::vec4(0.05, 0.05, 0.05, 0.0));
 	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
 	renderer_.UseShader(*solidShader_);
 
@@ -84,6 +84,34 @@ void RenderingSystem::DoRender()
 			mesh.mesh->Draw();
 		});
 
+	// Second pass - draw selection
+	renderer_.SetDepthTest(false);
+	renderer_.UseShader(*pickShader_);
+	renderer_.SetWireframeMode(true);
+
+	pickShader_->SetUniform("camera", camera_.CalculateTransformation());
+	pickShader_->SetUniform("projection", projectionTrans_);
+	pickShader_->SetUniform("color", glm::vec4(1.0, 0.8, 0.0, 1.0));
+
+	auto selectionVisitor = Ecs::BuildUniqueTypeVisitor< // TODO move to Init
+		Components::Selectable,
+		Rendering::Components::Mesh,
+		Rendering::Components::Transformation>(database_);
+
+	selectionVisitor.ForEach([&](
+		Ecs::EntityId id,
+		const Components::Selectable& selectable,
+		const Rendering::Components::Mesh& mesh,
+		const Rendering::Components::Transformation& trans)
+		{
+			if (selectable.selected)
+			{
+				pickShader_->SetUniform("model", trans.transformation);
+				mesh.mesh->Draw();
+			}
+		});
+
+
 }
 
 void RenderingSystem::RenderToFile()
@@ -101,14 +129,14 @@ void RenderingSystem::RenderPickMap()
 	renderer_.SetWireframeMode(false);
 	renderer_.SetFaceCulling(true);
 
-	renderer_.SetClearColor(glm::vec3(0.0f));
+	renderer_.SetClearColor(glm::vec4(0.0f));
 	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
 	renderer_.UseShader(*pickShader_);
 
 	pickShader_->SetUniform("camera", camera_.CalculateTransformation());
 	pickShader_->SetUniform("projection", projectionTrans_);
 
-	// Iterate
+	// Pass - draw all
 	auto visitor = Ecs::BuildUniqueTypeVisitor< // TODO move to Init
 		Components::MousePickable,
 		Rendering::Components::Transformation>(database_);
@@ -137,6 +165,7 @@ void RenderingSystem::RenderPickMap()
 
 			pickable.mesh->Draw();
 	});
+
 }
 
 uint32_t RenderingSystem::QueryPickMap(int x, int y) const

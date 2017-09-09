@@ -9,9 +9,9 @@ Renderer::Renderer()
 {
 }
 
-void Renderer::SetClearColor(const glm::vec3& color)
+void Renderer::SetClearColor(const glm::vec4& color)
 {
-	glClearColor(color.r, color.g, color.b, 1.0f);
+	glClearColor(color.r, color.g, color.b, color.a);
 	CheckError();
 }
 

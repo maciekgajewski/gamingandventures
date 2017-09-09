@@ -8,7 +8,7 @@ To learn:
  [ ] Multiple textures: shine maps, bump maps
  [ ] Load model from file
  [ ] UI
- [ ] Mouse picking
+ [x] Mouse picking
  [ ] Oct-tree
  [ ] Drawing lines
  [ ] Directional light

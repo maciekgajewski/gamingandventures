@@ -22,7 +22,7 @@ public:
 	Renderer();
 
 	// state
-	void SetClearColor(const glm::vec3& color);
+	void SetClearColor(const glm::vec4& color);
 	void SetViewport(int x, int y, int w, int h);
 
 	enum class ClearedBuffers { Color, Depth, ColorDepth };
