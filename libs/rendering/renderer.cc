@@ -47,6 +47,15 @@ void Renderer::SetDepthTest(bool enabled)
 	CheckError();
 }
 
+void Renderer::setDepthMask(bool enabled)
+{
+	if (enabled)
+		glDepthMask(GL_TRUE);
+	else
+		glDepthMask(GL_FALSE);
+	CheckError();
+}
+
 void Renderer::SetFaceCulling(bool enabled)
 {
 	if (enabled)
@@ -66,7 +75,7 @@ void Renderer::SetWireframeMode(bool wireframe)
 
 }
 
-void Renderer::UseShader(Shader& shader)
+void Renderer::useShader(Shader& shader)
 {
 	unsigned programId = shader.glId();
 	assert(programId && "Shader not initialized");
@@ -86,6 +95,16 @@ void Renderer::ActivateTexture(Texture& texture, unsigned unit)
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	CheckError();
 
+}
+
+void Renderer::activateCubemap(Texture& texture)
+{
+	unsigned textureId = texture.glId();
+
+	assert(textureId > 0 && "Texture not initialized");
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
+	CheckError();
 }
 
 void Renderer::RenderToScreen()

@@ -6,6 +6,7 @@
 #include <rendering/renderer.hh>
 #include <rendering/components.hh>
 #include <rendering/framebuffer.hh>
+#include <rendering/mesh_utilities.hh>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -21,8 +22,9 @@ RenderingSystem::~RenderingSystem()
 
 void RenderingSystem::Init()
 {
-	solidShader_ = renderer_.Shaders().Load("shaders/single_light_phong.vert", "shaders/single_light_phong.frag");
-	pickShader_ = renderer_.Shaders().Load("shaders/solid.vert", "shaders/solid.frag");
+	solidShader_  = renderer_.Shaders().Load("shaders/single_light_phong.vert", "shaders/single_light_phong.frag");
+	pickShader_   = renderer_.Shaders().Load("shaders/solid.vert", "shaders/solid.frag");
+	skyboxShader_ = renderer_.Shaders().Load("shaders/skybox.vert", "shaders/skybox.frag");
 
 	ambientLight_ = glm::vec3(1.0f);
 	pointLightPos_ = glm::vec3(0.0f);
@@ -35,6 +37,17 @@ void RenderingSystem::Init()
 	database_.RegisterUniqueComponentType<Components::Selectable>("Selectable");
 
 	offScreen_ = std::make_unique<Rendering::Framebuffer>();
+
+	skyboxMesh_ = std::make_unique<Rendering::Mesh>(Rendering::buildSkyboxMesh());
+	skybox_ = std::make_unique<Rendering::Texture>();
+	skybox_->loadCubemap({
+			"textures/yokohama_cubemap/posx.jpg",
+			"textures/yokohama_cubemap/negx.jpg",
+			"textures/yokohama_cubemap/posy.jpg",
+			"textures/yokohama_cubemap/negy.jpg",
+			"textures/yokohama_cubemap/posz.jpg",
+			"textures/yokohama_cubemap/negz.jpg",
+		});
 }
 
 
@@ -52,15 +65,32 @@ void RenderingSystem::DoRender()
 
 	renderer_.SetClearColor(glm::vec4(0.05, 0.05, 0.05, 0.0));
 	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
-	renderer_.UseShader(*solidShader_);
+
+	// render skybox
+	{
+		Rendering::Camera fixedCam = camera_;
+		fixedCam.setPosition(glm::vec3(0.0f));
+
+		renderer_.useShader(*skyboxShader_);
+		skyboxShader_->SetUniform("projection", projectionTrans_);
+		skyboxShader_->SetUniform("camera", fixedCam.calculateTransformation());
+
+		renderer_.activateCubemap(*skybox_);
+		renderer_.setDepthMask(false);
+		skyboxMesh_->Draw();
+	}
+
+	// render solid items
+	renderer_.setDepthMask(true);
+	renderer_.useShader(*solidShader_);
 
 	solidShader_->SetUniform("ambientLight", ambientLight_);
 	solidShader_->SetUniform("lightColor", pointLightColor_);
 	solidShader_->SetUniform("lightPos", pointLightPos_);
 
-	solidShader_->SetUniform("camera", camera_.CalculateTransformation());
+	solidShader_->SetUniform("camera", camera_.calculateTransformation());
 	solidShader_->SetUniform("projection", projectionTrans_);
-	solidShader_->SetUniform("viewPos", camera_.GetPosition());
+	solidShader_->SetUniform("viewPos", camera_.getPosition());
 
 	Rendering::Uniform modelUniform = solidShader_->GetUniform("model");
 
@@ -86,10 +116,10 @@ void RenderingSystem::DoRender()
 
 	// Second pass - draw selection
 	renderer_.SetDepthTest(false);
-	renderer_.UseShader(*pickShader_);
+	renderer_.useShader(*pickShader_);
 	renderer_.SetWireframeMode(true);
 
-	pickShader_->SetUniform("camera", camera_.CalculateTransformation());
+	pickShader_->SetUniform("camera", camera_.calculateTransformation());
 	pickShader_->SetUniform("projection", projectionTrans_);
 	pickShader_->SetUniform("color", glm::vec4(1.0, 0.8, 0.0, 1.0));
 
@@ -129,9 +159,9 @@ void RenderingSystem::RenderPickMap()
 
 	renderer_.SetClearColor(glm::vec4(0.0f));
 	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
-	renderer_.UseShader(*pickShader_);
+	renderer_.useShader(*pickShader_);
 
-	pickShader_->SetUniform("camera", camera_.CalculateTransformation());
+	pickShader_->SetUniform("camera", camera_.calculateTransformation());
 	pickShader_->SetUniform("projection", projectionTrans_);
 
 	// Pass - draw all
@@ -182,7 +212,7 @@ void RenderingSystem::SetViewport(int x, int y, int w, int h)
 			);
 
 	offScreenColor_ = std::make_unique<Rendering::Texture>();
-	offScreenColor_->CreateEmpty(w, h);
+	offScreenColor_->createEmpty(w, h);
 	offScreen_->AttachColorBuffer(*offScreenColor_);
 	width_ = w;
 	height_ = h;

@@ -12,6 +12,6 @@ To learn:
  [ ] Oct-tree
  [ ] Drawing lines
  [ ] Directional light
- [ ] Skybox
+ [x] Skybox
  [ ] Sound (FMod)
  [x] Shining in Phong

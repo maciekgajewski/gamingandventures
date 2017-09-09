@@ -142,8 +142,8 @@ int main()
 			{
 				static const double MOVE_SPEED = 2.0;
 				Rendering::Camera cam = renderingSystem.getCamera();
-				glm::vec3 movement = float(camMovement  * dt * MOVE_SPEED) * glm::normalize(cam.GetDirection());
-				cam.SetPosition(cam.GetPosition() + movement);
+				glm::vec3 movement = float(camMovement  * dt * MOVE_SPEED) * glm::normalize(cam.getDirection());
+				cam.setPosition(cam.getPosition() + movement);
 				renderingSystem.setCamera(cam);
 			}
 			if (camRotation != 0.0)
@@ -154,7 +154,7 @@ int main()
 					glm::mat4(1.0f),
 					float(ROTATION_SPEED * dt * camRotation),
 					glm::vec3(0.0f, 1.0f, 0.0f))
-					* glm::vec4(cam.GetDirection(), 1.0);
+					* glm::vec4(cam.getDirection(), 1.0);
 				cam.setDirection(direction);
 				renderingSystem.setCamera(cam);
 			}
@@ -244,9 +244,9 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 
 	// camera
 	Rendering::Camera cam;
-	cam.SetPosition(glm::vec3(0.0f));
-	cam.LookAt(glm::vec3(1.0f, 1.0f, -5.0f)); // first ball
-	cam.LookAt(glm::vec3(-2.0f, 2.0f, -12.0f)); // second ball
+	cam.setPosition(glm::vec3(0.0f));
+	cam.lookAt(glm::vec3(1.0f, 1.0f, -5.0f)); // first ball
+	cam.lookAt(glm::vec3(-2.0f, 2.0f, -12.0f)); // second ball
 	renderingSystem.setCamera(cam);
 
 	// light

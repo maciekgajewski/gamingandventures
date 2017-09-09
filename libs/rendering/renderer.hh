@@ -28,12 +28,14 @@ public:
 	enum class ClearedBuffers { Color, Depth, ColorDepth };
 	void ClearBuffers(ClearedBuffers b);
 
-	void SetDepthTest(bool enabled);
+	void SetDepthTest(bool enabled); // enables/disbales depth test
+	void setDepthMask(bool enabled); // enables/disbales writing to depth buffer
 	void SetFaceCulling(bool enabled);
 	void SetWireframeMode(bool wireframe);
 
-	void UseShader(Shader& shader);
+	void useShader(Shader& shader);
 	void ActivateTexture(Texture& texture, unsigned unit);
+	void activateCubemap(Texture& texture);
 
 	// render target
 	void RenderToScreen();

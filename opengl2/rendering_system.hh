@@ -14,6 +14,7 @@ namespace Rendering {
 	class Shader;
 	class Texture;
 	class Framebuffer;
+	class Mesh;
 }
 
 // This application's rendering system
@@ -67,6 +68,11 @@ private:
 	// off-screen buffer
 	std::unique_ptr<Rendering::Texture> offScreenColor_;
 	std::unique_ptr<Rendering::Framebuffer> offScreen_;
+
+	// skybox
+	std::unique_ptr<Rendering::Mesh> skyboxMesh_;
+	std::unique_ptr<Rendering::Texture>  skybox_;
+	Rendering::Shader* skyboxShader_ = nullptr;
 
 };
 

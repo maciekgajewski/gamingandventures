@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace Rendering {
 
@@ -18,8 +19,10 @@ public:
 	Texture(const Texture&) = delete;
 	Texture& operator=(const Texture&) = delete;
 
-	void CreateEmpty(int w, int h);
-	void LoadFromFile(const std::string& path, MipmapsOption generateMipmaps);
+	void createEmpty(int w, int h);
+	void loadFromFile(const std::string& path, MipmapsOption generateMipmaps);
+
+	void loadCubemap(const std::vector<std::string>& paths);
 
 public: // renderer API
 
@@ -27,7 +30,7 @@ public: // renderer API
 
 private:
 
-	void Create(int w, int h);
+	void create(int w, int h);
 
 	unsigned textureId_ = 0;
 	int width_ = 0;
