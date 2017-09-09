@@ -22,32 +22,32 @@ public:
 	Renderer();
 
 	// state
-	void SetClearColor(const glm::vec4& color);
-	void SetViewport(int x, int y, int w, int h);
+	void setClearColor(const glm::vec4& color);
+	void setViewport(int x, int y, int w, int h);
 
 	enum class ClearedBuffers { Color, Depth, ColorDepth };
-	void ClearBuffers(ClearedBuffers b);
+	void clearBuffers(ClearedBuffers b);
 
-	void SetDepthTest(bool enabled); // enables/disbales depth test
+	void setDepthTest(bool enabled); // enables/disbales depth test
 	void setDepthMask(bool enabled); // enables/disbales writing to depth buffer
-	void SetFaceCulling(bool enabled);
-	void SetWireframeMode(bool wireframe);
+	void setFaceCulling(bool enabled);
+	void setWireframeMode(bool wireframe);
 
 	void useShader(Shader& shader);
-	void ActivateTexture(Texture& texture, unsigned unit);
+	void activateTexture(Texture& texture, unsigned unit);
 	void activateCubemap(Texture& texture);
 
 	// render target
-	void RenderToScreen();
-	void RenderTo(Framebuffer& fb);
+	void renderToScreen();
+	void renderTo(Framebuffer& fb);
 
 
 	// Resource managers
-	TextureManager& Textures() { return textureManager_; }
-	ShaderManager& Shaders() { return shaderManager_; }
-	MeshManager& Meshes() { return meshManager_; }
+	TextureManager& textures() { return textureManager_; }
+	ShaderManager& shaders() { return shaderManager_; }
+	MeshManager& meshes() { return meshManager_; }
 
-	static void CheckError();
+	static void checkError();
 
 private:
 

@@ -22,9 +22,9 @@ RenderingSystem::~RenderingSystem()
 
 void RenderingSystem::Init()
 {
-	solidShader_  = renderer_.Shaders().Load("shaders/single_light_phong.vert", "shaders/single_light_phong.frag");
-	pickShader_   = renderer_.Shaders().Load("shaders/solid.vert", "shaders/solid.frag");
-	skyboxShader_ = renderer_.Shaders().Load("shaders/skybox.vert", "shaders/skybox.frag");
+	solidShader_  = renderer_.shaders().Load("shaders/single_light_phong.vert", "shaders/single_light_phong.frag");
+	pickShader_   = renderer_.shaders().Load("shaders/solid.vert", "shaders/solid.frag");
+	skyboxShader_ = renderer_.shaders().Load("shaders/skybox.vert", "shaders/skybox.frag");
 
 	ambientLight_ = glm::vec3(1.0f);
 	pointLightPos_ = glm::vec3(0.0f);
@@ -53,18 +53,18 @@ void RenderingSystem::Init()
 
 void RenderingSystem::Render()
 {
-	renderer_.RenderToScreen();
+	renderer_.renderToScreen();
 	DoRender();
 }
 
 void RenderingSystem::DoRender()
 {
-	renderer_.SetDepthTest(true);
-	renderer_.SetWireframeMode(false);
-	renderer_.SetFaceCulling(true);
+	renderer_.setDepthTest(true);
+	renderer_.setWireframeMode(false);
+	renderer_.setFaceCulling(true);
 
-	renderer_.SetClearColor(glm::vec4(0.05, 0.05, 0.05, 0.0));
-	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
+	renderer_.setClearColor(glm::vec4(0.05, 0.05, 0.05, 0.0));
+	renderer_.clearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
 
 	// render skybox
 	{
@@ -108,16 +108,16 @@ void RenderingSystem::DoRender()
 		{
 			modelUniform.Set(trans.transformation);
 
-			renderer_.ActivateTexture(*material.diffuseTexture, 0);
+			renderer_.activateTexture(*material.diffuseTexture, 0);
 			solidShader_->SetUniform("shininess", material.shininess);
 
 			mesh.mesh->Draw();
 		});
 
 	// Second pass - draw selection
-	renderer_.SetDepthTest(false);
+	renderer_.setDepthTest(false);
 	renderer_.useShader(*pickShader_);
-	renderer_.SetWireframeMode(true);
+	renderer_.setWireframeMode(true);
 
 	pickShader_->SetUniform("camera", camera_.calculateTransformation());
 	pickShader_->SetUniform("projection", projectionTrans_);
@@ -144,21 +144,21 @@ void RenderingSystem::DoRender()
 
 void RenderingSystem::RenderToFile()
 {
-	renderer_.RenderTo(*offScreen_);
+	renderer_.renderTo(*offScreen_);
 	DoRender();
 	offScreen_->SaveToFile("out.png", 0, 0, width_, height_);
 }
 
 void RenderingSystem::RenderPickMap()
 {
-	renderer_.RenderTo(*offScreen_);
+	renderer_.renderTo(*offScreen_);
 
-	renderer_.SetDepthTest(true);
-	renderer_.SetWireframeMode(false);
-	renderer_.SetFaceCulling(true);
+	renderer_.setDepthTest(true);
+	renderer_.setWireframeMode(false);
+	renderer_.setFaceCulling(true);
 
-	renderer_.SetClearColor(glm::vec4(0.0f));
-	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
+	renderer_.setClearColor(glm::vec4(0.0f));
+	renderer_.clearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
 	renderer_.useShader(*pickShader_);
 
 	pickShader_->SetUniform("camera", camera_.calculateTransformation());
@@ -204,7 +204,7 @@ uint32_t RenderingSystem::QueryPickMap(int x, int y) const
 
 void RenderingSystem::SetViewport(int x, int y, int w, int h)
 {
-	renderer_.SetViewport(x, y, w, h);
+	renderer_.setViewport(x, y, w, h);
 	projectionTrans_ = glm::perspective(glm::radians(45.0f),
 			float(w)/h,
 			0.1f, // near

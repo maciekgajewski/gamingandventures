@@ -34,7 +34,7 @@ void Texture::createEmpty(int width, int height)
 	create(width, height);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-	Rendering::Renderer::CheckError();
+	Rendering::Renderer::checkError();
 }
 
 void Texture::create(int width, int height)
@@ -80,9 +80,9 @@ void Texture::loadCubemap(const std::vector<std::string>& paths)
 	assert (paths.size() == 6);
 
 	glGenTextures(1, &textureId_);
-	Renderer::CheckError();
+	Renderer::checkError();
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId_);
-	Renderer::CheckError();
+	Renderer::checkError();
 
 	int nrChannels;
 	for (int i = 0; i < 6; i++)
@@ -96,7 +96,7 @@ void Texture::loadCubemap(const std::vector<std::string>& paths)
 						GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
 						0, GL_RGB, width_, height_, 0, GL_RGB, GL_UNSIGNED_BYTE, data
 					);
-				Renderer::CheckError();
+				Renderer::checkError();
 			}
 			else
 			{
@@ -110,15 +110,15 @@ void Texture::loadCubemap(const std::vector<std::string>& paths)
 		}
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	Renderer::CheckError();
+	Renderer::checkError();
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	Renderer::CheckError();
+	Renderer::checkError();
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	Renderer::CheckError();
+	Renderer::checkError();
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	Renderer::CheckError();
+	Renderer::checkError();
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	Renderer::CheckError();
+	Renderer::checkError();
 }
 
 } // namespace OT

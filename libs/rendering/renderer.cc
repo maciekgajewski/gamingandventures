@@ -9,19 +9,19 @@ Renderer::Renderer()
 {
 }
 
-void Renderer::SetClearColor(const glm::vec4& color)
+void Renderer::setClearColor(const glm::vec4& color)
 {
 	glClearColor(color.r, color.g, color.b, color.a);
-	CheckError();
+	checkError();
 }
 
-void Renderer::SetViewport(int x, int y, int w, int h)
+void Renderer::setViewport(int x, int y, int w, int h)
 {
 	glViewport(x, y, w, h);
-	CheckError();
+	checkError();
 }
 
-void Renderer::ClearBuffers(Renderer::ClearedBuffers b)
+void Renderer::clearBuffers(Renderer::ClearedBuffers b)
 {
 	switch(b)
 	{
@@ -35,16 +35,16 @@ void Renderer::ClearBuffers(Renderer::ClearedBuffers b)
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			break;
 	}
-	CheckError();
+	checkError();
 }
 
-void Renderer::SetDepthTest(bool enabled)
+void Renderer::setDepthTest(bool enabled)
 {
 	if (enabled)
 		glEnable(GL_DEPTH_TEST);
 	else
 		glDisable(GL_DEPTH_TEST);
-	CheckError();
+	checkError();
 }
 
 void Renderer::setDepthMask(bool enabled)
@@ -53,25 +53,25 @@ void Renderer::setDepthMask(bool enabled)
 		glDepthMask(GL_TRUE);
 	else
 		glDepthMask(GL_FALSE);
-	CheckError();
+	checkError();
 }
 
-void Renderer::SetFaceCulling(bool enabled)
+void Renderer::setFaceCulling(bool enabled)
 {
 	if (enabled)
 		glEnable(GL_CULL_FACE);
 	else
 		glDisable(GL_CULL_FACE);
-	CheckError();
+	checkError();
 }
 
-void Renderer::SetWireframeMode(bool wireframe)
+void Renderer::setWireframeMode(bool wireframe)
 {
 	if (wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	CheckError();
+	checkError();
 
 }
 
@@ -80,10 +80,10 @@ void Renderer::useShader(Shader& shader)
 	unsigned programId = shader.glId();
 	assert(programId && "Shader not initialized");
 	glUseProgram(programId);
-	CheckError();
+	checkError();
 }
 
-void Renderer::ActivateTexture(Texture& texture, unsigned unit)
+void Renderer::activateTexture(Texture& texture, unsigned unit)
 {
 	unsigned textureId = texture.glId();
 
@@ -91,9 +91,9 @@ void Renderer::ActivateTexture(Texture& texture, unsigned unit)
 	assert(textureId > 0 && "Texture not initialized");
 
 	glActiveTexture(GL_TEXTURE0 + unit);
-	CheckError();
+	checkError();
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	CheckError();
+	checkError();
 
 }
 
@@ -104,16 +104,16 @@ void Renderer::activateCubemap(Texture& texture)
 	assert(textureId > 0 && "Texture not initialized");
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
-	CheckError();
+	checkError();
 }
 
-void Renderer::RenderToScreen()
+void Renderer::renderToScreen()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	CheckError();
+	checkError();
 }
 
-void Renderer::RenderTo(Framebuffer& fb)
+void Renderer::renderTo(Framebuffer& fb)
 {
 	unsigned fbId = fb.glId();
 
@@ -121,10 +121,10 @@ void Renderer::RenderTo(Framebuffer& fb)
 	assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE && "Framebuffer not complete");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbId);
-	CheckError();
+	checkError();
 }
 
-void Renderer::CheckError()
+void Renderer::checkError()
 {
 	unsigned err = glGetError();
 
