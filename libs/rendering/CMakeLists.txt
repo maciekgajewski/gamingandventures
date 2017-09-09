@@ -11,6 +11,7 @@ add_library(rendering
 	shader_manager.cc shader_manager.hh
 	mesh_manager.cc mesh_manager.hh
 	components.cc components.hh
+	framebuffer.cc framebuffer.hh
 )
 
 target_include_directories(rendering INTERFACE ..)

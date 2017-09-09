@@ -53,9 +53,8 @@ int main()
 		Rendering::Renderer renderer;
 		RenderingSystem renderingSystem(renderer, database);
 
-		renderingSystem.SetViewport(0, 0, 800, 600);
-
 		renderingSystem.Init();
+		renderingSystem.SetViewport(0, 0, 800, 600);
 
 		// load world
 		createWorld(database, renderer, renderingSystem);

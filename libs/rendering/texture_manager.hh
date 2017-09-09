@@ -5,6 +5,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 namespace Rendering {
 
@@ -20,9 +21,6 @@ public:
 	TextureManager();
 
 	Texture* Load(const std::string& name, Texture::MipmapsOption mipmaps = Texture::GENERATE_MIPMAPS);
-
-	// TODO
-	// Texture* Create(w, h, format);
 
 private:
 

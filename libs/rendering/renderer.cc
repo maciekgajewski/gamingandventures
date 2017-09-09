@@ -1,6 +1,8 @@
 // (C) 2017 Maciej Gajewski
 #include "renderer.hh"
 
+#include "framebuffer.hh"
+
 namespace Rendering {
 
 Renderer::Renderer()
@@ -75,6 +77,21 @@ void Renderer::ActivateTexture(Texture& texture, unsigned unit)
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 
+}
+
+void Renderer::RenderToScreen()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::RenderTo(Framebuffer& fb)
+{
+	unsigned fbId = fb.glId();
+
+	assert(fbId && "Framebuffer not initialized");
+	assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE && "Framebuffer not complete");
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fbId);
 }
 
 } // namespace Rendering

@@ -3,13 +3,17 @@
 
 #include <rendering/renderer.hh>
 #include <rendering/components.hh>
+#include <rendering/framebuffer.hh>
 
 #include <glm/gtc/matrix_transform.hpp>
 
 RenderingSystem::RenderingSystem(Rendering::Renderer& renderer, Ecs::Ecs& data)
 	: renderer_(renderer), database_(data)
 {
+}
 
+RenderingSystem::~RenderingSystem()
+{
 }
 
 void RenderingSystem::Init()
@@ -28,6 +32,8 @@ void RenderingSystem::Init()
 	database_.RegisterUniqueComponentType<Rendering::Components::Material>("Material");
 	database_.RegisterUniqueComponentType<Rendering::Components::Mesh>("Mesh");
 	database_.RegisterUniqueComponentType<Rendering::Components::Transformation>("Transformation");
+
+	offScreen_ = std::make_unique<Rendering::Framebuffer>();
 }
 
 
@@ -53,6 +59,8 @@ void RenderingSystem::Render()
 		Rendering::Components::Mesh,
 		Rendering::Components::Transformation>(database_);
 
+	// render to screen
+	renderer_.RenderToScreen();
 	visitor.ForEach([&](
 		Ecs::EntityId id,
 		const Rendering::Components::Material& material,
@@ -67,6 +75,27 @@ void RenderingSystem::Render()
 			mesh.mesh->Draw();
 		});
 
+	// render the same to framebuffer
+	renderer_.RenderTo(*offScreen_);
+	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
+	visitor.ForEach([&](
+		Ecs::EntityId id,
+		const Rendering::Components::Material& material,
+		const Rendering::Components::Mesh& mesh,
+		const Rendering::Components::Transformation& trans)
+		{
+			modelUniform.Set(trans.transformation);
+
+			renderer_.ActivateTexture(*material.diffuseTexture, 0);
+			solidShader_->SetUniform("shininess", material.shininess);
+
+			mesh.mesh->Draw();
+		});
+	if (!saved_)
+	{
+		offScreen_->SaveToFile("out.png", 0, 0, width_, height_);
+		saved_ = true;
+	}
 }
 
 void RenderingSystem::SetViewport(int x, int y, int w, int h)
@@ -77,6 +106,12 @@ void RenderingSystem::SetViewport(int x, int y, int w, int h)
 			0.1f, // near
 			1000.0f // far
 			);
+
+	offScreenColor_ = std::make_unique<Rendering::Texture>();
+	offScreenColor_->CreateEmpty(w, h);
+	offScreen_->AttachColorBuffer(*offScreenColor_);
+	width_ = w;
+	height_ = h;
 }
 
 void RenderingSystem::SetCamera(const Rendering::Camera& cam)

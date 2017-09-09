@@ -19,12 +19,13 @@ Texture* TextureManager::Load(const std::string& name, Texture::MipmapsOption mi
 	{
 		Texture t;
 		t.LoadFromFile(name, mipmaps);
-		auto res = mTextures.emplace(name, t);
+		auto res = mTextures.emplace(name, std::move(t));
 		assert(res.second);
 		it = res.first;
 	}
 
 	return &(it->second);
 }
+
 
 } // namespace Rednering
