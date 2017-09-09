@@ -39,9 +39,16 @@ void RenderingSystem::Init()
 
 void RenderingSystem::Render()
 {
-	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
+	renderer_.RenderToScreen();
+	DoRender();
+}
 
+void RenderingSystem::DoRender()
+{
+	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
+	Rendering::Renderer::CheckError();
 	renderer_.UseShader(*solidShader_);
+	Rendering::Renderer::CheckError();
 
 	solidShader_->SetUniform("ambientLight", ambientLight_);
 	solidShader_->SetUniform("lightColor", pointLightColor_);
@@ -60,7 +67,6 @@ void RenderingSystem::Render()
 		Rendering::Components::Transformation>(database_);
 
 	// render to screen
-	renderer_.RenderToScreen();
 	visitor.ForEach([&](
 		Ecs::EntityId id,
 		const Rendering::Components::Material& material,
@@ -70,33 +76,23 @@ void RenderingSystem::Render()
 			modelUniform.Set(trans.transformation);
 
 			renderer_.ActivateTexture(*material.diffuseTexture, 0);
+			Rendering::Renderer::CheckError();
 			solidShader_->SetUniform("shininess", material.shininess);
+			Rendering::Renderer::CheckError();
 
 			mesh.mesh->Draw();
+			Rendering::Renderer::CheckError();
 		});
 
-	// render the same to framebuffer
-	renderer_.RenderTo(*offScreen_);
-	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
-	visitor.ForEach([&](
-		Ecs::EntityId id,
-		const Rendering::Components::Material& material,
-		const Rendering::Components::Mesh& mesh,
-		const Rendering::Components::Transformation& trans)
-		{
-			modelUniform.Set(trans.transformation);
-
-			renderer_.ActivateTexture(*material.diffuseTexture, 0);
-			solidShader_->SetUniform("shininess", material.shininess);
-
-			mesh.mesh->Draw();
-		});
-	if (!saved_)
-	{
-		offScreen_->SaveToFile("out.png", 0, 0, width_, height_);
-		saved_ = true;
-	}
 }
+
+void RenderingSystem::RenderToFile()
+{
+	renderer_.RenderTo(*offScreen_);
+	DoRender();
+	offScreen_->SaveToFile("out.png", 0, 0, width_, height_);
+}
+
 
 void RenderingSystem::SetViewport(int x, int y, int w, int h)
 {

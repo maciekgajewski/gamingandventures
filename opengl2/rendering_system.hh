@@ -28,6 +28,7 @@ public:
 
 	// Renders a frame
 	void Render();
+	void RenderToFile();
 
 	// Settings
 	void SetViewport(int x, int y, int w, int h);
@@ -40,6 +41,8 @@ public:
 	}
 
 private:
+
+	void DoRender();
 
 	Rendering::Renderer& renderer_;
 	Ecs::Ecs& database_;

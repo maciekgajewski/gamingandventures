@@ -94,4 +94,32 @@ void Renderer::RenderTo(Framebuffer& fb)
 	glBindFramebuffer(GL_FRAMEBUFFER, fbId);
 }
 
+void Renderer::CheckError()
+{
+	unsigned err = glGetError();
+
+	switch(err)
+	{
+		case GL_INVALID_ENUM:
+			throw std::runtime_error("GL_INVALID_ENUM");
+
+		case GL_INVALID_VALUE:
+			throw std::runtime_error("GL_INVALID_VALUE");
+
+		case GL_INVALID_OPERATION:
+			throw std::runtime_error("GL_INVALID_OPERATION");
+
+		case GL_INVALID_FRAMEBUFFER_OPERATION:
+			throw std::runtime_error("GL_INVALID_FRAMEBUFFER_OPERATION");
+
+		case GL_OUT_OF_MEMORY:
+			throw std::runtime_error("GL_OUT_OF_MEMORY");
+
+		case GL_NO_ERROR:
+			return;
+	}
+
+	throw std::runtime_error("Unknown error " + std::to_string(err));
+}
+
 } // namespace Rendering

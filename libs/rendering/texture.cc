@@ -1,5 +1,7 @@
 #include "texture.hh"
 
+#include "renderer.hh"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -30,6 +32,7 @@ void Texture::CreateEmpty(int width, int height)
 	Create(width, height);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	Rendering::Renderer::CheckError();
 }
 
 void Texture::Create(int width, int height)
@@ -40,10 +43,14 @@ void Texture::Create(int width, int height)
 	height_ = height;
 
 	glGenTextures(1, &textureId_);
+	Rendering::Renderer::CheckError();
 	glBindTexture(GL_TEXTURE_2D, textureId_);
+	Rendering::Renderer::CheckError();
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	Rendering::Renderer::CheckError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	Rendering::Renderer::CheckError();
 	// TODO enable anisotropy here
 
 }

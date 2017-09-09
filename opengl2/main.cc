@@ -59,6 +59,8 @@ int main()
 		// load world
 		createWorld(database, renderer, renderingSystem);
 
+		renderingSystem.RenderToFile();
+
 		// main loop
 		while (!window.shouldClose())
 		{

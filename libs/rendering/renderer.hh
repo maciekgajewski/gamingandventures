@@ -45,6 +45,8 @@ public:
 	ShaderManager& Shaders() { return shaderManager_; }
 	MeshManager& Meshes() { return meshManager_; }
 
+	static void CheckError();
+
 private:
 
 	TextureManager textureManager_;
