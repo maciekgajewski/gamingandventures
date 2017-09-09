@@ -34,7 +34,8 @@ public:
 
 	// Settings
 	void SetViewport(int x, int y, int w, int h);
-	void SetCamera(const Rendering::Camera& cam);
+	void setCamera(const Rendering::Camera& cam);
+	Rendering::Camera getCamera() const { return camera_; }
 	void SetAmbientLight(const glm::vec3& color) { ambientLight_ = color; }
 	void SetPointLight(const glm::vec3& position, const glm::vec3& color)
 	{

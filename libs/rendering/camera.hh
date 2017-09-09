@@ -22,6 +22,7 @@ public:
 
 	void SetPosition(const glm::vec3& pos) { pos_ = pos; }
 	void LookAt(const glm::vec3& center) { direction_ = glm::normalize(center - pos_); }
+	void setDirection(glm::vec3 d) { direction_ = glm::normalize(d); }
 
 	glm::mat4 CalculateTransformation() const;
 

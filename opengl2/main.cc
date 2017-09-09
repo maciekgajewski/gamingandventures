@@ -24,11 +24,59 @@
 void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem);
 
 InputSystem* is = nullptr;
-
 void onCursorPos(GLFWwindow* /*window*/, double xpos, double ypos)
 {
 	if (is)
 		is->OnCursorMove(xpos, ypos);
+}
+
+float camMovement = 0.0;
+float camRotation = 0.0;
+void onKey(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+
+	if (action == GLFW_PRESS)
+	{
+		switch(key)
+		{
+			case GLFW_KEY_ESCAPE:
+				glfwSetWindowShouldClose(window, true);
+				break;
+
+			case GLFW_KEY_W:
+				camMovement = 1.0;
+				break;
+
+			case GLFW_KEY_S:
+				camMovement = -1.0;
+				break;
+
+			case GLFW_KEY_A:
+				camRotation = 1.0;
+				break;
+
+			case GLFW_KEY_D:
+				camRotation = -1.0;
+				break;
+
+		}
+	}
+
+	if (action == GLFW_RELEASE)
+	{
+		switch(key)
+		{
+			case GLFW_KEY_S:
+			case GLFW_KEY_W:
+				camMovement = 0.0;
+				break;
+			case GLFW_KEY_A:
+			case GLFW_KEY_D:
+				camRotation = 0.0;
+				break;
+		}
+	}
+
 }
 
 int main()
@@ -45,6 +93,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	double time = glfwGetTime();
 	try
 	{
 		Ecs::Ecs database;
@@ -58,11 +107,10 @@ int main()
 		}
 
 		Rendering::Renderer renderer;
-		RenderingSystem renderingSystem(renderer, database);
 
+		RenderingSystem renderingSystem(renderer, database);
 		renderingSystem.Init();
 		renderingSystem.SetViewport(0, 0, 800, 600);
-
 
 		InputSystem inputSystem(renderingSystem, database);
 		inputSystem.Init();
@@ -71,7 +119,7 @@ int main()
 
 		// intercept input
 		::glfwSetCursorPosCallback(window.win(), onCursorPos);
-
+		::glfwSetKeyCallback(window.win(), onKey);
 
 		// load world
 		createWorld(database, renderer, renderingSystem);
@@ -84,6 +132,33 @@ int main()
 
 			window.swapBuffers();
 			inputSystem.PollEvents();
+
+			// simluation
+			double now = glfwGetTime();
+			double dt = now - time;
+			time = now;
+
+			if (camMovement != 0.0)
+			{
+				static const double MOVE_SPEED = 2.0;
+				Rendering::Camera cam = renderingSystem.getCamera();
+				glm::vec3 movement = float(camMovement  * dt * MOVE_SPEED) * glm::normalize(cam.GetDirection());
+				cam.SetPosition(cam.GetPosition() + movement);
+				renderingSystem.setCamera(cam);
+			}
+			if (camRotation != 0.0)
+			{
+				static const double ROTATION_SPEED = 0.5;
+				Rendering::Camera cam = renderingSystem.getCamera();
+				glm::vec3 direction = glm::rotate(
+					glm::mat4(1.0f),
+					float(ROTATION_SPEED * dt * camRotation),
+					glm::vec3(0.0f, 1.0f, 0.0f))
+					* glm::vec4(cam.GetDirection(), 1.0);
+				cam.setDirection(direction);
+				renderingSystem.setCamera(cam);
+			}
+
 		}
 	}
 	catch(...)
@@ -172,7 +247,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	cam.SetPosition(glm::vec3(0.0f));
 	cam.LookAt(glm::vec3(1.0f, 1.0f, -5.0f)); // first ball
 	cam.LookAt(glm::vec3(-2.0f, 2.0f, -12.0f)); // second ball
-	renderingSystem.SetCamera(cam);
+	renderingSystem.setCamera(cam);
 
 	// light
 	renderingSystem.SetAmbientLight(glm::vec3(0.05));

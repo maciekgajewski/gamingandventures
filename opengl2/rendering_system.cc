@@ -110,8 +110,6 @@ void RenderingSystem::DoRender()
 				mesh.mesh->Draw();
 			}
 		});
-
-
 }
 
 void RenderingSystem::RenderToFile()
@@ -190,7 +188,7 @@ void RenderingSystem::SetViewport(int x, int y, int w, int h)
 	height_ = h;
 }
 
-void RenderingSystem::SetCamera(const Rendering::Camera& cam)
+void RenderingSystem::setCamera(const Rendering::Camera& cam)
 {
 	camera_ = cam;
 }
