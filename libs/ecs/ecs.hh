@@ -53,7 +53,7 @@ public:
 private:
 
 	std::unordered_map<EntityId, std::string> entityNames_;
-	std::uint64_t mNextFreeEntityId = 0;
+	std::uint64_t mNextFreeEntityId = 1;
 
 	std::unordered_map<ComponentTypeId, std::unique_ptr<AbstractComponentType>> componentTypes_;
 

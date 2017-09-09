@@ -20,7 +20,8 @@ public:
 	void AttachColorBuffer(Texture& texture);
 	void AttachDepthBuffer(Texture& texture);
 
-	void SaveToFile(const std::string& path, int x, int y, int w, int h);
+	void SaveToFile(const std::string& path, int x, int y, int w, int h) const;
+	std::uint32_t QueryPixel(int x, int y) const;
 
 public: // Renderer API
 

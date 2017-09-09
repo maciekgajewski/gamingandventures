@@ -41,7 +41,7 @@ void Framebuffer::AttachDepthBuffer(Texture& texture)
 	// TODO
 }
 
-void Framebuffer::SaveToFile(const std::string& path, int x, int y, int w, int h)
+void Framebuffer::SaveToFile(const std::string& path, int x, int y, int w, int h) const
 {
 	if(path.length() < 5)
 		throw std::runtime_error("Invalid file name");
@@ -65,6 +65,19 @@ void Framebuffer::SaveToFile(const std::string& path, int x, int y, int w, int h
 	}
 	else
 		throw std::runtime_error("Unsupported image format");
+}
+
+uint32_t Framebuffer::QueryPixel(int x, int y) const
+{
+	std::uint32_t data;
+	glBindFramebuffer(GL_FRAMEBUFFER, framebufferId_);
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+	glPixelStorei(GL_PACK_ALIGNMENT, 4);
+	glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	return data;
 }
 
 } // namespace Rendering

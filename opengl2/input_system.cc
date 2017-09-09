@@ -34,8 +34,8 @@ void InputSystem::SetViewport(int x, int y, int w, int h)
 
 void InputSystem::OnCursorMove(double x, double y)
 {
-	std::cout << "x=" << x << ", y=" << y << std::endl;
-	// TODO
+	auto pick = renderingSystem_.QueryPickMap(x, y);
+	std::cout << "x=" << x << ", y=" << y << ", pick=" << pick << std::endl;
 }
 
 void InputSystem::PollEvents()

@@ -30,6 +30,7 @@ public:
 	void Render();
 	void RenderToFile();
 	void RenderPickMap();
+	std::uint32_t QueryPickMap(int x, int y) const;
 
 	// Settings
 	void SetViewport(int x, int y, int w, int h);

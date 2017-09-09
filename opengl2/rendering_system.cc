@@ -95,20 +95,18 @@ void RenderingSystem::RenderToFile()
 
 void RenderingSystem::RenderPickMap()
 {
+	renderer_.RenderTo(*offScreen_);
+
 	renderer_.SetDepthTest(true);
 	renderer_.SetWireframeMode(false);
 	renderer_.SetFaceCulling(true);
-	renderer_.RenderTo(*offScreen_);
 
 	renderer_.SetClearColor(glm::vec3(0.0f));
-
 	renderer_.ClearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
 	renderer_.UseShader(*pickShader_);
 
 	pickShader_->SetUniform("camera", camera_.CalculateTransformation());
 	pickShader_->SetUniform("projection", projectionTrans_);
-
-	Rendering::Uniform modelUniform = pickShader_->GetUniform("model");
 
 	// Iterate
 	auto visitor = Ecs::BuildUniqueTypeVisitor< // TODO move to Init
@@ -138,9 +136,12 @@ void RenderingSystem::RenderPickMap()
 			pickShader_->SetUniform("color", color);
 
 			pickable.mesh->Draw();
-		});
+	});
+}
 
-	offScreen_->SaveToFile("pickmap.png", 0, 0, width_, height_);
+uint32_t RenderingSystem::QueryPickMap(int x, int y) const
+{
+	return offScreen_->QueryPixel(x, height_-y);
 }
 
 

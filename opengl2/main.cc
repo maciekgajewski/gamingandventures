@@ -76,8 +76,6 @@ int main()
 		// load world
 		createWorld(database, renderer, renderingSystem);
 
-		renderingSystem.RenderToFile();
-
 		// main loop
 		while (!window.shouldClose())
 		{
@@ -111,7 +109,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh.mesh = renderer.Meshes().CreateSphere();
 
-	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { 0x00ff0000, mesh.mesh };
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, mesh.mesh };
 
 	// ball 2
 	entityId = database.CreateEntity("Ball 2");
@@ -126,7 +124,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh2 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh2.mesh = renderer.Meshes().CreateSphere();
 
-	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { 0x00ffff00, mesh2.mesh };
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, mesh2.mesh };
 
 	// ball 3
 	entityId = database.CreateEntity("Ball 3");
@@ -140,7 +138,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh3 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh3.mesh = renderer.Meshes().CreateSphere();
 
-	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { 0x0000ff00, mesh3.mesh };
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, mesh3.mesh };
 
 	// cube
 	entityId = database.CreateEntity("Cube 1");
@@ -163,7 +161,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh4 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh4.mesh = renderer.Meshes().CreateCube();
 
-	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { 0x0000ffff, mesh4.mesh };
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, mesh4.mesh };
 
 	// camera
 	Rendering::Camera cam;
