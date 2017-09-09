@@ -23,4 +23,21 @@ Mesh* MeshManager::CreateSphere(int segments)
 
 }
 
+Mesh*MeshManager::CreateCube()
+{
+	std::string name = "cube";
+
+	auto it = mMeshes.find(name);
+
+	if (it == mMeshes.end())
+	{
+		Mesh m = buildCubeMesh();
+		auto res = mMeshes.emplace(name, std::move(m));
+		assert(res.second);
+		it = res.first;
+	}
+
+	return &(it->second);
+}
+
 } // namespace Rendering

@@ -17,6 +17,7 @@ public:
 	// Mesh* LoadFromFile(path)
 
 	Mesh* CreateSphere(int segments = 10);
+	Mesh* CreateCube();
 
 private:
 

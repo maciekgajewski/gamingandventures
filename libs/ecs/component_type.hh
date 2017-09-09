@@ -11,8 +11,8 @@ namespace Ecs {
 // Component type defines per-type component sotrage.
 // Components are stored in an associative container, uniquely identified by Entiti id
 
-using EntityId = std::uint64_t;
-using ComponentTypeId = std::uint64_t;
+using EntityId = std::uint32_t;
+using ComponentTypeId = std::uint32_t;
 
 // Base, type-erased type
 class AbstractComponentType
