@@ -31,26 +31,9 @@ void Framebuffer::AttachColorBuffer(Texture& texture)
 	assert(framebufferId_ && "Framebuffer not initilized");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, framebufferId_);
-	Rendering::Renderer::CheckError();
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.glId(), 0);
-	Rendering::Renderer::CheckError();
-
-	// TODO ugly
-	// add Z/stencil buffer
-	unsigned int rbo;
-	glGenRenderbuffers(1, &rbo);
-	Rendering::Renderer::CheckError();
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	Rendering::Renderer::CheckError();
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
-	Rendering::Renderer::CheckError();
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	Rendering::Renderer::CheckError();
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-	Rendering::Renderer::CheckError();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	Rendering::Renderer::CheckError();
 }
 
 void Framebuffer::AttachDepthBuffer(Texture& texture)
@@ -67,13 +50,9 @@ void Framebuffer::SaveToFile(const std::string& path, int x, int y, int w, int h
 	std::unique_ptr<char[]> buf(new char[bufsize]);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, framebufferId_);
-	Rendering::Renderer::CheckError();
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	Rendering::Renderer::CheckError();
 	glPixelStorei(GL_PACK_ALIGNMENT, 4);
-	Rendering::Renderer::CheckError();
 	glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buf.get());
-	Rendering::Renderer::CheckError();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

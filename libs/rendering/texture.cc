@@ -43,14 +43,10 @@ void Texture::Create(int width, int height)
 	height_ = height;
 
 	glGenTextures(1, &textureId_);
-	Rendering::Renderer::CheckError();
 	glBindTexture(GL_TEXTURE_2D, textureId_);
-	Rendering::Renderer::CheckError();
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	Rendering::Renderer::CheckError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	Rendering::Renderer::CheckError();
 	// TODO enable anisotropy here
 
 }
