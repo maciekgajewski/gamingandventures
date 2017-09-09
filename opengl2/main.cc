@@ -2,16 +2,14 @@
 #include "main_window.hh"
 
 #include "rendering_system.hh"
+#include "input_system.hh"
 
-//#include <rendering/rendering_system.hh>
 #include <rendering/mesh_utilities.hh>
 #include <rendering/renderer.hh>
 #include <rendering/components.hh>
 
 
 #include <ecs/ecs.hh>
-
-#include <glad/glad.h>
 
 #include <GLFW/glfw3.h>
 
@@ -24,9 +22,12 @@
 
 void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem);
 
+InputSystem* is = nullptr;
+
 void onCursorPos(GLFWwindow* /*window*/, double xpos, double ypos)
 {
-	std::cout << "x=" << xpos << ", y=" << ypos << std::endl;
+	if (is)
+		is->OnCursorMove(xpos, ypos);
 }
 
 int main()
@@ -62,6 +63,11 @@ int main()
 		renderingSystem.SetViewport(0, 0, 800, 600);
 
 
+		InputSystem inputSystem(renderer, database);
+		inputSystem.Init();
+		inputSystem.SetViewport(0, 0, 800, 600);
+		is = &inputSystem;
+
 		// intercept input
 		::glfwSetCursorPosCallback(window.win(), onCursorPos);
 
@@ -78,7 +84,7 @@ int main()
 			// TODO physics and others
 
 			window.swapBuffers();
-			glfwPollEvents();
+			inputSystem.PollEvents();
 		}
 	}
 	catch(...)

@@ -6,6 +6,7 @@ add_executable(opengltest2
 
 	main_window.cc main_window.hh
 	rendering_system.cc rendering_system.hh
+	input_system.cc input_system.hh
 
 	${SHADERS}
 )

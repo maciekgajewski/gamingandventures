@@ -63,7 +63,6 @@ private:
 	// off-screen buffer
 	std::unique_ptr<Rendering::Texture> offScreenColor_;
 	std::unique_ptr<Rendering::Framebuffer> offScreen_;
-	bool saved_ = false;
 
 };
 
