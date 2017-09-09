@@ -20,5 +20,6 @@ target_link_libraries(rendering
 	ecs
 
 	glad
+	assimp
 )
 

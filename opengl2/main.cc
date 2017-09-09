@@ -9,12 +9,14 @@
 #include <rendering/renderer.hh>
 #include <rendering/components.hh>
 
-
 #include <ecs/ecs.hh>
 
 #include <GLFW/glfw3.h>
 
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
 
 #include <boost/optional.hpp>
 
@@ -22,6 +24,7 @@
 
 
 void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem);
+void loadModel(Ecs::Ecs& database, const std::string& path);
 
 InputSystem* is = nullptr;
 void onCursorPos(GLFWwindow* /*window*/, double xpos, double ypos)
@@ -122,7 +125,8 @@ int main()
 		::glfwSetKeyCallback(window.win(), onKey);
 
 		// load world
-		createWorld(database, renderer, renderingSystem);
+		//createWorld(database, renderer, renderingSystem);
+		loadModel(database, "models/wraith_raider/Wraith Raider Starship.obj");
 
 		// main loop
 		while (!window.shouldClose())
@@ -168,6 +172,60 @@ int main()
 	}
 
 	glfwTerminate();
+}
+
+void loadModel(Ecs::Ecs& database, const std::string& path)
+{
+	Assimp::Importer importer;
+
+	const aiScene* scene = importer.ReadFile(path.c_str(), 0);
+//			aiProcess_CalcTangentSpace       |
+//			aiProcess_Triangulate            |
+//			aiProcess_JoinIdenticalVertices  |
+//			aiProcess_SortByPType);
+	if(!scene)
+	{
+		throw std::runtime_error("Error loading model from '" + path + "' : " + importer.GetErrorString());
+	}
+
+	// print some basic diagnostics
+	std::cout << "Model loaded from " << path << std::endl;
+	std::cout << " - meshes:    " << scene->mNumMeshes << std::endl;
+	std::cout << " - materials: " << scene->mNumMaterials << std::endl;
+	std::cout << " - textures:  " << scene->mNumTextures << std::endl;
+
+	for(int mi = 0; mi < scene->mNumMeshes; mi++)
+	{
+		aiMesh* mesh = scene->mMeshes[mi];
+		std::cout << "Mesh: " << mesh->mName.C_Str() << std::endl;
+		std::cout << " has normals: " << mesh->HasNormals() << std::endl;
+		//std::cout << " has text coords: " << mesh->HasTextureCoords( << std::endl;
+		std::cout << " uv channels: "<< mesh->GetNumUVChannels() << std::endl;
+
+		std::vector<Rendering::Mesh::Vertex> vertices;
+		std::vector<Rendering::Mesh::Face> faces;
+
+		// copy vertices
+		vertices.reserve(mesh->mNumVertices);
+		for(int vi = 0; vi < mesh->mNumVertices; vi++)
+		{
+			Rendering::Mesh::Vertex vertex;
+			aiVector3D& sourceVertex = mesh->mVertices[vi];
+			vertex.pos = glm::vec3(
+					sourceVertex.x,
+					sourceVertex.y,
+					sourceVertex.z
+				);
+			if (mesh->mNormals)
+			{
+				vertex.normal = glm::vec3(
+						mesh->mNormals[vi].x,
+						mesh->mNormals[vi].y,
+						mesh->mNormals[vi].z
+					);
+			}
+		}
+	}
 }
 
 void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem)

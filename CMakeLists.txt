@@ -14,6 +14,10 @@ if(GLFW_ROOT)
 	LINK_DIRECTORIES(${GLFW_ROOT}/lib)
 endif()
 
+find_package(assimp 4.0 REQUIRED)
+include_directories(${ASSIMP_INCLUDE_DIRS})
+link_directories(${ASSIMP_LIBRARY_DIRS})
+
 # externals
 # glad - code genrated and downloaded
 add_subdirectory(glad)
