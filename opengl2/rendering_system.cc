@@ -40,13 +40,21 @@ void RenderingSystem::Init()
 
 	skyboxMesh_ = std::make_unique<Rendering::Mesh>(Rendering::buildSkyboxMesh());
 	skybox_ = std::make_unique<Rendering::Texture>();
+//	skybox_->loadCubemap({
+//			"textures/yokohama_cubemap/posx.jpg",
+//			"textures/yokohama_cubemap/negx.jpg",
+//			"textures/yokohama_cubemap/posy.jpg",
+//			"textures/yokohama_cubemap/negy.jpg",
+//			"textures/yokohama_cubemap/posz.jpg",
+//			"textures/yokohama_cubemap/negz.jpg",
+//		});
 	skybox_->loadCubemap({
-			"textures/yokohama_cubemap/posx.jpg",
-			"textures/yokohama_cubemap/negx.jpg",
-			"textures/yokohama_cubemap/posy.jpg",
-			"textures/yokohama_cubemap/negy.jpg",
-			"textures/yokohama_cubemap/posz.jpg",
-			"textures/yokohama_cubemap/negz.jpg",
+			"textures/mp_cloud9/cloud9_rt.tga",
+			"textures/mp_cloud9/cloud9_lf.tga",
+			"textures/mp_cloud9/cloud9_up.tga",
+			"textures/mp_cloud9/cloud9_dn.tga",
+			"textures/mp_cloud9/cloud9_bk.tga",
+			"textures/mp_cloud9/cloud9_ft.tga",
 		});
 }
 
