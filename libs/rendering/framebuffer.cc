@@ -21,6 +21,9 @@ Framebuffer::Framebuffer()
 
 Framebuffer::~Framebuffer()
 {
+	if (depthRenderbuffer_)
+		glDeleteRenderbuffers(1, &depthRenderbuffer_);
+
 	if (framebufferId_)
 		glDeleteFramebuffers(1, &framebufferId_);
 }
@@ -39,6 +42,23 @@ void Framebuffer::AttachColorBuffer(Texture& texture)
 void Framebuffer::AttachDepthBuffer(Texture& texture)
 {
 	// TODO
+}
+
+void Framebuffer::attachDepthRenderbuffer(int w, int h)
+{
+	assert(framebufferId_ && "Framebuffer not initilized");
+
+	if (depthRenderbuffer_)
+		glDeleteRenderbuffers(1, &depthRenderbuffer_);
+
+	glGenRenderbuffers(1, &depthRenderbuffer_);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer_);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, framebufferId_);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer_);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 void Framebuffer::SaveToFile(const std::string& path, int x, int y, int w, int h) const

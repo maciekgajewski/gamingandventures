@@ -20,6 +20,8 @@ public:
 	void AttachColorBuffer(Texture& texture);
 	void AttachDepthBuffer(Texture& texture);
 
+	void attachDepthRenderbuffer(int w, int h);
+
 	void SaveToFile(const std::string& path, int x, int y, int w, int h) const;
 	std::uint32_t QueryPixel(int x, int y) const;
 
@@ -30,6 +32,7 @@ public: // Renderer API
 private:
 
 	unsigned framebufferId_ = 0;
+	unsigned depthRenderbuffer_ = 0;
 };
 
 } // namespace Rendering

@@ -230,6 +230,7 @@ void RenderingSystem::SetViewport(int x, int y, int w, int h)
 	offScreenColor_ = std::make_unique<Rendering::Texture>();
 	offScreenColor_->createEmpty(w, h);
 	offScreen_->AttachColorBuffer(*offScreenColor_);
+	offScreen_->attachDepthRenderbuffer(w, h);
 	width_ = w;
 	height_ = h;
 }
