@@ -23,6 +23,7 @@
 #include <glm-aabb/AABB.hpp>
 
 #include <boost/optional.hpp>
+#include <boost/filesystem.hpp>
 
 #include <iostream>
 
@@ -248,6 +249,7 @@ std::vector<Rendering::Mesh::Face> getFaces(aiMesh* mesh)
 void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem, const std::string& path)
 {
 	Assimp::Importer importer;
+	boost::filesystem::path modelDir = boost::filesystem::path(path).remove_filename();
 
 	glm::AABB boundingBox;
 
@@ -272,21 +274,57 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 
 	for(int mi = 0; mi < scene->mNumMeshes; mi++)
 	{
-		aiMesh* mesh = scene->mMeshes[mi];
-		std::cout << "Mesh: " << mesh->mName.C_Str() << std::endl;
-		std::cout << " has normals: " << mesh->HasNormals() << std::endl;
-		//std::cout << " has text coords: " << mesh->HasTextureCoords( << std::endl;
-		std::cout << " uv channels: "<< mesh->GetNumUVChannels() << std::endl;
+		aiMesh* aMesh = scene->mMeshes[mi];
+		aiMaterial* aMaterial = scene->mMaterials[aMesh->mMaterialIndex];
 
-		std::vector<Rendering::Mesh::Vertex> vertices = getVertices(mesh, boundingBox);
-		std::vector<Rendering::Mesh::Face> faces = getFaces(mesh);
+		aiString materialName;
+		aiGetMaterialString(aMaterial, AI_MATKEY_NAME, &materialName);
+
+		aiString texture;
+		bool hasTexture = false;
+		boost::filesystem::path texturePath;
+		auto res = aiGetMaterialTexture(aMaterial, aiTextureType_DIFFUSE, 0, &texture);
+		if (aiReturn_SUCCESS == res)
+		{
+			texturePath = modelDir / boost::filesystem::path(texture.C_Str());
+			hasTexture = true;
+		}
+
+		std::cout << " ======================= " << std::endl;
+		std::cout << "Mesh: " << aMesh->mName.C_Str() << std::endl;
+		std::cout << " has normals: " << aMesh->HasNormals() << std::endl;
+		//std::cout << " has text coords: " << mesh->HasTextureCoords( << std::endl;
+		std::cout << " uv channels: "<< aMesh->GetNumUVChannels() << std::endl;
+		std::cout << "material name: " << materialName.C_Str() << std::endl;
+		if (hasTexture)
+			std::cout << "texture: " << texturePath << std::endl;
+		else
+			std::cout << "no texture" << std::endl;
+
+
+		// build mesh
+		std::vector<Rendering::Mesh::Vertex> vertices = getVertices(aMesh, boundingBox);
+		std::vector<Rendering::Mesh::Face> faces = getFaces(aMesh);
+
+		// get texture for mesh
+
 
 		// create entity per mesh
-		Ecs::EntityId entityId = database.CreateEntity(mesh->mName.C_Str());
-		// TODO use proper material
+		Ecs::EntityId entityId = database.CreateEntity(aMesh->mName.C_Str());
+		// use proper material
+
+
 		Rendering::Components::Material& mat = database.AddUniqueComponentToEntity<Rendering::Components::Material>(entityId);
-		mat.diffuseTexture = renderer.textures().Load("textures/ball.jpg");
-		//
+		if (hasTexture)
+		{
+			mat.diffuseTexture = renderer.textures().Load(texturePath.string());
+		}
+		else
+		{
+			// TODO use default texture. Probably different material needed
+			mat.diffuseTexture = renderer.textures().Load("textures/ball.jpg");
+		}
+
 		Rendering::Components::Transformation& tr = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(entityId);
 		// mesh
 		Rendering::Components::Mesh& meshComp = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
@@ -294,6 +332,7 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 		// mouse
 		database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, meshComp.mesh };
 		database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = { false };
+
 	}// meshes
 
 	std::cout << "Bounding box: " << boundingBox.getMin() << " - " << boundingBox.getMax() << std::endl;

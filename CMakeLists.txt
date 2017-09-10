@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 FIND_PACKAGE(OpenGL REQUIRED)
-find_package(Boost 1.50 REQUIRED)
+find_package(Boost 1.50 REQUIRED COMPONENTS filesystem)
 
 include_directories(${Boost_INCLUDE_DIRS})
 

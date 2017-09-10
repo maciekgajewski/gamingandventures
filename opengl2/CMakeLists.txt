@@ -19,4 +19,5 @@ target_link_libraries(opengltest2
 
 	glm_static
 	${OpenGL_LIBRARIES}
+	${Boost_LIBRARIES}
 )
