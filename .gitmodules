@@ -13,3 +13,6 @@
 [submodule "x_glm_aabb"]
 	path = x_glm_aabb
 	url = https://github.com/maciekgajewski/cpm-glm-aabb.git
+[submodule "x_assimp"]
+	path = x_assimp
+	url = https://github.com/assimp/assimp.git
