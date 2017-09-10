@@ -333,6 +333,7 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 			// TODO use default texture. Probably different material needed
 			mat.diffuseTexture = renderer.textures().Load("textures/ball.jpg");
 		}
+		mat.shininess = 1.0f;
 
 		Rendering::Components::Transformation& tr = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(entityId);
 		// mesh
@@ -353,6 +354,10 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 	cam.setPosition(glm::vec3(600.0f, 200.0f, 100.0f));
 	cam.lookAt(glm::vec3(0.0f, 50.0f, 0.0f)); // first ball
 	renderingSystem.setCamera(cam);
+
+	// light
+	renderingSystem.SetAmbientLight(glm::vec3(0.05));
+	renderingSystem.SetPointLight({600.0f, 600.0f, 600.0f}, glm::vec3(1.0));
 }
 
 void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem)
