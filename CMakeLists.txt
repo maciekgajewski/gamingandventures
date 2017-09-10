@@ -14,7 +14,6 @@ if(GLFW_ROOT)
 	LINK_DIRECTORIES(${GLFW_ROOT}/lib)
 endif()
 
-find_package(assimp 4.0 REQUIRED)
 include_directories(${ASSIMP_INCLUDE_DIRS})
 link_directories(${ASSIMP_LIBRARY_DIRS})
 
@@ -37,6 +36,11 @@ include_directories(x_stb)
 
 # Google test
 add_subdirectory(x_googletest googletest)
+
+# Ass Imp
+add_subdirectory(x_assimp)
+include_directories(x_assimp/include)
+include_directories(${CMAKE_BINARY_DIR}/x_assimp/include/)
 
 # libraries
 add_subdirectory(libs)
