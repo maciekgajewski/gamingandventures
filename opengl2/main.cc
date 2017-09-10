@@ -17,6 +17,7 @@
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include <boost/optional.hpp>
 
@@ -24,7 +25,7 @@
 
 
 void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem);
-void loadModel(Ecs::Ecs& database, const std::string& path);
+void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem, const std::string& path);
 
 InputSystem* is = nullptr;
 void onCursorPos(GLFWwindow* /*window*/, double xpos, double ypos)
@@ -126,7 +127,7 @@ int main()
 
 		// load world
 		//createWorld(database, renderer, renderingSystem);
-		loadModel(database, "models/wraith_raider/Wraith Raider Starship.obj");
+		loadModel(database, renderer, renderingSystem, "models/wraith_raider/Wraith Raider Starship.obj");
 
 		// main loop
 		while (!window.shouldClose())
@@ -174,11 +175,75 @@ int main()
 	glfwTerminate();
 }
 
-void loadModel(Ecs::Ecs& database, const std::string& path)
+std::vector<Rendering::Mesh::Vertex> getVertices(aiMesh* mesh)
+{
+	std::vector<Rendering::Mesh::Vertex> vertices;
+
+	vertices.reserve(mesh->mNumVertices);
+	for(int vi = 0; vi < mesh->mNumVertices; vi++)
+	{
+		Rendering::Mesh::Vertex vertex;
+		aiVector3D& sourceVertex = mesh->mVertices[vi];
+		vertex.pos = glm::vec3(
+				sourceVertex.x,
+				sourceVertex.y,
+				sourceVertex.z
+			);
+		if (mesh->mNormals)
+		{
+			vertex.normal = glm::vec3(
+					mesh->mNormals[vi].x,
+					mesh->mNormals[vi].y,
+					mesh->mNormals[vi].z
+				);
+		}
+		aiVector3D* uvCoords = mesh->mTextureCoords[0];
+		if (uvCoords)
+		{
+			vertex.st = glm::vec2(
+					uvCoords[vi].x,
+					uvCoords[vi].y
+				);
+		}
+
+		vertices.push_back(vertex);
+	} // vertices
+
+	return vertices;
+}
+
+std::vector<Rendering::Mesh::Face> getFaces(aiMesh* mesh)
+{
+	std::vector<Rendering::Mesh::Face> faces;
+
+	// copy faces
+	faces.reserve(mesh->mNumFaces);
+	for(int fi = 0; fi < mesh->mNumFaces; fi++)
+	{
+		const aiFace& aface = mesh->mFaces[fi];
+		if (aface.mNumIndices != 3)
+			throw std::runtime_error("I don't know how to handle face with " + std::to_string(aface.mNumIndices));
+
+		Rendering::Mesh::Face face(
+				aface.mIndices[0],
+				aface.mIndices[1],
+				aface.mIndices[2]
+			);
+		faces.push_back(face);
+	} // faces
+
+	return faces;
+}
+
+
+void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem, const std::string& path)
 {
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(path.c_str(), 0);
+	const aiScene* scene = importer.ReadFile(
+			path.c_str(),
+			aiProcess_Triangulate
+		);
 //			aiProcess_CalcTangentSpace       |
 //			aiProcess_Triangulate            |
 //			aiProcess_JoinIdenticalVertices  |
@@ -202,30 +267,27 @@ void loadModel(Ecs::Ecs& database, const std::string& path)
 		//std::cout << " has text coords: " << mesh->HasTextureCoords( << std::endl;
 		std::cout << " uv channels: "<< mesh->GetNumUVChannels() << std::endl;
 
-		std::vector<Rendering::Mesh::Vertex> vertices;
-		std::vector<Rendering::Mesh::Face> faces;
+		std::vector<Rendering::Mesh::Vertex> vertices = getVertices(mesh);
+		std::vector<Rendering::Mesh::Face> faces = getFaces(mesh);
 
-		// copy vertices
-		vertices.reserve(mesh->mNumVertices);
-		for(int vi = 0; vi < mesh->mNumVertices; vi++)
-		{
-			Rendering::Mesh::Vertex vertex;
-			aiVector3D& sourceVertex = mesh->mVertices[vi];
-			vertex.pos = glm::vec3(
-					sourceVertex.x,
-					sourceVertex.y,
-					sourceVertex.z
-				);
-			if (mesh->mNormals)
-			{
-				vertex.normal = glm::vec3(
-						mesh->mNormals[vi].x,
-						mesh->mNormals[vi].y,
-						mesh->mNormals[vi].z
-					);
-			}
-		}
-	}
+		// create entity per mesh
+		Ecs::EntityId entityId = database.CreateEntity(mesh->mName.C_Str());
+		// TODO use proper material
+		Rendering::Components::Material& mat = database.AddUniqueComponentToEntity<Rendering::Components::Material>(entityId);
+		mat.diffuseTexture = renderer.textures().Load("textures/ball.jpg");
+		//
+		Rendering::Components::Transformation& tr = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(entityId);
+		// mesh
+		Rendering::Components::Mesh& meshComp = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
+		meshComp.mesh = new Rendering::Mesh(vertices, faces);
+	}// meshes
+
+
+	// camera
+	Rendering::Camera cam;
+	cam.setPosition(glm::vec3(0.0f, 0.0f, 15.0f));
+	cam.lookAt(glm::vec3(0.0f)); // first ball
+	renderingSystem.setCamera(cam);
 }
 
 void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem)

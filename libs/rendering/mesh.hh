@@ -29,6 +29,14 @@ public:
 		Setup();
 	}
 
+	template<typename VertexRange, typename FaceRange>
+	Mesh(VertexRange&& vs, FaceRange&& fs)
+		: vertices_(std::forward<VertexRange>(vs))
+		, faces_(std::forward<FaceRange>(fs))
+	{
+		Setup();
+	}
+
 	Mesh() = default;
 	Mesh(const Mesh&) = delete;
 	Mesh(Mesh&&) = default;
