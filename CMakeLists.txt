@@ -24,8 +24,13 @@ add_subdirectory(glad)
 
 # GLM - the maths library
 set(GLM_STATIC_LIBRARY_ENABLE 1)
+add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
 add_subdirectory(x_glm/glm glm)
 include_directories(x_glm)
+
+# AABB extension to glm
+add_subdirectory(x_glm_aabb)
+include_directories(x_glm_aabb)
 
 # STB - single file libs, header-only
 include_directories(x_stb)

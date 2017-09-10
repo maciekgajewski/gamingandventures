@@ -10,3 +10,6 @@
 [submodule "opengl/x_stb"]
 	path = x_stb
 	url = https://github.com/nothings/stb.git
+[submodule "x_glm_aabb"]
+	path = x_glm_aabb
+	url = https://github.com/maciekgajewski/cpm-glm-aabb.git

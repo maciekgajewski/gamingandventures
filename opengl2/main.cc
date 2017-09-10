@@ -19,10 +19,18 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm-aabb/AABB.hpp>
+
 #include <boost/optional.hpp>
 
 #include <iostream>
 
+
+std::ostream& operator<<(std::ostream& o, const glm::vec3& v)
+{
+	return o << "(" << v.x << ", " << v.y << ", " << v.z << ")";
+}
 
 void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem);
 void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSystem& renderingSystem, const std::string& path);
@@ -175,7 +183,7 @@ int main()
 	glfwTerminate();
 }
 
-std::vector<Rendering::Mesh::Vertex> getVertices(aiMesh* mesh)
+std::vector<Rendering::Mesh::Vertex> getVertices(aiMesh* mesh, glm::AABB& boundingBox)
 {
 	std::vector<Rendering::Mesh::Vertex> vertices;
 
@@ -207,6 +215,7 @@ std::vector<Rendering::Mesh::Vertex> getVertices(aiMesh* mesh)
 		}
 
 		vertices.push_back(vertex);
+		boundingBox.extend(vertex.pos);
 	} // vertices
 
 	return vertices;
@@ -240,6 +249,8 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 {
 	Assimp::Importer importer;
 
+	glm::AABB boundingBox;
+
 	const aiScene* scene = importer.ReadFile(
 			path.c_str(),
 			aiProcess_Triangulate
@@ -267,7 +278,7 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 		//std::cout << " has text coords: " << mesh->HasTextureCoords( << std::endl;
 		std::cout << " uv channels: "<< mesh->GetNumUVChannels() << std::endl;
 
-		std::vector<Rendering::Mesh::Vertex> vertices = getVertices(mesh);
+		std::vector<Rendering::Mesh::Vertex> vertices = getVertices(mesh, boundingBox);
 		std::vector<Rendering::Mesh::Face> faces = getFaces(mesh);
 
 		// create entity per mesh
@@ -280,13 +291,19 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 		// mesh
 		Rendering::Components::Mesh& meshComp = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 		meshComp.mesh = new Rendering::Mesh(vertices, faces);
+		// mouse
+		database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, meshComp.mesh };
+		database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = { false };
 	}// meshes
 
+	std::cout << "Bounding box: " << boundingBox.getMin() << " - " << boundingBox.getMax() << std::endl;
+	std::cout << "Center: " << boundingBox.getCenter() << std::endl;
+	std::cout << "Longest edge: " << boundingBox.getLongestEdge() << std::endl;
 
 	// camera
 	Rendering::Camera cam;
-	cam.setPosition(glm::vec3(0.0f, 0.0f, 15.0f));
-	cam.lookAt(glm::vec3(0.0f)); // first ball
+	cam.setPosition(glm::vec3(600.0f, 200.0f, 100.0f));
+	cam.lookAt(glm::vec3(0.0f, 50.0f, 0.0f)); // first ball
 	renderingSystem.setCamera(cam);
 }
 

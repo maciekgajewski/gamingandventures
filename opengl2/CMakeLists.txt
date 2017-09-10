@@ -15,6 +15,7 @@ target_link_libraries(opengltest2
 	ecs
 	rendering
 	utils
+	glm_aabb
 
 	glm_static
 	${OpenGL_LIBRARIES}
