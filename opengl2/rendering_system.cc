@@ -48,13 +48,21 @@ void RenderingSystem::Init()
 //			"textures/yokohama_cubemap/posz.jpg",
 //			"textures/yokohama_cubemap/negz.jpg",
 //		});
+//	skybox_->loadCubemap({
+//			"textures/mp_cloud9/cloud9_rt.tga",
+//			"textures/mp_cloud9/cloud9_lf.tga",
+//			"textures/mp_cloud9/cloud9_up.tga",
+//			"textures/mp_cloud9/cloud9_dn.tga",
+//			"textures/mp_cloud9/cloud9_bk.tga",
+//			"textures/mp_cloud9/cloud9_ft.tga",
+//		});
 	skybox_->loadCubemap({
-			"textures/mp_cloud9/cloud9_rt.tga",
-			"textures/mp_cloud9/cloud9_lf.tga",
-			"textures/mp_cloud9/cloud9_up.tga",
-			"textures/mp_cloud9/cloud9_dn.tga",
-			"textures/mp_cloud9/cloud9_bk.tga",
-			"textures/mp_cloud9/cloud9_ft.tga",
+			"textures/mp_portal/portal_rt.tga",
+			"textures/mp_portal/portal_lf.tga",
+			"textures/mp_portal/portal_up.tga",
+			"textures/mp_portal/portal_dn.tga",
+			"textures/mp_portal/portal_bk.tga",
+			"textures/mp_portal/portal_ft.tga",
 		});
 }
 
