@@ -154,22 +154,31 @@ int main()
 
 			if (camMovement != 0.0)
 			{
-				static const double MOVE_SPEED = 2.0;
+				// move camera up/down
+				static const double ROTATION_SPEED = 0.5;
 				Rendering::Camera cam = renderingSystem.getCamera();
-				glm::vec3 movement = float(camMovement  * dt * MOVE_SPEED) * glm::normalize(cam.getDirection());
-				cam.setPosition(cam.getPosition() + movement);
+				glm::vec3 axis = glm::vec3(-cam.getPosition().z, 0.0f, cam.getPosition().x);
+				glm::vec3 position = glm::rotate(
+						glm::mat4(1.0f),
+						float(ROTATION_SPEED * dt * camMovement),
+						axis
+					) * glm::vec4(cam.getPosition(), 1.0);
+				cam.setPosition(position);
+				cam.lookAt(glm::vec3(0.0f));
 				renderingSystem.setCamera(cam);
 			}
 			if (camRotation != 0.0)
 			{
+				// orbit camera arounf the origin
 				static const double ROTATION_SPEED = 0.5;
 				Rendering::Camera cam = renderingSystem.getCamera();
-				glm::vec3 direction = glm::rotate(
-					glm::mat4(1.0f),
-					float(ROTATION_SPEED * dt * camRotation),
-					glm::vec3(0.0f, 1.0f, 0.0f))
-					* glm::vec4(cam.getDirection(), 1.0);
-				cam.setDirection(direction);
+				glm::vec3 position = glm::rotate(
+						glm::mat4(1.0f),
+						float(ROTATION_SPEED * dt * camRotation),
+						glm::vec3(0.0f, 1.0f, 0.0f)
+					) * glm::vec4(cam.getPosition(), 1.0);
+				cam.setPosition(position);
+				cam.lookAt(glm::vec3(0.0f));
 				renderingSystem.setCamera(cam);
 			}
 
