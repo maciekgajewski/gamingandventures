@@ -10,7 +10,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-
 RenderingSystem::RenderingSystem(Rendering::Renderer& renderer, Ecs::Ecs& data)
 	: renderer_(renderer), database_(data)
 {
@@ -96,7 +95,9 @@ void RenderingSystem::DoRender()
 		skyboxMesh_->Draw();
 	}
 
-	// render solid items
+	// render solid items, detect transparent
+	std::vector<Ecs::EntityId> transparentItems;
+
 	renderer_.setDepthMask(true);
 	renderer_.useShader(*solidShader_);
 
@@ -109,6 +110,7 @@ void RenderingSystem::DoRender()
 	solidShader_->SetUniform("viewPos", camera_.getPosition());
 
 	Rendering::Uniform modelUniform = solidShader_->GetUniform("model");
+	solidShader_->SetUniform("opacity", 1.0f);
 
 	// Iterate and render
 	auto visitor = Ecs::BuildUniqueTypeVisitor< // TODO move to Init
@@ -122,13 +124,37 @@ void RenderingSystem::DoRender()
 		const Rendering::Components::Mesh& mesh,
 		const Rendering::Components::Transformation& trans)
 		{
-			modelUniform.Set(trans.transformation);
+			if (material.opacity == 1.0f)
+			{
+				modelUniform.Set(trans.transformation);
 
-			renderer_.activateTexture(*material.diffuseTexture, 0);
-			solidShader_->SetUniform("shininess", material.shininess);
+				renderer_.activateTexture(*material.diffuseTexture, 0);
+				solidShader_->SetUniform("shininess", material.shininess);
 
-			mesh.mesh->Draw();
+				mesh.mesh->Draw();
+			}
+			else
+			{
+				transparentItems.push_back(id);
+			}
 		});
+
+	renderer_.setBlend(true);
+	// Draw transparent items (TODO: sort by Z)
+	for (Ecs::EntityId id : transparentItems)
+	{
+		const Rendering::Components::Material& material = *database_.GetUniqueComponentType<Rendering::Components::Material>().Find(id);
+		const Rendering::Components::Mesh& mesh = *database_.GetUniqueComponentType<Rendering::Components::Mesh>().Find(id);
+		const Rendering::Components::Transformation& trans = *database_.GetUniqueComponentType<Rendering::Components::Transformation>().Find(id);
+
+		modelUniform.Set(trans.transformation);
+
+		renderer_.activateTexture(*material.diffuseTexture, 0);
+		solidShader_->SetUniform("shininess", material.shininess);
+		solidShader_->SetUniform("opacity", material.opacity);
+
+		mesh.mesh->Draw();
+	}
 
 	// Second pass - draw selection
 	renderer_.setDepthTest(false);

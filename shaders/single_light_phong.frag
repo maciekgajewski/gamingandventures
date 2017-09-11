@@ -13,6 +13,7 @@ uniform vec3 lightColor;
 
 uniform vec3 viewPos;
 uniform float shininess;
+uniform float opacity;
 
 uniform sampler2D diffuseTexture;
 
@@ -33,5 +34,5 @@ void main()
 	vec3 specular = spec * lightColor;
 
 	vec3 finalColor = vec3((diffuse + ambientLight + specular)*color.rgb);
-	FragColor = vec4(clamp(finalColor, 0.0, 1.0), 1.0);
+	FragColor = vec4(clamp(finalColor, 0.0, 1.0), opacity);
 }

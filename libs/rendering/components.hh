@@ -18,6 +18,7 @@ struct Material
 {
 	Texture* diffuseTexture = nullptr;
 	float shininess = 0.5f;
+	float opacity = 1.0f;
 };
 
 struct Mesh

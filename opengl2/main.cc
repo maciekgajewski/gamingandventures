@@ -359,6 +359,7 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 			mat.diffuseTexture = renderer.textures().getSolid({diffuse.r, diffuse.g, diffuse.b, 1.0f});
 		}
 		mat.shininess = shinines;
+		mat.opacity = opacity;
 
 		Rendering::Components::Transformation& tr = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(entityId);
 		// mesh

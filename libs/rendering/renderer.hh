@@ -32,6 +32,7 @@ public:
 	void setDepthMask(bool enabled); // enables/disbales writing to depth buffer
 	void setFaceCulling(bool enabled);
 	void setWireframeMode(bool wireframe);
+	void setBlend(bool enabled); // enables/disables alphablending
 
 	void useShader(Shader& shader);
 	void activateTexture(Texture& texture, unsigned unit);

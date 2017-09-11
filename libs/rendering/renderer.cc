@@ -75,6 +75,22 @@ void Renderer::setWireframeMode(bool wireframe)
 
 }
 
+void Renderer::setBlend(bool enabled)
+{
+	if (enabled)
+		glEnable(GL_BLEND);
+	else
+		glDisable(GL_BLEND);
+	checkError();
+
+	if (enabled)
+	{
+		// expose, if needed
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		checkError();
+	}
+}
+
 void Renderer::useShader(Shader& shader)
 {
 	unsigned programId = shader.glId();
