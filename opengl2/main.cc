@@ -123,11 +123,11 @@ int main()
 
 		RenderingSystem renderingSystem(renderer, database);
 		renderingSystem.Init();
-		renderingSystem.SetViewport(0, 0, 800, 600);
+		renderingSystem.SetViewport(0, 0, 1024, 768);
 
 		InputSystem inputSystem(renderingSystem, database);
 		inputSystem.Init();
-		inputSystem.SetViewport(0, 0, 800, 600);
+		inputSystem.SetViewport(0, 0, 1024, 768);
 		is = &inputSystem;
 
 		// intercept input
