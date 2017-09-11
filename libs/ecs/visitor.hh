@@ -20,7 +20,7 @@ struct TypeAndId
 };
 
 template<typename F, typename CT, typename... CTs>
-void ForwardIf(F fun, EntityId id, bool cond, CT& primary, CTs*... ptrs)
+void forwardIf(F fun, EntityId id, bool cond, CT& primary, CTs*... ptrs)
 {
 	if (cond)
 		fun(id, primary, *ptrs...);
@@ -52,21 +52,21 @@ class Visitor;
 
 // Builds visitor for non-unique types
 template<typename PrimaryCT,  typename... CTs>
-Visitor<PrimaryCT, CTs...> BuildVisitor(Ecs& ecs, CTypeId<PrimaryCT> primaryId, CTypeId<CTs>... ids)
+Visitor<PrimaryCT, CTs...> buildVisitor(Ecs& ecs, CTypeId<PrimaryCT> primaryId, CTypeId<CTs>... ids)
 {
 	// build an array of pointers to storages
 	typename Visitor<PrimaryCT, CTs...>::SecondaryTupleType secondary{
-		ecs.GetComponentType<CTs>(ids.id)...
+		ecs.getComponentType<CTs>(ids.id)...
 		};
 
-	return Visitor<PrimaryCT, CTs...>(ecs.GetComponentType<PrimaryCT>(primaryId.id), secondary);
+	return Visitor<PrimaryCT, CTs...>(ecs.getComponentType<PrimaryCT>(primaryId.id), secondary);
 }
 
 // Builds visitor for unique types
 template<typename... CTs>
-Visitor<CTs...> BuildUniqueTypeVisitor(Ecs& ecs)
+Visitor<CTs...> buildAutoTypeVisitor(Ecs& ecs)
 {
-	return BuildVisitor(ecs, CTypeId<CTs>(ecs.GetUniqueComponentTypeId<CTs>())...);
+	return buildVisitor(ecs, CTypeId<CTs>(ecs.getAutoComponentTypeId<CTs>())...);
 }
 
 
@@ -90,11 +90,11 @@ public:
 	//
 	// f(EntityId, PrimaryCT&, CTs&...)
 	template<typename F>
-	void ForEach(F fun)
+	void forEach(F fun)
 	{
-		primaryType_.ForEach([&](EntityId id, PrimaryCT& component)
+		primaryType_.forEach([&](EntityId id, PrimaryCT& component)
 		{
-			VisitSecondaries<sizeof...(CTs)>(fun, id, component);
+			visitSecondaries<sizeof...(CTs)>(fun, id, component);
 		});
 	}
 
@@ -104,24 +104,24 @@ private:
 	// recursive array visitator
 	template<int LEFT_TO_VISIT, typename F>
 	std::enable_if_t<LEFT_TO_VISIT == 0>
-	VisitSecondaries(F fun, EntityId id, PrimaryCT& primary, CTs&... cts)
+	visitSecondaries(F fun, EntityId id, PrimaryCT& primary, CTs&... cts)
 	{
 		fun(id, primary, cts...);
 	}
 
 	template<int LEFT_TO_VISIT, typename F, typename... ResovledCTs>
 	std::enable_if_t<(LEFT_TO_VISIT > 0)>
-	VisitSecondaries(F fun, EntityId id, PrimaryCT& primary, ResovledCTs&... foundPreviously)
+	visitSecondaries(F fun, EntityId id, PrimaryCT& primary, ResovledCTs&... foundPreviously)
 	{
 		constexpr int NEXT_TO_FIND = sizeof...(CTs) - LEFT_TO_VISIT;
 
 		auto& compomnentType = std::get<NEXT_TO_FIND>(secondaryTypes_);
-		auto* foundNow = compomnentType.Find(id);
+		auto* foundNow = compomnentType.find(id);
 
 		if (!foundNow)
 			return;
 
-		VisitSecondaries<LEFT_TO_VISIT-1>(
+		visitSecondaries<LEFT_TO_VISIT-1>(
 			fun, id, primary, foundPreviously..., *foundNow);
 	}
 

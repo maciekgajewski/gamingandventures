@@ -5,7 +5,7 @@
 
 namespace Ecs {
 
-EntityId Ecs::CreateEntity(const std::string& name)
+EntityId Ecs::createEntity(const std::string& name)
 {
 	auto id = mNextFreeEntityId;
 	mNextFreeEntityId++;

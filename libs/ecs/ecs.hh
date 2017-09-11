@@ -18,37 +18,37 @@ class Ecs
 public:
 
 	// Creates new entity
-	EntityId CreateEntity(const std::string& name);
+	EntityId createEntity(const std::string& name);
 
 	// Deletes entity and all associated components
-	void DeleteEntity(EntityId id);
+	void deleteEntity(EntityId id);
 
-	// Registers a unique C++ component type. The C++ will be bound to the returned ID.
-	// Only one compennt with this C++ type can exist.
+	// Registers an automatic (compile-time detected) C++ component type. The C++ type will be bound to the returned ID.
+	// The registered C++ type must be unique
 	//
-	// Use AddComponentType when re-using C++ types is needed
+	// Use addComponentType when re-using C++ types is needed
 	template<typename CT>
-	ComponentTypeId RegisterUniqueComponentType(const std::string& typeName);
+	ComponentTypeId registerAutoComponentType(const std::string& typeName);
 
-	// Returs Id of unique type, thorws if no such type
+	// Returs Id of automatic type, thorws if no such type
 	template<typename CT>
-	ComponentTypeId GetUniqueComponentTypeId();
-
-	// Adds uniquely-typed component to entity
-	template<typename CT>
-	CT& AddComponentToEntity(EntityId eid, ComponentTypeId cid, const CT& value = CT{});
+	ComponentTypeId getAutoComponentTypeId();
 
 	// Adds uniquely-typed component to entity
 	template<typename CT>
-	CT& AddUniqueComponentToEntity(EntityId id, const CT& value = CT{});
+	CT& addComponentToEntity(EntityId eid, ComponentTypeId cid, const CT& value = CT{});
+
+	// Adds uniquely-typed component to entity
+	template<typename CT>
+	CT& addAutoComponentToEntity(EntityId id, const CT& value = CT{});
 
 	// Gets component storage by id
 	template<typename CT>
-	ComponentType<CT>& GetComponentType(ComponentTypeId id);
+	ComponentType<CT>& getComponentType(ComponentTypeId id);
 
-	// Gets unique compontent type by type alone
+	// Gets automatic compontent type by type alone
 	template<typename CT>
-	ComponentType<CT>& GetUniqueComponentType();
+	ComponentType<CT>& getAutoComponentType();
 
 private:
 
@@ -61,7 +61,7 @@ private:
 };
 
 template<typename CT>
-ComponentTypeId Ecs::RegisterUniqueComponentType(const std::string& typeName)
+ComponentTypeId Ecs::registerAutoComponentType(const std::string& typeName)
 {
 	if (uniqueTypes_.find(std::type_index(typeid(CT))) != uniqueTypes_.end())
 		throw std::logic_error(std::string("C++ type '") + typeid(CT).name() + "' already resgistered");
@@ -79,28 +79,28 @@ ComponentTypeId Ecs::RegisterUniqueComponentType(const std::string& typeName)
 }
 
 template<typename CT>
-CT& Ecs::AddComponentToEntity(EntityId eid, ComponentTypeId cid, const CT& value)
+CT& Ecs::addComponentToEntity(EntityId eid, ComponentTypeId cid, const CT& value)
 {
 	if (entityNames_.find(eid) == entityNames_.end())
 		throw std::logic_error("No such entity");
 
-	ComponentType<CT>& type = GetComponentType<CT>(cid);
-	return type.AddToEntity(eid, value);
+	ComponentType<CT>& type = getComponentType<CT>(cid);
+	return type.addToEntity(eid, value);
 }
 
 template<typename CT>
-CT& Ecs::AddUniqueComponentToEntity(EntityId eid, const CT& value)
+CT& Ecs::addAutoComponentToEntity(EntityId eid, const CT& value)
 {
 	if (entityNames_.find(eid) == entityNames_.end())
 		throw std::logic_error("No such entity");
 
-	ComponentType<CT>& type = GetUniqueComponentType<CT>();
-	return type.AddToEntity(eid, value);
+	ComponentType<CT>& type = getAutoComponentType<CT>();
+	return type.addToEntity(eid, value);
 }
 
 
 template<typename CT>
-ComponentType<CT>& Ecs::GetComponentType(ComponentTypeId id)
+ComponentType<CT>& Ecs::getComponentType(ComponentTypeId id)
 {
 	auto it = componentTypes_.find(id);
 	if (it == componentTypes_.end())
@@ -110,7 +110,7 @@ ComponentType<CT>& Ecs::GetComponentType(ComponentTypeId id)
 
 	std::type_index expectedTi(typeid(CT));
 
-	if (abstractType.GetCppType() != expectedTi)
+	if (abstractType.getCppType() != expectedTi)
 		throw std::logic_error("Invalid component type");
 
 	return static_cast<ComponentType<CT>&>(abstractType);
@@ -118,48 +118,21 @@ ComponentType<CT>& Ecs::GetComponentType(ComponentTypeId id)
 
 
 template<typename CT>
-ComponentTypeId Ecs::GetUniqueComponentTypeId()
+ComponentTypeId Ecs::getAutoComponentTypeId()
 {
 	std::type_index expectedTi(typeid(CT));
 	auto typeIt = uniqueTypes_.find(expectedTi);
 	if (typeIt == uniqueTypes_.end())
-		throw std::logic_error(std::string("Not a registered unique type: '") + typeid(CT).name() + "'");
+		throw std::logic_error(std::string("Not a registered automatic type: '") + typeid(CT).name() + "'");
 
 	return typeIt->second;
 }
 
 template<typename CT>
-ComponentType<CT>& Ecs::GetUniqueComponentType()
+ComponentType<CT>& Ecs::getAutoComponentType()
 {
-	ComponentTypeId id = GetUniqueComponentTypeId<CT>();
-	return GetComponentType<CT>(id);
+	ComponentTypeId id = getAutoComponentTypeId<CT>();
+	return getComponentType<CT>(id);
 }
-
-
-/*
-template<typename T> struct GetCtFromTypePtr;
-template<typename CT> struct GetCtFromTypePtr<Ecs::ComponentType<CT>*>
-{
-	using type = CT;
-};
-
-template<typename F, typename CT, typename... CTs>
-void ForwardIf(F fun, EntityId id, bool cond, CT& primary, CTs*... ptrs)
-{
-	if (cond)
-		fun(id, primary, *ptrs...);
-}
-
-template<typename CT, typename... CTs, typename F>
-void Ecs::ForEach(F fun)
-{
-	ComponentType<CT>& primaryType = GetComponentByType<CT>();
-	primaryType.ForEach([&](EntityId id, CT& component)
-	{
-		bool allPresent = true;
-		ForwardIf(fun, id, allPresent, component, (GetComponentByType<CTs>().Find(id, allPresent))...);
-	});
-}
-*/
 
 }

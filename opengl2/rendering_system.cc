@@ -29,11 +29,11 @@ void RenderingSystem::Init()
 	pointLightPos_ = glm::vec3(0.0f);
 	pointLightColor_ = glm::vec3(0.0f);
 
-	database_.RegisterUniqueComponentType<Rendering::Components::Material>("Material");
-	database_.RegisterUniqueComponentType<Rendering::Components::Mesh>("Mesh");
-	database_.RegisterUniqueComponentType<Rendering::Components::Transformation>("Transformation");
-	database_.RegisterUniqueComponentType<Components::MousePickable>("MousePickable");
-	database_.RegisterUniqueComponentType<Components::Selectable>("Selectable");
+	database_.registerAutoComponentType<Rendering::Components::Material>("Material");
+	database_.registerAutoComponentType<Rendering::Components::Mesh>("Mesh");
+	database_.registerAutoComponentType<Rendering::Components::Transformation>("Transformation");
+	database_.registerAutoComponentType<Components::MousePickable>("MousePickable");
+	database_.registerAutoComponentType<Components::Selectable>("Selectable");
 
 	offScreen_ = std::make_unique<Rendering::Framebuffer>();
 
@@ -113,12 +113,12 @@ void RenderingSystem::DoRender()
 	solidShader_->SetUniform("opacity", 1.0f);
 
 	// Iterate and render
-	auto visitor = Ecs::BuildUniqueTypeVisitor< // TODO move to Init
+	auto visitor = Ecs::buildAutoTypeVisitor< // TODO move to Init
 		Rendering::Components::Material,
 		Rendering::Components::Mesh,
 		Rendering::Components::Transformation>(database_);
 
-	visitor.ForEach([&](
+	visitor.forEach([&](
 		Ecs::EntityId id,
 		const Rendering::Components::Material& material,
 		const Rendering::Components::Mesh& mesh,
@@ -143,9 +143,9 @@ void RenderingSystem::DoRender()
 	// Draw transparent items (TODO: sort by Z)
 	for (Ecs::EntityId id : transparentItems)
 	{
-		const Rendering::Components::Material& material = *database_.GetUniqueComponentType<Rendering::Components::Material>().Find(id);
-		const Rendering::Components::Mesh& mesh = *database_.GetUniqueComponentType<Rendering::Components::Mesh>().Find(id);
-		const Rendering::Components::Transformation& trans = *database_.GetUniqueComponentType<Rendering::Components::Transformation>().Find(id);
+		const Rendering::Components::Material& material = *database_.getAutoComponentType<Rendering::Components::Material>().find(id);
+		const Rendering::Components::Mesh& mesh = *database_.getAutoComponentType<Rendering::Components::Mesh>().find(id);
+		const Rendering::Components::Transformation& trans = *database_.getAutoComponentType<Rendering::Components::Transformation>().find(id);
 
 		modelUniform.Set(trans.transformation);
 
@@ -165,12 +165,12 @@ void RenderingSystem::DoRender()
 	pickShader_->SetUniform("projection", projectionTrans_);
 	pickShader_->SetUniform("color", glm::vec4(1.0, 0.8, 0.0, 1.0));
 
-	auto selectionVisitor = Ecs::BuildUniqueTypeVisitor< // TODO move to Init
+	auto selectionVisitor = Ecs::buildAutoTypeVisitor< // TODO move to Init
 		Components::Selectable,
 		Rendering::Components::Mesh,
 		Rendering::Components::Transformation>(database_);
 
-	selectionVisitor.ForEach([&](
+	selectionVisitor.forEach([&](
 		Ecs::EntityId id,
 		const Components::Selectable& selectable,
 		const Rendering::Components::Mesh& mesh,
@@ -207,11 +207,11 @@ void RenderingSystem::RenderPickMap()
 	pickShader_->SetUniform("projection", projectionTrans_);
 
 	// Pass - draw all
-	auto visitor = Ecs::BuildUniqueTypeVisitor< // TODO move to Init
+	auto visitor = Ecs::buildAutoTypeVisitor< // TODO move to Init
 		Components::MousePickable,
 		Rendering::Components::Transformation>(database_);
 
-	visitor.ForEach([&](
+	visitor.forEach([&](
 		Ecs::EntityId id,
 		const Components::MousePickable& pickable,
 		const Rendering::Components::Transformation& trans)

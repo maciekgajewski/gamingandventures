@@ -36,10 +36,10 @@ void InputSystem::OnCursorMove(double x, double y)
 {
 	auto pick = renderingSystem_.QueryPickMap(x, y);
 	//std::cout << "x=" << x << ", y=" << y << ", pick=" << pick << std::endl;
-	auto visitor  = Ecs::BuildUniqueTypeVisitor<
+	auto visitor  = Ecs::buildAutoTypeVisitor<
 		Components::MousePickable, Components::Selectable>(database_);
 
-	visitor.ForEach([&](Ecs::EntityId id, const Components::MousePickable& pickable, Components::Selectable& selectable)
+	visitor.forEach([&](Ecs::EntityId id, const Components::MousePickable& pickable, Components::Selectable& selectable)
 	{
 		if (pickable.value == pick)
 			selectable.selected = true;

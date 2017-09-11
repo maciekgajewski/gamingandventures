@@ -23,8 +23,8 @@ public:
 	{
 	}
 
-	const std::string& GetName() const { return typeName_; }
-	std::type_index GetCppType() const { return typeIndex_; }
+	const std::string& getName() const { return typeName_; }
+	std::type_index getCppType() const { return typeIndex_; }
 
 private:
 	std::string typeName_;
@@ -44,7 +44,7 @@ public:
 	{
 	}
 
-	CT& AddToEntity(EntityId id, const CT& value)
+	CT& addToEntity(EntityId id, const CT& value)
 	{
 		auto res = mData.emplace(id, value);
 		if (res.second)
@@ -58,7 +58,7 @@ public:
 	//
 	// (EntityId, CT&);
 	template<typename F>
-	void ForEach(F f)
+	void forEach(F f)
 	{
 		for(auto& p : mData)
 		{
@@ -66,7 +66,7 @@ public:
 		}
 	}
 
-	CT* Find(EntityId id)
+	CT* find(EntityId id)
 	{
 		auto it = mData.find(id);
 		if (it == mData.end())

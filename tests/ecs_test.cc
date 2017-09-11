@@ -32,27 +32,27 @@ protected:
 
 	void RegisterTypes()
 	{
-		ecs_.RegisterUniqueComponentType<NumAspect>("NumAspect");
-		ecs_.RegisterUniqueComponentType<StringAspect>("StringAspect");
-		ecs_.RegisterUniqueComponentType<CharAspect>("CharAspect");
+		ecs_.registerAutoComponentType<NumAspect>("NumAspect");
+		ecs_.registerAutoComponentType<StringAspect>("StringAspect");
+		ecs_.registerAutoComponentType<CharAspect>("CharAspect");
 	}
 
 	void AddElements()
 	{
-		stringId_ = ecs_.CreateEntity("string entity");
-		ecs_.AddUniqueComponentToEntity<StringAspect>(stringId_, {"str1"});
+		stringId_ = ecs_.createEntity("string entity");
+		ecs_.addAutoComponentToEntity<StringAspect>(stringId_, {"str1"});
 
-		stringNumId_ = ecs_.CreateEntity("string/int entity");
-		ecs_.AddUniqueComponentToEntity<StringAspect>(stringNumId_, {"str2"});
-		ecs_.AddUniqueComponentToEntity<NumAspect>(stringNumId_, {2});
+		stringNumId_ = ecs_.createEntity("string/int entity");
+		ecs_.addAutoComponentToEntity<StringAspect>(stringNumId_, {"str2"});
+		ecs_.addAutoComponentToEntity<NumAspect>(stringNumId_, {2});
 
-		numId_ = ecs_.CreateEntity("int entity");
-		ecs_.AddUniqueComponentToEntity<NumAspect>(numId_, {3});
+		numId_ = ecs_.createEntity("int entity");
+		ecs_.addAutoComponentToEntity<NumAspect>(numId_, {3});
 
-		numCharId_ = ecs_.CreateEntity("int-char entity");
-		ecs_.AddUniqueComponentToEntity<NumAspect>(numCharId_, {4});
-		ecs_.AddUniqueComponentToEntity<CharAspect>(numCharId_, {'a'});
-		ecs_.AddUniqueComponentToEntity<StringAspect>(numCharId_, {"str4"});
+		numCharId_ = ecs_.createEntity("int-char entity");
+		ecs_.addAutoComponentToEntity<NumAspect>(numCharId_, {4});
+		ecs_.addAutoComponentToEntity<CharAspect>(numCharId_, {'a'});
+		ecs_.addAutoComponentToEntity<StringAspect>(numCharId_, {"str4"});
 	}
 
 	Ecs ecs_;
@@ -65,8 +65,8 @@ protected:
 
 TEST_F(EcsTests, RegisteringTheSameUniqueTypeTwiceFails)
 {
-	ecs_.RegisterUniqueComponentType<NumAspect>("NumAspect");
-	EXPECT_THROW(ecs_.RegisterUniqueComponentType<NumAspect>("NumAspect2"), std::logic_error);
+	ecs_.registerAutoComponentType<NumAspect>("NumAspect");
+	EXPECT_THROW(ecs_.registerAutoComponentType<NumAspect>("NumAspect2"), std::logic_error);
 }
 
 TEST_F(EcsTests, VisitationPrimaryOnly)
@@ -74,10 +74,10 @@ TEST_F(EcsTests, VisitationPrimaryOnly)
 	RegisterTypes();
 	AddElements();
 
-	auto visitor = BuildUniqueTypeVisitor<StringAspect>(ecs_);
+	auto visitor = buildAutoTypeVisitor<StringAspect>(ecs_);
 
 	int stringCount = 0;
-	visitor.ForEach([&](EntityId, StringAspect&)
+	visitor.forEach([&](EntityId, StringAspect&)
 	{
 		stringCount++;
 	});
@@ -90,12 +90,12 @@ TEST_F(EcsTests, VisitationWithSecondaries)
 	RegisterTypes();
 	AddElements();
 
-	auto visitor = BuildUniqueTypeVisitor<StringAspect, NumAspect, CharAspect>(ecs_);
+	auto visitor = buildAutoTypeVisitor<StringAspect, NumAspect, CharAspect>(ecs_);
 
 	int numsTotal = 0;
 	std::string stringsTotal;
 	char charTotal = 0;
-	visitor.ForEach([&](EntityId, const StringAspect& s, const NumAspect& n, const CharAspect& c)
+	visitor.forEach([&](EntityId, const StringAspect& s, const NumAspect& n, const CharAspect& c)
 	{
 		numsTotal += n.i;
 		stringsTotal += s.s;
