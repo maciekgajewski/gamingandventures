@@ -20,6 +20,7 @@ public:
 	Texture& operator=(const Texture&) = delete;
 
 	void createEmpty(int w, int h);
+	void generateSolid(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a);
 	void loadFromFile(const std::string& path, MipmapsOption generateMipmaps);
 
 	void loadCubemap(const std::vector<std::string>& paths);

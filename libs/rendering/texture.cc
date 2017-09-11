@@ -34,7 +34,15 @@ void Texture::createEmpty(int width, int height)
 	create(width, height);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-	Rendering::Renderer::checkError();
+	Renderer::checkError();
+}
+
+void Texture::generateSolid(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a)
+{
+	create(1, 1);
+	std::uint32_t data = (a<<24) + (r<<16) + (g<<8) + b;
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data);
+	Renderer::checkError();
 }
 
 void Texture::create(int width, int height)
@@ -45,10 +53,14 @@ void Texture::create(int width, int height)
 	height_ = height;
 
 	glGenTextures(1, &textureId_);
+	Renderer::checkError();
 	glBindTexture(GL_TEXTURE_2D, textureId_);
+	Renderer::checkError();
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	Renderer::checkError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	Renderer::checkError();
 	// TODO enable anisotropy here
 
 }
@@ -63,11 +75,12 @@ void Texture::loadFromFile(const std::string& path, Texture::MipmapsOption gener
 	create(width, height);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-
+	Renderer::checkError();
 
 	if (generateMipmaps == GENERATE_MIPMAPS)
 	{
 		glGenerateMipmap(GL_TEXTURE_2D);
+		Renderer::checkError();
 	}
 
 	stbi_image_free(data);

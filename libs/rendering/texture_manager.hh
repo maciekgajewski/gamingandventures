@@ -3,6 +3,8 @@
 
 #include "texture.hh"
 
+#include <glm/glm.hpp>
+
 #include <string>
 #include <unordered_map>
 #include <memory>
@@ -20,7 +22,11 @@ class TextureManager
 public:
 	TextureManager();
 
-	Texture* Load(const std::string& name, Texture::MipmapsOption mipmaps = Texture::GENERATE_MIPMAPS);
+	// Loads texture from file. Once loaded, the texture stays in cache, so that subsequent calls will be served from the cache
+	Texture* load(const std::string& name, Texture::MipmapsOption mipmaps = Texture::GENERATE_MIPMAPS);
+
+	// Creates 1x1 texture with supplied color
+	Texture* getSolid(const glm::vec4& rgba);
 
 private:
 

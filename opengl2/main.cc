@@ -332,7 +332,7 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 			std::cout << "Diffuse: " << diffuse.r << ", " << diffuse.g << ", " << diffuse.b << std::endl;
 		}
 		aiColor3D emmisive;
-		if (aMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, diffuse) == aiReturn_SUCCESS)
+		if (aMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, emmisive) == aiReturn_SUCCESS)
 		{
 			std::cout << "Emmisive: " << emmisive.r << ", " << emmisive.g << ", " << emmisive.b << std::endl;
 		}
@@ -352,12 +352,11 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 		Rendering::Components::Material& mat = database.AddUniqueComponentToEntity<Rendering::Components::Material>(entityId);
 		if (hasTexture)
 		{
-			mat.diffuseTexture = renderer.textures().Load(texturePath.string());
+			mat.diffuseTexture = renderer.textures().load(texturePath.string());
 		}
 		else
 		{
-			// TODO use default texture. Probably different material needed
-			mat.diffuseTexture = renderer.textures().Load("textures/ball.jpg");
+			mat.diffuseTexture = renderer.textures().getSolid({diffuse.r, diffuse.g, diffuse.b, 1.0f});
 		}
 		mat.shininess = shinines;
 
@@ -392,7 +391,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Ecs::EntityId entityId = database.CreateEntity("Ball 1");
 
 	Rendering::Components::Material& mat = database.AddUniqueComponentToEntity<Rendering::Components::Material>(entityId);
-	mat.diffuseTexture = renderer.textures().Load("textures/ball.jpg");
+	mat.diffuseTexture = renderer.textures().load("textures/ball.jpg");
 
 	Rendering::Components::Transformation& tr = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(entityId);
 	tr.transformation = glm::translate(glm::mat4(1.0), glm::vec3(1.0f, 1.0f, -5.0f));
@@ -407,7 +406,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	entityId = database.CreateEntity("Ball 2");
 
 	Rendering::Components::Material& mat2 = database.AddUniqueComponentToEntity<Rendering::Components::Material>(entityId);
-	mat2.diffuseTexture = renderer.textures().Load("textures/ground.jpg");
+	mat2.diffuseTexture = renderer.textures().load("textures/ground.jpg");
 	mat2.shininess = 2.0f;
 
 	Rendering::Components::Transformation& tr2 = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(entityId);
@@ -423,7 +422,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	entityId = database.CreateEntity("Ball 3");
 
 	Rendering::Components::Material& mat3 = database.AddUniqueComponentToEntity<Rendering::Components::Material>(entityId);
-	mat3.diffuseTexture = renderer.textures().Load("textures/ball.jpg");
+	mat3.diffuseTexture = renderer.textures().load("textures/ball.jpg");
 
 	Rendering::Components::Transformation& tr3 = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(entityId);
 	tr3.transformation = glm::translate(glm::mat4(1.0), glm::vec3(-1.0f, -2.0f, -9.0f));
@@ -438,7 +437,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	entityId = database.CreateEntity("Cube 1");
 
 	Rendering::Components::Material& mat4 = database.AddUniqueComponentToEntity<Rendering::Components::Material>(entityId);
-	mat4.diffuseTexture = renderer.textures().Load("textures/ball.jpg");
+	mat4.diffuseTexture = renderer.textures().load("textures/ball.jpg");
 
 	Rendering::Components::Transformation& tr4 = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(entityId);
 	tr4.transformation =
