@@ -299,6 +299,7 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 			hasTexture = true;
 		}
 
+
 		std::cout << " ======================= " << std::endl;
 		std::cout << "Mesh: " << aMesh->mName.C_Str() << std::endl;
 		std::cout << " has normals: " << aMesh->HasNormals() << std::endl;
@@ -310,6 +311,31 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 		else
 			std::cout << "no texture" << std::endl;
 
+		float shinines = 0.0f;
+		if (aMaterial->Get(AI_MATKEY_SHININESS, shinines) == aiReturn_SUCCESS)
+		{
+			std::cout << "Shinines: " << shinines << std::endl;
+		}
+		float shininesStrength;
+		if (aMaterial->Get(AI_MATKEY_SHININESS_STRENGTH, shininesStrength) == aiReturn_SUCCESS)
+		{
+			std::cout << "Shinines strength: " << shininesStrength << std::endl;
+		}
+		float opacity = 1.0f;
+		if (aMaterial->Get(AI_MATKEY_OPACITY, opacity) == aiReturn_SUCCESS)
+		{
+			std::cout << "Opacity: " << opacity << std::endl;
+		}
+		aiColor3D diffuse;
+		if (aMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse) == aiReturn_SUCCESS)
+		{
+			std::cout << "Diffuse: " << diffuse.r << ", " << diffuse.g << ", " << diffuse.b << std::endl;
+		}
+		aiColor3D emmisive;
+		if (aMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, diffuse) == aiReturn_SUCCESS)
+		{
+			std::cout << "Emmisive: " << emmisive.r << ", " << emmisive.g << ", " << emmisive.b << std::endl;
+		}
 
 		// build mesh
 		std::vector<Rendering::Mesh::Vertex> vertices = getVertices(aMesh, boundingBox);
@@ -333,7 +359,7 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 			// TODO use default texture. Probably different material needed
 			mat.diffuseTexture = renderer.textures().Load("textures/ball.jpg");
 		}
-		mat.shininess = 1.0f;
+		mat.shininess = shinines;
 
 		Rendering::Components::Transformation& tr = database.AddUniqueComponentToEntity<Rendering::Components::Transformation>(entityId);
 		// mesh
