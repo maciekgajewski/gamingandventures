@@ -198,6 +198,7 @@ void RenderingSystem::RenderPickMap()
 	renderer_.setDepthTest(true);
 	renderer_.setWireframeMode(false);
 	renderer_.setFaceCulling(true);
+	renderer_.setBlend(false);
 
 	renderer_.setClearColor(glm::vec4(0.0f));
 	renderer_.clearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
@@ -235,7 +236,6 @@ void RenderingSystem::RenderPickMap()
 
 			pickable.mesh->Draw();
 	});
-
 }
 
 uint32_t RenderingSystem::QueryPickMap(int x, int y) const
