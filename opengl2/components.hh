@@ -12,13 +12,13 @@ namespace Components
 
 struct MousePickable
 {
-	std::uint32_t value = 0;
-	Rendering::Mesh* mesh = nullptr;
+	std::uint32_t value;
+	Rendering::Mesh* mesh;
 };
 
 struct Selectable
 {
-	bool selected = false;
+	bool selected;
 };
 
 }

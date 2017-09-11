@@ -5,7 +5,7 @@ add_library(utils
 
 target_include_directories(utils INTERFACE ..)
 
-if(WINDOWS)
+if(WIN32)
 	set(GLFW3_LIB glfw3)
 else()
 	set(GLFW3_LIB glfw)

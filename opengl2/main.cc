@@ -340,8 +340,8 @@ void loadModel(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSyste
 		Rendering::Components::Mesh& meshComp = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 		meshComp.mesh = new Rendering::Mesh(vertices, faces);
 		// mouse
-		database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, meshComp.mesh };
-		database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = { false };
+		database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = Components::MousePickable{ entityId, meshComp.mesh };
+		database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = Components::Selectable{ false };
 
 	}// meshes
 
@@ -374,8 +374,8 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh.mesh = renderer.meshes().CreateSphere();
 
-	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, mesh.mesh };
-	database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = { true };
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = Components::MousePickable{ entityId, mesh.mesh };
+	database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = Components::Selectable{ true };
 
 	// ball 2
 	entityId = database.CreateEntity("Ball 2");
@@ -390,8 +390,8 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh2 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh2.mesh = renderer.meshes().CreateSphere();
 
-	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, mesh2.mesh };
-	database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = { false };
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = Components::MousePickable{ entityId, mesh2.mesh };
+	database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = Components::Selectable{ false };
 
 	// ball 3
 	entityId = database.CreateEntity("Ball 3");
@@ -405,8 +405,8 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh3 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh3.mesh = renderer.meshes().CreateSphere();
 
-	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, mesh3.mesh };
-	database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = { false };
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = Components::MousePickable{ entityId, mesh3.mesh };
+	database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = Components::Selectable{ false };
 
 	// cube
 	entityId = database.CreateEntity("Cube 1");
@@ -429,8 +429,8 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	Rendering::Components::Mesh& mesh4 = database.AddUniqueComponentToEntity<Rendering::Components::Mesh>(entityId);
 	mesh4.mesh = renderer.meshes().CreateCube();
 
-	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = { entityId, mesh4.mesh };
-	database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = { false };
+	database.AddUniqueComponentToEntity<Components::MousePickable>(entityId) = Components::MousePickable{ entityId, mesh4.mesh };
+	database.AddUniqueComponentToEntity<Components::Selectable>(entityId) = Components::Selectable{ false };
 
 	// camera
 	Rendering::Camera cam;
