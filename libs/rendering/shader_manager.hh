@@ -15,7 +15,7 @@ class ShaderManager
 public:
 	ShaderManager();
 
-	Shader* Load(const std::string& vert, const std::string& frag);
+	Shader* load(const std::string& vert, const std::string& frag);
 
 private:
 

@@ -4,7 +4,7 @@
 
 class GLFWwindow;
 
-namespace OT {
+namespace Utils {
 
 class Window
 {

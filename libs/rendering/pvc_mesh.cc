@@ -4,14 +4,14 @@
 
 namespace Rendering {
 
-void PvcMesh::Draw()
+void PvcMesh::draw()
 {
 	glBindVertexArray(vao_);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eao_); // why is this needed?
 	glDrawElements(GL_TRIANGLES, faces_.size() * 3, GL_UNSIGNED_INT, 0);
 }
 
-void PvcMesh::Setup()
+void PvcMesh::setup()
 {
 	glGenVertexArrays(1, &vao_);
 	glBindVertexArray(vao_);

@@ -13,11 +13,10 @@ class MeshManager
 {
 public:
 
-	// TODO
-	// Mesh* LoadFromFile(path)
+	// TODO loading from file
 
-	Mesh* CreateSphere(int segments = 10);
-	Mesh* CreateCube();
+	Mesh* createSphere(int segments = 10);
+	Mesh* createCube();
 
 private:
 

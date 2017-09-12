@@ -398,7 +398,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	tr.transformation = glm::translate(glm::mat4(1.0), glm::vec3(1.0f, 1.0f, -5.0f));
 
 	Rendering::Components::Mesh& mesh = database.addAutoComponentToEntity<Rendering::Components::Mesh>(entityId);
-	mesh.mesh = renderer.meshes().CreateSphere();
+	mesh.mesh = renderer.meshes().createSphere();
 
 	database.addAutoComponentToEntity<Components::MousePickable>(entityId) = Components::MousePickable{ entityId, mesh.mesh };
 	database.addAutoComponentToEntity<Components::Selectable>(entityId) = Components::Selectable{ true };
@@ -414,7 +414,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	tr2.transformation = glm::translate(glm::mat4(1.0), glm::vec3(-2.0f, 2.0f, -12.0f));
 
 	Rendering::Components::Mesh& mesh2 = database.addAutoComponentToEntity<Rendering::Components::Mesh>(entityId);
-	mesh2.mesh = renderer.meshes().CreateSphere();
+	mesh2.mesh = renderer.meshes().createSphere();
 
 	database.addAutoComponentToEntity<Components::MousePickable>(entityId) = Components::MousePickable{ entityId, mesh2.mesh };
 	database.addAutoComponentToEntity<Components::Selectable>(entityId) = Components::Selectable{ false };
@@ -429,7 +429,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 	tr3.transformation = glm::translate(glm::mat4(1.0), glm::vec3(-1.0f, -2.0f, -9.0f));
 
 	Rendering::Components::Mesh& mesh3 = database.addAutoComponentToEntity<Rendering::Components::Mesh>(entityId);
-	mesh3.mesh = renderer.meshes().CreateSphere();
+	mesh3.mesh = renderer.meshes().createSphere();
 
 	database.addAutoComponentToEntity<Components::MousePickable>(entityId) = Components::MousePickable{ entityId, mesh3.mesh };
 	database.addAutoComponentToEntity<Components::Selectable>(entityId) = Components::Selectable{ false };
@@ -453,7 +453,7 @@ void createWorld(Ecs::Ecs& database, Rendering::Renderer& renderer, RenderingSys
 
 
 	Rendering::Components::Mesh& mesh4 = database.addAutoComponentToEntity<Rendering::Components::Mesh>(entityId);
-	mesh4.mesh = renderer.meshes().CreateCube();
+	mesh4.mesh = renderer.meshes().createCube();
 
 	database.addAutoComponentToEntity<Components::MousePickable>(entityId) = Components::MousePickable{ entityId, mesh4.mesh };
 	database.addAutoComponentToEntity<Components::Selectable>(entityId) = Components::Selectable{ false };

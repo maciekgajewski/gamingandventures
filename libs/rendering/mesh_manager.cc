@@ -5,7 +5,7 @@
 
 namespace Rendering {
 
-Mesh* MeshManager::CreateSphere(int segments)
+Mesh* MeshManager::createSphere(int segments)
 {
 	std::string name = "spehere" + std::to_string(segments);
 
@@ -23,7 +23,7 @@ Mesh* MeshManager::CreateSphere(int segments)
 
 }
 
-Mesh*MeshManager::CreateCube()
+Mesh*MeshManager::createCube()
 {
 	std::string name = "cube";
 

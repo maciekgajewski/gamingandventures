@@ -28,7 +28,7 @@ Framebuffer::~Framebuffer()
 		glDeleteFramebuffers(1, &framebufferId_);
 }
 
-void Framebuffer::AttachColorBuffer(Texture& texture)
+void Framebuffer::attachColorBuffer(Texture& texture)
 {
 	assert(texture.glId() && "Texture not initialized");
 	assert(framebufferId_ && "Framebuffer not initilized");
@@ -39,7 +39,7 @@ void Framebuffer::AttachColorBuffer(Texture& texture)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Framebuffer::AttachDepthBuffer(Texture& texture)
+void Framebuffer::attachDepthBuffer(Texture& texture)
 {
 	// TODO
 }
@@ -61,7 +61,7 @@ void Framebuffer::attachDepthRenderbuffer(int w, int h)
 
 }
 
-void Framebuffer::SaveToFile(const std::string& path, int x, int y, int w, int h) const
+void Framebuffer::saveToFile(const std::string& path, int x, int y, int w, int h) const
 {
 	if(path.length() < 5)
 		throw std::runtime_error("Invalid file name");
@@ -87,7 +87,7 @@ void Framebuffer::SaveToFile(const std::string& path, int x, int y, int w, int h
 		throw std::runtime_error("Unsupported image format");
 }
 
-uint32_t Framebuffer::QueryPixel(int x, int y) const
+uint32_t Framebuffer::queryPixel(int x, int y) const
 {
 	std::uint32_t data;
 	glBindFramebuffer(GL_FRAMEBUFFER, framebufferId_);

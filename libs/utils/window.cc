@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <iostream>
 
-namespace OT {
+namespace Utils {
 
 void Window::windowResizedFun(GLFWwindow* window, int width, int height)
 {

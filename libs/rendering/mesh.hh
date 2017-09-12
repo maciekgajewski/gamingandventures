@@ -1,3 +1,4 @@
+// (C) 2017 Maciej Gajewski
 #pragma once
 
 #include <glm/glm.hpp>
@@ -26,7 +27,7 @@ public:
 		: vertices_(vb, ve)
 		, faces_(fb, fe)
 	{
-		Setup();
+		setup();
 	}
 
 	template<typename VertexRange, typename FaceRange>
@@ -34,7 +35,7 @@ public:
 		: vertices_(std::forward<VertexRange>(vs))
 		, faces_(std::forward<FaceRange>(fs))
 	{
-		Setup();
+		setup();
 	}
 
 	Mesh() = default;
@@ -43,11 +44,11 @@ public:
 
 	Mesh& operator=(Mesh&&) = default;
 
-	void Draw();
+	void draw();
 
 private:
 
-	void Setup();
+	void setup();
 
 	std::vector<Vertex> vertices_;
 	std::vector<Face> faces_;
@@ -57,5 +58,4 @@ private:
 	unsigned eao_ = 0;
 };
 
-} // namespace OT
-
+}

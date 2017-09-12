@@ -3,7 +3,7 @@
 
 #include <utils/window.hh>
 
-class MainWindow: public OT::Window
+class MainWindow: public Utils::Window
 {
 public:
 	MainWindow();

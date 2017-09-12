@@ -17,27 +17,27 @@ public:
 	Uniform() = default;
 	explicit Uniform(int l) : location_(l) {}
 
-	void Set(const glm::vec3& v)
+	void set(const glm::vec3& v)
 	{
 		glUniform3f(location_, v.x, v.y, v.z);
 	}
 
-	void Set(const glm::vec4& v)
+	void set(const glm::vec4& v)
 	{
 		glUniform4f(location_, v.r, v.g, v.b, v.a);
 	}
 
-	void Set(const glm::mat4& m)
+	void set(const glm::mat4& m)
 	{
 		glUniformMatrix4fv(location_, 1, GL_FALSE, glm::value_ptr(m));
 	}
 
-	void Set(std::int32_t v)
+	void set(std::int32_t v)
 	{
 		glUniform1i(location_, v);
 	}
 
-	void Set(float v)
+	void set(float v)
 	{
 		glUniform1f(location_, v);
 	}
@@ -62,12 +62,12 @@ public:
 	~Shader();
 
 	// Manipulating uniforms
-	Uniform GetUniform(const char* name) const;
+	Uniform getUniform(const char* name) const;
 
 	template<typename T>
-	void SetUniform(const char* name, const T& v)
+	void setUniform(const char* name, const T& v)
 	{
-		GetUniform(name).Set(v);
+		getUniform(name).set(v);
 	}
 
 	Shader& operator=(Shader&& other) { std::swap(shaderProgramId_, other.shaderProgramId_); return *this; }

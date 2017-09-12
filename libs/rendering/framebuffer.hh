@@ -17,13 +17,13 @@ public:
 	Framebuffer(const Framebuffer&) = delete;
 	Framebuffer& operator=(const Framebuffer&) = delete;
 
-	void AttachColorBuffer(Texture& texture);
-	void AttachDepthBuffer(Texture& texture);
+	void attachColorBuffer(Texture& texture);
+	void attachDepthBuffer(Texture& texture);
 
 	void attachDepthRenderbuffer(int w, int h);
 
-	void SaveToFile(const std::string& path, int x, int y, int w, int h) const;
-	std::uint32_t QueryPixel(int x, int y) const;
+	void saveToFile(const std::string& path, int x, int y, int w, int h) const;
+	std::uint32_t queryPixel(int x, int y) const;
 
 public: // Renderer API
 

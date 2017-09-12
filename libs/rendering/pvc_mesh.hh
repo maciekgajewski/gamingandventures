@@ -25,7 +25,7 @@ public:
 		: vertices_(vb, ve)
 		, faces_(fb, fe)
 	{
-		Setup();
+		setup();
 	}
 
 	PvcMesh() = default;
@@ -34,11 +34,11 @@ public:
 
 	PvcMesh& operator=(PvcMesh&&) = default;
 
-	void Draw();
+	void draw();
 
 private:
 
-	void Setup();
+	void setup();
 
 	std::vector<Vertex> vertices_;
 	std::vector<Face> faces_;
@@ -48,5 +48,5 @@ private:
 	unsigned eao_ = 0;
 };
 
-} // namespace OT
+}
 

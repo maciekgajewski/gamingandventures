@@ -68,7 +68,7 @@ Shader::Shader(
 
 
 
-Uniform Shader::GetUniform(const char* name) const
+Uniform Shader::getUniform(const char* name) const
 {
 	assert(shaderProgramId_ && "Shader not initialized");
 	int loc = glGetUniformLocation(shaderProgramId_, name);

@@ -10,7 +10,7 @@ ShaderManager::ShaderManager()
 {
 }
 
-Shader* ShaderManager::Load(const std::string& vert, const std::string& frag)
+Shader* ShaderManager::load(const std::string& vert, const std::string& frag)
 {
 	Key key(vert, frag);
 	auto it = mShaders.find(key);

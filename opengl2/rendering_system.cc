@@ -21,9 +21,9 @@ RenderingSystem::~RenderingSystem()
 
 void RenderingSystem::Init()
 {
-	solidShader_  = renderer_.shaders().Load("shaders/single_light_phong.vert", "shaders/single_light_phong.frag");
-	pickShader_   = renderer_.shaders().Load("shaders/solid.vert", "shaders/solid.frag");
-	skyboxShader_ = renderer_.shaders().Load("shaders/skybox.vert", "shaders/skybox.frag");
+	solidShader_  = renderer_.shaders().load("shaders/single_light_phong.vert", "shaders/single_light_phong.frag");
+	pickShader_   = renderer_.shaders().load("shaders/solid.vert", "shaders/solid.frag");
+	skyboxShader_ = renderer_.shaders().load("shaders/skybox.vert", "shaders/skybox.frag");
 
 	ambientLight_ = glm::vec3(1.0f);
 	pointLightPos_ = glm::vec3(0.0f);
@@ -87,12 +87,12 @@ void RenderingSystem::DoRender()
 		fixedCam.setPosition(glm::vec3(0.0f));
 
 		renderer_.useShader(*skyboxShader_);
-		skyboxShader_->SetUniform("projection", projectionTrans_);
-		skyboxShader_->SetUniform("camera", fixedCam.calculateTransformation());
+		skyboxShader_->setUniform("projection", projectionTrans_);
+		skyboxShader_->setUniform("camera", fixedCam.calculateTransformation());
 
 		renderer_.activateCubemap(*skybox_);
 		renderer_.setDepthMask(false);
-		skyboxMesh_->Draw();
+		skyboxMesh_->draw();
 	}
 
 	// render solid items, detect transparent
@@ -101,16 +101,16 @@ void RenderingSystem::DoRender()
 	renderer_.setDepthMask(true);
 	renderer_.useShader(*solidShader_);
 
-	solidShader_->SetUniform("ambientLight", ambientLight_);
-	solidShader_->SetUniform("lightColor", pointLightColor_);
-	solidShader_->SetUniform("lightPos", pointLightPos_);
+	solidShader_->setUniform("ambientLight", ambientLight_);
+	solidShader_->setUniform("lightColor", pointLightColor_);
+	solidShader_->setUniform("lightPos", pointLightPos_);
 
-	solidShader_->SetUniform("camera", camera_.calculateTransformation());
-	solidShader_->SetUniform("projection", projectionTrans_);
-	solidShader_->SetUniform("viewPos", camera_.getPosition());
+	solidShader_->setUniform("camera", camera_.calculateTransformation());
+	solidShader_->setUniform("projection", projectionTrans_);
+	solidShader_->setUniform("viewPos", camera_.getPosition());
 
-	Rendering::Uniform modelUniform = solidShader_->GetUniform("model");
-	solidShader_->SetUniform("opacity", 1.0f);
+	Rendering::Uniform modelUniform = solidShader_->getUniform("model");
+	solidShader_->setUniform("opacity", 1.0f);
 
 	// Iterate and render
 	auto visitor = Ecs::buildAutoTypeVisitor< // TODO move to Init
@@ -126,12 +126,12 @@ void RenderingSystem::DoRender()
 		{
 			if (material.opacity == 1.0f)
 			{
-				modelUniform.Set(trans.transformation);
+				modelUniform.set(trans.transformation);
 
 				renderer_.activateTexture(*material.diffuseTexture, 0);
-				solidShader_->SetUniform("shininess", material.shininess);
+				solidShader_->setUniform("shininess", material.shininess);
 
-				mesh.mesh->Draw();
+				mesh.mesh->draw();
 			}
 			else
 			{
@@ -147,13 +147,13 @@ void RenderingSystem::DoRender()
 		const Rendering::Components::Mesh& mesh = *database_.getAutoComponentType<Rendering::Components::Mesh>().find(id);
 		const Rendering::Components::Transformation& trans = *database_.getAutoComponentType<Rendering::Components::Transformation>().find(id);
 
-		modelUniform.Set(trans.transformation);
+		modelUniform.set(trans.transformation);
 
 		renderer_.activateTexture(*material.diffuseTexture, 0);
-		solidShader_->SetUniform("shininess", material.shininess);
-		solidShader_->SetUniform("opacity", material.opacity);
+		solidShader_->setUniform("shininess", material.shininess);
+		solidShader_->setUniform("opacity", material.opacity);
 
-		mesh.mesh->Draw();
+		mesh.mesh->draw();
 	}
 
 	// Second pass - draw selection
@@ -161,9 +161,9 @@ void RenderingSystem::DoRender()
 	renderer_.useShader(*pickShader_);
 	renderer_.setWireframeMode(true);
 
-	pickShader_->SetUniform("camera", camera_.calculateTransformation());
-	pickShader_->SetUniform("projection", projectionTrans_);
-	pickShader_->SetUniform("color", glm::vec4(1.0, 0.8, 0.0, 1.0));
+	pickShader_->setUniform("camera", camera_.calculateTransformation());
+	pickShader_->setUniform("projection", projectionTrans_);
+	pickShader_->setUniform("color", glm::vec4(1.0, 0.8, 0.0, 1.0));
 
 	auto selectionVisitor = Ecs::buildAutoTypeVisitor< // TODO move to Init
 		Components::Selectable,
@@ -178,8 +178,8 @@ void RenderingSystem::DoRender()
 		{
 			if (selectable.selected)
 			{
-				pickShader_->SetUniform("model", trans.transformation);
-				mesh.mesh->Draw();
+				pickShader_->setUniform("model", trans.transformation);
+				mesh.mesh->draw();
 			}
 		});
 }
@@ -188,7 +188,7 @@ void RenderingSystem::RenderToFile()
 {
 	renderer_.renderTo(*offScreen_);
 	DoRender();
-	offScreen_->SaveToFile("out.png", 0, 0, width_, height_);
+	offScreen_->saveToFile("out.png", 0, 0, width_, height_);
 }
 
 void RenderingSystem::RenderPickMap()
@@ -204,8 +204,8 @@ void RenderingSystem::RenderPickMap()
 	renderer_.clearBuffers(Rendering::Renderer::ClearedBuffers::ColorDepth);
 	renderer_.useShader(*pickShader_);
 
-	pickShader_->SetUniform("camera", camera_.calculateTransformation());
-	pickShader_->SetUniform("projection", projectionTrans_);
+	pickShader_->setUniform("camera", camera_.calculateTransformation());
+	pickShader_->setUniform("projection", projectionTrans_);
 
 	// Pass - draw all
 	auto visitor = Ecs::buildAutoTypeVisitor< // TODO move to Init
@@ -217,7 +217,7 @@ void RenderingSystem::RenderPickMap()
 		const Components::MousePickable& pickable,
 		const Rendering::Components::Transformation& trans)
 		{
-			pickShader_->SetUniform("model", trans.transformation);
+			pickShader_->setUniform("model", trans.transformation);
 
 			union rgba
 			{
@@ -232,15 +232,15 @@ void RenderingSystem::RenderPickMap()
 
 			glm::vec4 color(u.r/255.0, u.g/255.0, u.b/255.0, u.a/255.0);
 
-			pickShader_->SetUniform("color", color);
+			pickShader_->setUniform("color", color);
 
-			pickable.mesh->Draw();
+			pickable.mesh->draw();
 	});
 }
 
 uint32_t RenderingSystem::QueryPickMap(int x, int y) const
 {
-	return offScreen_->QueryPixel(x, height_-y);
+	return offScreen_->queryPixel(x, height_-y);
 }
 
 
@@ -255,7 +255,7 @@ void RenderingSystem::SetViewport(int x, int y, int w, int h)
 
 	offScreenColor_ = std::make_unique<Rendering::Texture>();
 	offScreenColor_->createEmpty(w, h);
-	offScreen_->AttachColorBuffer(*offScreenColor_);
+	offScreen_->attachColorBuffer(*offScreenColor_);
 	offScreen_->attachDepthRenderbuffer(w, h);
 	width_ = w;
 	height_ = h;
